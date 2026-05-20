@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'account' => 'Conta',
+    'dashboard' => 'Dashboard',
+    'demo' => 'Demo',
+    'helpers' => 'Helpers',
+    'language' => 'Idioma',
+    'project' => 'Projeto',
+    'readme' => 'README',
+    'repository' => 'Repositório',
     'search' => 'Pesquisar',
     'my_profile' => 'Meu Perfil',
     'security' => 'Segurança',
