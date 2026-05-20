@@ -1,0 +1,76 @@
+.header {
+    @apply grid-default col-span-12 border-b h-fit border-b-gray-200 px-2 py-4;
+}
+
+.header .mobile-menu {
+    @apply hidden items-center justify-center 
+    xl:hidden
+    lg:flex lg:col-span-1 max-lg:col-span-1 
+    md:flex md:col-span-2 max-md:col-span-2
+    sm:flex sm:col-span-2 max-sm:flex max-sm:col-span-2;
+}
+
+.header .page-header {
+    @apply col-span-12 flex flex-col gap-1 px-4
+    xl:col-span-9
+    lg:col-span-9 
+    md:col-span-10 
+    sm:col-span-10 
+    max-sm:col-span-10;
+}
+
+.header .header-buttons {
+    @apply hidden gap-2 flex-row items-center justify-end pr-2
+    xl:flex
+    lg:flex
+    xl:col-span-3
+    lg:col-span-2
+    max-lg:col-span-2;
+}
+
+.header .header-buttons-home {
+    @apply gap-2 flex-row items-center justify-end pr-2
+    xl:flex xl:col-span-12
+    lg:flex lg:col-span-11 max-lg:col-span-10
+    md:flex md:col-span-10 max-md:col-span-10
+    sm:flex sm:col-span-10 max-sm:col-span-10 max-sm:flex;
+}
+
+.header .page-header h1 {
+    @apply text-4xl uppercase font-bold font-unbounded text-ellipsis overflow-hidden whitespace-nowrap;
+}
+
+.breadcrumbs {
+    @apply text-gray-500 font-poppins font-medium;
+}
+
+.breadcrumbs ul {
+    @apply uppercase;
+}
+
+.breadcrumbs ul li a {
+    @apply transition-default text-primary/50 no-underline;
+}
+
+.breadcrumbs li span {
+    @apply transition-default text-gray-400 no-underline cursor-default;
+}
+
+.breadcrumbs li a:hover,
+.breadcrumbs li:last-child span {
+    @apply text-primary;
+}
+
+.header .header-buttons .button,
+.header .header-buttons button,
+.header .header-buttons label,
+.header .mobile-menu button,
+.header .header-buttons-home .button,
+.header .header-buttons-home button,
+.header .header-buttons-home label,
+.header .mobile-menu button {
+    @apply border border-gray-200 py-3 px-4 rounded-md transition-default shadow;
+    &:hover {
+        @apply bg-gray-100 cursor-pointer;
+    }
+}

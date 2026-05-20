@@ -1,0 +1,46 @@
+[x-cloak] {
+    display: none !important;
+}
+
+@utility tooltip {
+    font-weight: normal;
+    &:after {
+        content: none;
+    }
+    & > .tooltip-content,
+    &[data-tip]:before {
+        @apply bg-primary;
+    }
+}
+
+@utility grid-default {
+    @apply grid grid-cols-12 gap-4;
+}
+
+@utility transition-default {
+    transition: ease-in-out 0.3s;
+}
+
+@utility text-transform-none {
+    text-transform: none;
+}
+
+@utility border-default {
+    @apply border rounded-md border-gray-300;
+}
+
+@utility border-b-none {
+    border-bottom: none;
+}
+
+@utility content-empty {
+    content: "";
+}
+
+@utility m-0-auto {
+    margin: 0 auto;
+}
+
+@utility modal {
+    @apply backdrop-blur-sm bg-black/60;
+}

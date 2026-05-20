@@ -1,0 +1,116 @@
+/** Sidebar **/
+[data-theme="dark"] .profile .profile-button,
+[data-theme="dark"] .profile ul {
+    @apply border-gray-600;
+}
+
+[data-theme="dark"] .profile::after,
+[data-theme="dark"] .search-box::after,
+[data-theme="dark"] nav.side-menu .menu-section::after {
+    @apply bg-gray-600;
+}
+
+[data-theme="dark"] nav.side-menu .menu-section {
+    @apply text-gray-300;
+}
+
+[data-theme="dark"] .side-menu ul > li > ul {
+    @apply border-l-gray-600;
+}
+
+[data-theme="dark"] .profile ul li svg,
+[data-theme="dark"] .profile ul li i {
+    @apply rounded bg-black border-gray-600;
+}
+
+/** Search **/
+[data-theme="dark"] .search-box {
+    @apply bg-gray-600;
+
+    &:hover {
+        @apply bg-primary ring-primary/50 ring-4;
+    }
+}
+
+[data-theme="dark"] .search-box .search-input,
+[data-theme="dark"] .search-box .search-input i,
+[data-theme="dark"] .search-box .search-input svg {
+    @apply text-gray-200;
+}
+
+/** Header ***/
+[data-theme="dark"] .header {
+    @apply border-b-gray-600;
+}
+
+[data-theme="dark"] .breadcrumbs ul li a {
+    @apply transition-default text-gray-400 no-underline;
+}
+
+[data-theme="dark"] .breadcrumbs li a:hover,
+[data-theme="dark"] .breadcrumbs li:last-child span {
+    @apply text-white;
+}
+
+[data-theme="dark"] .header .header-buttons .button,
+[data-theme="dark"] .header .header-buttons button,
+[data-theme="dark"] .header .header-buttons label,
+[data-theme="dark"] .header .mobile-menu button {
+    @apply border-gray-600  shadow-gray-600;
+    &:hover {
+        @apply bg-gray-500 cursor-pointer;
+    }
+}
+
+/** Action Buttons **/
+[data-theme="dark"] .actions-buttons {
+    @apply border-b-gray-600;
+}
+
+[data-theme="dark"] .actions-buttons .button-item,
+[data-theme="dark"] .actions-buttons label {
+    @apply border-gray-600  shadow-gray-600;
+}
+
+[data-theme="dark"] .actions-buttons .button-item:hover,
+[data-theme="dark"] .actions-buttons label:hover {
+    @apply bg-primary cursor-pointer;
+}
+
+[data-theme="dark"] .actions-buttons .button-item:hover .badge {
+    @apply bg-white text-primary;
+}
+
+[data-theme="dark"] .actions-buttons ul.dropdown-content {
+    @apply shadow-gray-600 mt-1;
+}
+
+[data-theme="dark"] .actions-buttons ul.dropdown-content li a:hover {
+    @apply bg-primary;
+}
+
+/** Profile Options **/
+[data-theme="dark"] .profile-options .option,
+[data-theme="dark"] .profile-options .option-notification,
+[data-theme="dark"] .profile-options .action p {
+    @apply text-gray-400;
+}
+
+[data-theme="dark"] .profile ul li a:hover svg,
+[data-theme="dark"] .profile ul li a:hover i {
+    @apply text-white;
+}
+
+/** Main **/
+[data-theme="dark"] .app main .main-content .section {
+    @apply border-b-gray-600;
+}
+
+[data-theme="dark"] input {
+    @apply text-white;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] input:focus-within {
+    @apply border-secondary outline-secondary ring-secondary/50;
+}

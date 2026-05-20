@@ -1,0 +1,235 @@
+/* ===========================
+   GLOBAL / BASE
+   =========================== */
+body.no-scroll {
+    overflow: hidden;
+}
+
+.side-menu-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out;
+}
+
+.side-menu-backdrop.open {
+    @apply opacity-100 pointer-events-auto;
+}
+
+/* Utilitário Base para os Menus */
+@utility side-menu-base {
+    @apply p-4 bg-base-100 shadow rounded-xl;
+
+    /** Profile Menu **/
+    .profile .profile-button {
+        @apply text-left items-center flex flex-row gap-2 border border-gray-200 w-full p-1 rounded cursor-pointer transition-default;
+
+        &:hover {
+            @apply bg-primary text-white;
+        }
+    }
+    .profile {
+        @apply relative dropdown dropdown-bottom dropdown-start;
+    }
+
+    .profile::after {
+        @apply content-empty h-px bg-gray-200 w-full absolute -bottom-2;
+    }
+
+    .profile > .profile-button > .profile-pic {
+        @apply w-4/12 rounded overflow-hidden h-full;
+    }
+
+    .profile > .profile-button > .profile-details {
+        @apply w-8/12 flex flex-col;
+    }
+
+    .profile > .profile-button > .profile-details span.user-name {
+        @apply font-extrabold text-xl;
+    }
+
+    .profile > .profile-button > .profile-details span.user-email {
+        @apply text-gray-400 text-sm;
+    }
+
+    .profile .profile-button:hover span.user-email {
+        @apply text-white;
+    }
+
+    .profile ul {
+        @apply menu w-65 mt-1 rounded bg-base-100 shadow border border-gray-200;
+    }
+
+    .profile ul li {
+        @apply mb-0.5;
+    }
+
+    .profile ul li a:hover {
+        @apply transition-default bg-primary text-white;
+    }
+
+    .profile ul li svg,
+    .profile ul li i {
+        @apply p-1 rounded bg-white border border-gray-200 transition-default;
+    }
+
+    .profile ul li a:hover svg,
+    .profile ul li a:hover i {
+        @apply text-primary bg-white border border-black;
+        transform: scale(1.05);
+    }
+
+    /** Search **/
+    .search-box {
+        @apply mt-4 cursor-pointer flex justify-between items-center bg-gray-200 p-1.5 rounded relative transition-default mb-4 w-full text-left border-0;
+
+        &:hover {
+            @apply bg-primary ring-primary/50 ring-4;
+        }
+    }
+
+    .search-box::after {
+        @apply content-empty h-px bg-gray-200 w-full absolute -bottom-2 left-0;
+    }
+
+    .search-box .search-input {
+        @apply flex items-center gap-2 text-[#8C8E90] transition-default;
+    }
+
+    .search-box:hover .search-input,
+    .search-box:hover .search-input i,
+    .search-box:hover .search-input svg {
+        @apply text-white;
+    }
+
+    .search-box .search-input i,
+    .search-box .search-input svg {
+        @apply text-[#8C8E90] transition-default;
+    }
+
+    /** Side Menu **/
+    nav.side-menu {
+        @apply max-h-[77vh] mt-4 overflow-auto;
+    }
+
+    nav.side-menu .menu-section {
+        @apply font-semibold text-gray-500 py-2 uppercase text-[16px] relative overflow-hidden;
+    }
+
+    nav.side-menu .menu-section::after {
+        @apply content-empty h-px bg-gray-200 absolute w-full top-[50%] ml-2;
+    }
+
+    .side-menu ul {
+        @apply flex flex-col gap-1;
+    }
+
+    .side-menu ul > li > ul {
+        @apply ml-6 mb-2 border-l border-l-gray-200 pl-2 overflow-hidden transition-all duration-300 ease-in-out;
+        max-height: 0;
+    }
+
+    .side-menu ul > li.open > ul {
+        max-height: 500px;
+    }
+
+    .side-menu ul li a.menu-item,
+    .side-menu ul li a.has-submenu {
+        @apply flex text-[16px] items-center rounded-md cursor-pointer gap-2 p-2 transition-default;
+    }
+
+    .side-menu ul li a.active {
+        @apply bg-primary text-white;
+    }
+
+    .side-menu ul li a.menu-item:hover,
+    .side-menu ul li a.has-submenu:hover {
+        @apply bg-primary text-white;
+    }
+
+    .side-menu ul > li > a.has-submenu,
+    .side-menu ul > li > a.has-submenu {
+        @apply justify-between mb-2;
+    }
+
+    .side-menu ul > li > a.has-submenu span {
+        @apply flex items-center gap-2;
+    }
+
+    .side-menu ul > li > ul {
+        @apply ml-6 mb-2 border-l border-l-gray-200 pl-2;
+    }
+
+    .side-menu ul > li > ul > li a {
+        @apply p-2 transition-default rounded-md cursor-pointer block;
+    }
+
+    .side-menu ul > li > ul > li a.active {
+        @apply bg-secondary text-white;
+    }
+
+    .side-menu ul > li > ul > li a:hover {
+        @apply bg-secondary text-white;
+    }
+
+    /** Action Buttons **/
+    .actions-buttons {
+        @apply grid-cols-2 gap-2 mt-4 max-xl:grid xl:hidden border-b border-b-gray-200 pb-3;
+    }
+
+    .actions-buttons .button-item {
+        @apply border border-gray-200 py-3 px-4 rounded-md transition-default shadow flex flex-row items-center justify-center gap-2;
+    }
+
+    .actions-buttons label {
+        @apply border-gray-200 border rounded-md py-2 px-4 transition-default shadow flex-row items-start;
+    }
+
+    .actions-buttons .button-item:hover,
+    .actions-buttons label:hover {
+        @apply bg-gray-100 cursor-pointer;
+    }
+
+    .actions-buttons .indicator {
+        @apply w-full;
+    }
+}
+
+/* ===========================
+   DESKTOP
+   =========================== */
+.app aside {
+    @apply sticky top-4 
+    sm:hidden max-sm:hidden
+    md:hidden 
+    lg:hidden max-lg:hidden 
+    xl:col-span-2 xl:block 
+    col-span-2 bg-base-100 rounded-xl shadow h-[calc(100vh-32px)] p-4;
+}
+
+.app aside nav.side-menu {
+    @apply max-h-[79vh];
+}
+
+/* ===========================
+   MOBILE
+   =========================== */
+.side-menu-mobile {
+    @apply fixed left-0 top-0 max-w-100 h-full z-50 transform overflow-hidden shadow-lg transition-transform duration-300 ease-in-out -translate-x-full rounded-none;
+}
+
+.side-menu-mobile .profile ul {
+    @apply w-89;
+}
+.side-menu-mobile.open {
+    @apply translate-x-0;
+}
+.side-menu-mobile .close-b {
+    @apply w-full flex justify-end pb-3;
+}
+.side-menu-mobile .close-b button {
+    @apply btn rounded-full w-8 h-8 transition-default shadow;
+}
+.side-menu-mobile .close-b button:hover {
+    @apply bg-primary text-white;
+}
+.side-menu-mobile nav.side-menu {
+    @apply max-h-[75vh];
+}

@@ -1,0 +1,7 @@
+body {
+    @apply bg-base-300 min-h-screen w-full;
+}
+
+.app {
+    @apply p-4 grid-default min-h-screen font-poppins;
+}

@@ -1,0 +1,49 @@
+.profile-options {
+    @apply col-span-12 py-4 flex flex-col gap-2;
+}
+
+.profile-option {
+    @apply grid grid-cols-12 gap-2 col-span-12;
+}
+
+.profile-options .option {
+    @apply col-span-3 flex items-center text-gray-500;
+}
+
+.profile-options .action {
+    @apply col-span-9 text-gray-500;
+}
+
+.profile-options .option-notification,
+.profile-options .action-notification {
+    @apply col-span-6  text-gray-500;
+}
+
+.profile-options .option-notification {
+    @apply flex items-center;
+}
+
+.profile-options .action .input {
+    @apply xl:w-160 lg:w-160 md:w-130 sm:w-100;
+}
+
+/** Imagem de Perfil **/
+.profile-options .action .avatar-upload {
+    @apply flex items-center justify-start w-full text-gray-500 gap-2;
+}
+
+.profile-options .action .profile-image {
+    @apply h-24 w-24 rounded-full border border-gray-200 flex items-center justify-center overflow-hidden;
+}
+
+.profile-options .action .profile-image img {
+    @apply object-cover w-full h-full;
+}
+
+.profile-options .action .image-upload {
+    @apply flex flex-col gap-2;
+}
+
+.profile-options .action p {
+    @apply text-sm text-gray-700/50;
+}

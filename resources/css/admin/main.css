@@ -1,0 +1,25 @@
+/** Main **/
+.app main {
+    @apply bg-base-100 rounded-xl shadow col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 xl:col-span-10;
+}
+
+.app main .main-content {
+    @apply grid-default p-4;
+}
+
+.app main .main-content .section {
+    @apply col-span-12 border-b border-b-gray-200 py-2;
+}
+.app main .main-content .section:last-child {
+    @apply border-none;
+}
+
+/** Main Content **/
+
+.main-content .section .section-title h1 {
+    @apply text-2xl font-bold uppercase;
+}
+
+.main-content .section .section-title h4 {
+    @apply text-gray-400;
+}
