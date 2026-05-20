@@ -1,7 +1,7 @@
 <div class="dropdown profile">
     <div tabindex="0" role="button" class="profile-button">
         <div class="profile-pic">
-            <img src="{{ asset('img/placeholders/default-avatar.jpg') }}" alt="">
+            <img src="{{ asset('img/placeholders/avatars/default-avatar.jpg') }}" alt="">
         </div>
         <div class="profile-details">
             <span class="user-name">John Doe</span>
