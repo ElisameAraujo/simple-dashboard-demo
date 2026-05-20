@@ -7,6 +7,7 @@ use App\Helpers\NumberHelper;
 use App\Helpers\Support\LocaleResolver;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class TranslationTest extends TestCase
@@ -94,12 +95,32 @@ class TranslationTest extends TestCase
         $this->assertSame('2nd', NumberHelper::ordinal(2, 'en_US'));
     }
 
+    public function test_helper_documentation_metadata_is_translated(): void
+    {
+        app()->setLocale('en');
+
+        $this->assertSame('DateHelper', __('docs/helpers/date-helper.name'));
+        $this->assertSame('Date formatting, relative dates, and localized output.', __('docs/helpers/date-helper.description'));
+
+        app()->setLocale('pt_BR');
+
+        $this->assertSame('DateHelper', __('docs/helpers/date-helper.name'));
+        $this->assertSame('Formatação de datas, datas relativas e saídas localizadas.', __('docs/helpers/date-helper.description'));
+    }
+
     private function flattenTranslations(string $locale): array
     {
         $translations = [];
 
-        foreach (glob(lang_path("{$locale}/*.php")) as $file) {
-            $translations[basename($file, '.php')] = require $file;
+        foreach (File::allFiles(lang_path($locale)) as $file) {
+            $relativePath = str_replace('\\', '/', $file->getRelativePathname());
+
+            if (str_starts_with($relativePath, 'vendor/')) {
+                continue;
+            }
+
+            $translationGroup = str_replace('/', '.', substr($relativePath, 0, -4));
+            $translations[$translationGroup] = require $file->getPathname();
         }
 
         return Arr::dot($translations);

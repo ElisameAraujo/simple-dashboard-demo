@@ -5,9 +5,15 @@
         </button>
     </div>
 
+    <div class="mobile-header-actions">
+        @include('components.admin.language-switcher', ['class' => 'language-switcher-mobile'])
+    </div>
+
     @yield('page-header')
 
     <div class="header-buttons">
+        @include('components.admin.language-switcher')
+
         <label class="swap tooltip" data-tip="{{ __('ui.switch_theme') }}">
             <input type="checkbox" data-toggle-theme="dark,light" data-act-class="ACTIVECLASS" />
             <div class="swap-on"><i class="fa-regular fa-sun"></i></div>

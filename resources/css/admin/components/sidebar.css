@@ -78,7 +78,7 @@ body.no-scroll {
 
     /** Search **/
     .search-box {
-        @apply mt-4 cursor-pointer flex justify-between items-center bg-gray-200 p-1.5 rounded relative transition-default mb-4 w-full text-left border-0;
+        @apply mt-4 cursor-pointer flex justify-between items-center gap-2 bg-gray-200 p-1.5 rounded relative transition-default mb-4 w-full text-left border-0;
 
         &:hover {
             @apply bg-primary ring-primary/50 ring-4;
@@ -90,7 +90,15 @@ body.no-scroll {
     }
 
     .search-box .search-input {
-        @apply flex items-center gap-2 text-[#8C8E90] transition-default;
+        @apply flex min-w-0 items-center gap-1 text-sm text-[#8C8E90] transition-default;
+    }
+
+    .search-box .search-input span {
+        @apply truncate;
+    }
+
+    .search-box kbd {
+        @apply shrink-0 px-1 text-[10px];
     }
 
     .search-box:hover .search-input,

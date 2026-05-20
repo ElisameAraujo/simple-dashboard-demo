@@ -62,115 +62,66 @@
 </div>
 
 <nav class="side-menu">
-    <h2 class="menu-section">Seção 1</h2>
+    <h2 class="menu-section">{{ __('ui.demo') }}</h2>
     <ul>
         <li>
-            <a class="menu-item active" href="#">
+            <a class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                href="{{ route('admin.dashboard') }}">
                 <i class="fa-solid fa-chart-line"></i>
-                Dashboard
+                {{ __('ui.dashboard') }}
             </a>
         </li>
-        <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-building"></i>
-                Accounts
-            </a>
-        </li>
-        <li data-submenu-id="cards-1">
+        <h2 class="menu-section">{{ __('ui.account') }}</h2>
+        <li data-submenu-id="account-settings"
+            class="{{ request()->routeIs('admin.account.*') ? 'open' : '' }}">
             <a href="#" class="has-submenu">
                 <span>
-                    <i class="fa-solid fa-credit-card"></i>
-                    Cards
+                    <i class="fa-solid fa-user-gear"></i>
+                    {{ __('ui.settings') }}
                 </span>
                 <i class="fa-solid fa-plus text-xs" id="submenu-icon"></i>
             </a>
             <ul>
                 <li>
-                    <a href="#">Subitem 1</a>
+                    <a class="{{ request()->routeIs('admin.account.my-profile') ? 'active' : '' }}"
+                        href="{{ route('admin.account.my-profile') }}">{{ __('ui.my_profile') }}</a>
                 </li>
                 <li>
-                    <a class="sub-item" href="#">Subitem 2</a>
+                    <a class="{{ request()->routeIs('admin.account.notifications') ? 'active' : '' }}"
+                        href="{{ route('admin.account.notifications') }}">{{ __('ui.notifications') }}</a>
                 </li>
                 <li>
-                    <a class="sub-item" href="#">Subitem 3</a>
+                    <a class="{{ request()->routeIs('admin.account.security') ? 'active' : '' }}"
+                        href="{{ route('admin.account.security') }}">{{ __('ui.security') }}</a>
                 </li>
             </ul>
         </li>
-        <h2 class="menu-section">Seção 2</h2>
-        <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-users"></i>
-                Payees
-            </a>
-        </li>
-        <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-file-invoice"></i>
-                Invoices
-            </a>
-        </li>
 
-        <h2 class="menu-section">Seção 2</h2>
+        <h2 class="menu-section">{{ __('ui.project') }}</h2>
         <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-users"></i>
-                Payees
+            <a class="menu-item" href="{{ app()->getLocale() === 'pt_BR'
+                ? 'https://github.com/ElisameAraujo/simple-dashboard/blob/main/README.pt-br.md'
+                : 'https://github.com/ElisameAraujo/simple-dashboard' }}"
+                target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-readme"></i>
+                {{ __('ui.readme') }}
             </a>
         </li>
         <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-file-invoice"></i>
-                Invoices
-            </a>
-        </li>
-
-        <h2 class="menu-section">Seção 2</h2>
-        <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-users"></i>
-                Payees
+            <a class="menu-item" href="{{ app()->getLocale() === 'pt_BR'
+                ? 'https://github.com/ElisameAraujo/simple-dashboard/tree/main/documentation/pt-BR'
+                : 'https://github.com/ElisameAraujo/simple-dashboard/tree/main/documentation/en' }}"
+                target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-book-open"></i>
+                {{ __('ui.helpers') }}
             </a>
         </li>
         <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-file-invoice"></i>
-                Invoices
+            <a class="menu-item" href="https://github.com/ElisameAraujo/simple-dashboard" target="_blank"
+                rel="noopener noreferrer">
+                <i class="fa-brands fa-github"></i>
+                {{ __('ui.repository') }}
             </a>
-        </li>
-
-        <h2 class="menu-section">Seção 2</h2>
-        <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-users"></i>
-                Payees
-            </a>
-        </li>
-        <li>
-            <a class="menu-item" href="#">
-                <i class="fa-solid fa-file-invoice"></i>
-                Invoices
-            </a>
-        </li>
-
-        <li data-submenu-id="cards-2">
-            <a href="#" class="has-submenu">
-                <span>
-                    <i class="fa-solid fa-credit-card"></i>
-                    Cards
-                </span>
-                <i class="fa-solid fa-plus text-xs" id="submenu-icon"></i>
-            </a>
-            <ul>
-                <li>
-                    <a href="#" class="active">Subitem 1</a>
-                </li>
-                <li>
-                    <a class="sub-item" href="#">Subitem 2</a>
-                </li>
-                <li>
-                    <a class="sub-item" href="#">Subitem 3</a>
-                </li>
-            </ul>
         </li>
     </ul>
 </nav>

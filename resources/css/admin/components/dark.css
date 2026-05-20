@@ -55,11 +55,16 @@
 [data-theme="dark"] .header .header-buttons .button,
 [data-theme="dark"] .header .header-buttons button,
 [data-theme="dark"] .header .header-buttons label,
+[data-theme="dark"] .header .mobile-header-actions .button,
 [data-theme="dark"] .header .mobile-menu button {
     @apply border-gray-600  shadow-gray-600;
     &:hover {
         @apply bg-gray-500 cursor-pointer;
     }
+}
+
+[data-theme="dark"] .header .language-switcher ul {
+    @apply border border-gray-600 shadow-gray-600;
 }
 
 /** Action Buttons **/
@@ -113,4 +118,32 @@
 [data-theme="dark"] input:focus,
 [data-theme="dark"] input:focus-within {
     @apply border-secondary outline-secondary ring-secondary/50;
+}
+
+/** Dashboard **/
+[data-theme="dark"] .dashboard-intro,
+[data-theme="dark"] .dashboard-summary-card,
+[data-theme="dark"] .dashboard-panel,
+[data-theme="dark"] .dashboard-page-link,
+[data-theme="dark"] .dashboard-link-list a,
+[data-theme="dark"] .dashboard-helper-grid a,
+[data-theme="dark"] .dashboard-step-list li {
+    @apply border-gray-600;
+}
+
+[data-theme="dark"] .dashboard-intro p,
+[data-theme="dark"] .dashboard-panel-header p,
+[data-theme="dark"] .dashboard-summary-card p,
+[data-theme="dark"] .dashboard-page-copy small,
+[data-theme="dark"] .dashboard-link-list small,
+[data-theme="dark"] .dashboard-helper-grid small,
+[data-theme="dark"] .dashboard-step-list p {
+    @apply text-gray-400;
+}
+
+[data-theme="dark"] .dashboard-summary-icon,
+[data-theme="dark"] .dashboard-page-icon,
+[data-theme="dark"] .dashboard-link-list a > span:first-child,
+[data-theme="dark"] .dashboard-helper-grid a > span:first-child {
+    @apply bg-base-300;
 }
