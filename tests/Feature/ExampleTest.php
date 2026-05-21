@@ -44,7 +44,7 @@ class ExampleTest extends TestCase
         $this->get(route('admin.dashboard'))
             ->assertOk()
             ->assertSee('English')
-            ->assertSee('Português')
+            ->assertSee('Português (Brasil)')
             ->assertSee(route('locale.switch', 'pt_BR'), false);
     }
 
@@ -59,6 +59,6 @@ class ExampleTest extends TestCase
             ->get(route('admin.dashboard'))
             ->assertOk()
             ->assertSee('Resumo geral da demo')
-            ->assertSee('Português');
+            ->assertSee('Português (Brasil)');
     }
 }
