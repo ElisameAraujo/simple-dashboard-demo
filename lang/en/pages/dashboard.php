@@ -20,7 +20,7 @@ return [
         ],
         'locales' => [
             'label' => 'Prepared languages',
-            'description' => 'Interface with pt_BR and English files.',
+            'description' => 'Interface with Brazilian Portuguese and English files.',
         ],
         'pages' => [
             'label' => 'Demo pages',
