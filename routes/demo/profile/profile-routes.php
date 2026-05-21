@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 $middleware = ['verified'];
 
-Route::prefix('admin/profile')->group(function () {
+Route::prefix('profile')->group(function () {
 
     Route::get('my-profile', [ProfileController::class, 'myProfile'])
         ->name('admin.account.my-profile');

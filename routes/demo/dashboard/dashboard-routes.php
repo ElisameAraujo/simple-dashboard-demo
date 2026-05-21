@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 $middleware = ['verified'];
 
-Route::prefix('/admin')->group(function () {
+Route::prefix('')->group(function () {
 
     Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
