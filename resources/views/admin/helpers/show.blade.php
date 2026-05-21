@@ -35,7 +35,6 @@
                     <i class="{{ $helper['icon'] }}"></i>
                 </span>
                 <div>
-                    <span class="dashboard-kicker">{{ $helper['alias'] }}</span>
                     <h2>{{ $helper['name'] }}</h2>
                     <p>{{ $helper['description'] }}</p>
                 </div>
