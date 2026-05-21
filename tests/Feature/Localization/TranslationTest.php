@@ -5,6 +5,7 @@ namespace Tests\Feature\Localization;
 use App\Helpers\DateHelper;
 use App\Helpers\DiskHelper;
 use App\Helpers\HTMLHelper;
+use App\Helpers\MediaHelper;
 use App\Helpers\NumberHelper;
 use App\Helpers\Support\LocaleResolver;
 use App\Support\HelperDemoCatalog;
@@ -116,7 +117,7 @@ class TranslationTest extends TestCase
 
     public function test_helper_yaml_documentation_is_translated_and_matches_public_methods(): void
     {
-        foreach (['date-helper' => DateHelper::class, 'disk-helper' => DiskHelper::class, 'html-helper' => HTMLHelper::class] as $slug => $class) {
+        foreach (['date-helper' => DateHelper::class, 'disk-helper' => DiskHelper::class, 'html-helper' => HTMLHelper::class, 'media-helper' => MediaHelper::class] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
 
@@ -144,10 +145,12 @@ class TranslationTest extends TestCase
         $dateHelper = HelperDemoCatalog::find('date-helper');
         $diskHelper = HelperDemoCatalog::find('disk-helper');
         $htmlHelper = HelperDemoCatalog::find('html-helper');
+        $mediaHelper = HelperDemoCatalog::find('media-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
         $heading = collect($htmlHelper['methods'])->firstWhere('name', 'heading');
+        $showMedia = collect($mediaHelper['methods'])->firstWhere('name', 'showMedia');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -159,6 +162,10 @@ class TranslationTest extends TestCase
         $this->assertSame(['HTMLHelper::make()->heading(2)->generate();'], $heading['example']['usage']);
         $this->assertSame(['<h2>Título de Exemplo</h2>'], $heading['example']['output']);
         $this->assertNotContains('HTMLHelper instance', $heading['example']['output']);
+
+        $this->assertSame('Retorna a URL pública da mídia existente ou a URL de um placeholder quando o arquivo não existe.', $showMedia['summary']);
+        $this->assertSame('Caminho relativo da mídia dentro do disco.', $showMedia['parameters'][0]['description']);
+        $this->assertSame(['/storage/products/demo.jpg'], $showMedia['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array
