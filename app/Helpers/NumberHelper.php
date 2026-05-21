@@ -7,6 +7,8 @@ use NumberFormatter;
 
 class NumberHelper
 {
+    private const SQUARE_METERS_TO_SQUARE_FEET = 10.7639;
+
     /**
      * Suffix mapping for compact numbers by locale
      */
@@ -62,7 +64,10 @@ class NumberHelper
      * Mapping of ordinal suffixes by locale
      */
     protected static array $localeOrdinalSuffixMap = [
-        'pt_BR' => 'º',
+        'pt_BR' => [
+            'm' => 'º',
+            'f' => 'ª',
+        ],
         'en_US' => ['st', 'nd', 'rd', 'th'],
         'en_GB' => ['st', 'nd', 'rd', 'th'],
     ];
@@ -87,25 +92,27 @@ class NumberHelper
         $locale = self::resolveLocale($locale);
         $map = self::$compactNumberMap[$locale] ?? self::$compactNumberMap['en_US'];
 
-        if ($number < 1000) {
-            return number_format($number, 0, ',', '.');
+        $decimalSeparator = self::decimalSeparator($locale);
+
+        if (abs($number) < 1000) {
+            return number_format($number, 0, $decimalSeparator, self::thousandsSeparator($locale));
         }
 
-        if ($number < 1000000) {
+        if (abs($number) < 1000000) {
             $thousands = $number / 1000;
             $decimals = self::setDecimals($number, 1000);
-            return number_format($thousands, $decimals, ',', '') . ' ' . $map['thousands'];
+            return number_format($thousands, $decimals, $decimalSeparator, '') . ' ' . $map['thousands'];
         }
 
-        if ($number < 1000000000) {
+        if (abs($number) < 1000000000) {
             $millions = $number / 1000000;
             $decimals = self::setDecimals($number, 1000000);
-            return number_format($millions, $decimals, ',', '') . ' ' . $map['millions'];
+            return number_format($millions, $decimals, $decimalSeparator, '') . ' ' . $map['millions'];
         }
 
         $billions = $number / 1000000000;
         $decimals = self::setDecimals($number, 1000000000);
-        return number_format($billions, $decimals, ',', '') . ' ' . $map['billions'];
+        return number_format($billions, $decimals, $decimalSeparator, '') . ' ' . $map['billions'];
     }
 
     /**
@@ -126,34 +133,20 @@ class NumberHelper
     }
 
     /**
-     * `currencySymbol`:
-     * Returns the currency symbol based on the locale.
-     * @param string $locale Locale code (e.g., 'pt_BR', 'en_US')
-     * @return string
-     */
-    public static function currencySymbol(?string $locale = null): string
-    {
-        $locale = self::resolveLocale($locale);
-        $currency = self::$localeCurrencyMap[$locale] ?? 'USD';
-
-        return self::$currencySymbolMap[$currency] ?? $currency;
-    }
-
-    /**
      * `currencyFormat`:
-     * Format monetary value with plus symbol + value
-     * @param float|int $number
-     * @param string $locale Locale code (e.g., 'pt_BR', 'en_US')
-     * @param string $currency Currency code (e.g., 'BRL', 'USD')
+     * Formats a monetary value with the currency symbol and locale decimal format.
+     * @param float|int $number Number to be formatted.
+     * @param string|null $locale Locale code (e.g., 'pt_BR', 'en_US').
+     * @param string|null $currency Currency code (e.g., 'BRL', 'USD').
      * @return string
      */
     public static function currencyFormat(float|int $number, ?string $locale = null, ?string $currency = null): string
     {
         $locale = self::resolveLocale($locale);
-        $symbol = self::currencySymbol($locale);
-        $formatted = self::priceFormat($number, $locale, $currency);
+        $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        $formatted = $formatter->format($number);
 
-        return "{$symbol} {$formatted}";
+        return self::currencySymbol($locale, $currency) . " {$formatted}";
     }
 
     /**
@@ -170,9 +163,11 @@ class NumberHelper
         }
 
         $locale = self::resolveLocale($locale);
-        $unit = self::$localeAreaUnitMap[$locale] ?? 'm²';
+        $unit = self::$localeAreaUnitMap[$locale] ?? self::$localeAreaUnitMap['pt_BR'];
+        $value = self::convertSquareMeters($value, $unit);
 
         $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 2);
         $formatted = $formatter->format($value);
 
         return "{$formatted} {$unit}";
@@ -180,17 +175,21 @@ class NumberHelper
 
     /**
      * `ordinal`:
-     * Returns a generic ordinal based on language (e.g. 1º, 2nd)
+     * Returns a generic ordinal based on language (e.g. 1º, 1ª, 2nd)
      * @param int $number Number to be formatted
      * @param string $locale Locale code (e.g., 'pt_BR', 'en_US')
+     * @param string $gender Gender used by Portuguese ordinal suffixes: m or f
      * @return string
      */
-    public static function ordinal(int $number, ?string $locale = null): string
+    public static function ordinal(int $number, ?string $locale = null, string $gender = 'm'): string
     {
         $locale = self::resolveLocale($locale);
 
         if (str_starts_with($locale, 'pt')) {
-            return $number . self::$localeOrdinalSuffixMap['pt_BR'];
+            $gender = strtolower($gender);
+            $suffix = self::$localeOrdinalSuffixMap['pt_BR'][$gender] ?? self::$localeOrdinalSuffixMap['pt_BR']['m'];
+
+            return $number . $suffix;
         }
 
         $suffixes = self::$localeOrdinalSuffixMap['en_US'];
@@ -215,19 +214,54 @@ class NumberHelper
      */
     private static function setDecimals(int|float $number, int $divider): int
     {
-        $remainder = $number % $divider;
+        $compacted = abs($number) / $divider;
 
-        if ($remainder === 0) {
+        if (floor($compacted) === $compacted) {
             return 0;
         }
 
-        $hundred = intval(($remainder / ($divider / 10)) % 10);
-        $dozen  = intval(($remainder / ($divider / 100)) % 10);
+        $oneDecimal = round($compacted, 1);
 
-        if ($dozen === 0) {
-            return 1; // Show only hundred
+        if (round($compacted, 2) === $oneDecimal) {
+            return 1;
         }
 
-        return 2; // Show hundred and dozen
+        return 2;
+    }
+
+    /**
+     * Returns the currency symbol based on locale or explicit currency.
+     */
+    private static function currencySymbol(string $locale, ?string $currency = null): string
+    {
+        $currency = $currency ?? self::$localeCurrencyMap[$locale] ?? 'USD';
+
+        return self::$currencySymbolMap[$currency] ?? $currency;
+    }
+
+    /**
+     * Converts square meters to the area unit expected by the locale.
+     */
+    private static function convertSquareMeters(float|int $value, string $unit): float|int
+    {
+        return $unit === 'ft²'
+            ? $value * self::SQUARE_METERS_TO_SQUARE_FEET
+            : $value;
+    }
+
+    /**
+     * Returns the decimal separator for compact numbers.
+     */
+    private static function decimalSeparator(string $locale): string
+    {
+        return str_starts_with($locale, 'en') ? '.' : ',';
+    }
+
+    /**
+     * Returns the thousands separator for compact numbers below one thousand.
+     */
+    private static function thousandsSeparator(string $locale): string
+    {
+        return str_starts_with($locale, 'en') ? ',' : '.';
     }
 }
