@@ -1,0 +1,60 @@
+name: NotificationHelper
+description: Reads and counts authenticated user notifications for dropdowns, badges, and notification list screens.
+works:
+  - Use NotificationHelper when a view, Livewire component, or controller needs authenticated user notifications without repeating Auth checks.
+  - The helper is read-focused. Actions such as marking as read, marking all as read, or deleting notifications should live in the Controller or Livewire component that owns the interaction.
+  - latestNotifications() powers short summaries, such as the header dropdown; allUnreadNotifications() powers complete pending lists that do not fit in the summary.
+  - When there is no authenticated user, list methods return an empty Collection and count methods return 0.
+example:
+  code: |
+    $unreadCount = NotificationHelper::allUnreadNotificationsCount();
+    $dropdownNotifications = NotificationHelper::latestNotifications(10);
+  output: |
+    15 unread notifications and 10 items for the dropdown.
+methods:
+  unreadNotificationsByType:
+    description: Lists unread notifications of a specific notification class.
+    parameters:
+      type: Notification class name or fully qualified class name.
+      subfolder: Optional subfolder inside App\Notifications, such as User.
+      limit: Optional maximum number of returned records. When null or below 1, all matching records are returned.
+    example:
+      code: |
+        NotificationHelper::unreadNotificationsByType('NewMessageNotification', 'User', 5);
+      output: |
+        Collection with up to 5 unread notifications of type App\Notifications\User\NewMessageNotification.
+  unreadNotificationsByTypeCount:
+    description: Counts unread notifications of a specific notification class.
+    parameters:
+      type: Notification class name or fully qualified class name.
+      subfolder: Optional subfolder inside App\Notifications, such as User.
+    example:
+      code: |
+        NotificationHelper::unreadNotificationsByTypeCount('NewMessageNotification', 'User');
+      output: |
+        3
+  allUnreadNotifications:
+    description: Lists all unread notifications for the authenticated user, with an optional limit.
+    parameters:
+      limit: Optional maximum number of returned records. When null, all unread notifications are returned.
+    example:
+      code: |
+        NotificationHelper::allUnreadNotifications();
+      output: |
+        Collection with all unread notifications.
+  allUnreadNotificationsCount:
+    description: Counts all unread notifications for the authenticated user.
+    example:
+      code: |
+        NotificationHelper::allUnreadNotificationsCount();
+      output: |
+        15
+  latestNotifications:
+    description: Lists the authenticated user's latest notifications, read or unread, for summaries such as dropdowns.
+    parameters:
+      limit: Maximum number of returned notifications. When null or below 1, all notifications are returned.
+    example:
+      code: |
+        NotificationHelper::latestNotifications(10);
+      output: |
+        Collection with the 10 latest notifications.

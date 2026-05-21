@@ -1,0 +1,60 @@
+name: NotificationHelper
+description: Consulta e conta notificações do usuário autenticado para dropdowns, badges e telas de leitura.
+works:
+  - Use NotificationHelper quando uma view, componente Livewire ou controller precisa buscar notificações do usuário logado sem repetir verificações de Auth.
+  - O helper é focado em leitura. Ações como marcar como lida, marcar todas como lidas ou excluir notificações devem ficar no Controller ou no componente Livewire que controla a interação.
+  - latestNotifications() alimenta resumos curtos, como o dropdown do header; allUnreadNotifications() alimenta listas completas de pendências que não cabem no resumo.
+  - Quando não existe usuário autenticado, os métodos de lista retornam uma Collection vazia e os métodos de contagem retornam 0.
+example:
+  code: |
+    $unreadCount = NotificationHelper::allUnreadNotificationsCount();
+    $dropdownNotifications = NotificationHelper::latestNotifications(10);
+  output: |
+    15 notificações não lidas e 10 itens para o dropdown.
+methods:
+  unreadNotificationsByType:
+    description: Lista notificações não lidas de uma classe específica de notificação.
+    parameters:
+      type: Nome da classe de notificação ou classe completa com namespace.
+      subfolder: Subpasta opcional dentro de App\Notifications, como User.
+      limit: Limite opcional de registros retornados. Quando null ou menor que 1, retorna todos os registros encontrados.
+    example:
+      code: |
+        NotificationHelper::unreadNotificationsByType('NewMessageNotification', 'User', 5);
+      output: |
+        Collection com até 5 notificações não lidas do tipo App\Notifications\User\NewMessageNotification.
+  unreadNotificationsByTypeCount:
+    description: Conta notificações não lidas de uma classe específica de notificação.
+    parameters:
+      type: Nome da classe de notificação ou classe completa com namespace.
+      subfolder: Subpasta opcional dentro de App\Notifications, como User.
+    example:
+      code: |
+        NotificationHelper::unreadNotificationsByTypeCount('NewMessageNotification', 'User');
+      output: |
+        3
+  allUnreadNotifications:
+    description: Lista todas as notificações não lidas do usuário autenticado, com limite opcional.
+    parameters:
+      limit: Limite opcional de registros retornados. Quando null, retorna todas as notificações não lidas.
+    example:
+      code: |
+        NotificationHelper::allUnreadNotifications();
+      output: |
+        Collection com todas as notificações não lidas.
+  allUnreadNotificationsCount:
+    description: Conta todas as notificações não lidas do usuário autenticado.
+    example:
+      code: |
+        NotificationHelper::allUnreadNotificationsCount();
+      output: |
+        15
+  latestNotifications:
+    description: Lista as notificações mais recentes do usuário autenticado, lidas ou não lidas, para resumos como dropdowns.
+    parameters:
+      limit: Quantidade máxima de notificações retornadas. Quando null ou menor que 1, retorna todas.
+    example:
+      code: |
+        NotificationHelper::latestNotifications(10);
+      output: |
+        Collection com as 10 notificações mais recentes.
