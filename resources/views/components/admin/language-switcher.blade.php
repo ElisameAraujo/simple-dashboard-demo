@@ -2,9 +2,10 @@
     $currentLocale = app()->getLocale();
     $currentLabel = config('app.supported_locales')[$currentLocale] ?? $currentLocale;
     $currentShortLabel = strtoupper(explode('_', $currentLocale)[0]);
+    $alignment = $alignment ?? 'dropdown-end';
 @endphp
 
-<div class="dropdown dropdown-bottom dropdown-end language-switcher tooltip {{ $class ?? '' }}"
+<div class="dropdown dropdown-bottom {{ $alignment }} language-switcher tooltip {{ $class ?? '' }}"
     data-tip="{{ __('ui.language') }}">
     <div tabindex="0" role="button" class="button">
         <i class="fa-solid fa-language"></i>

@@ -5,10 +5,6 @@
         </button>
     </div>
 
-    <div class="mobile-header-actions">
-        @include('components.admin.language-switcher', ['class' => 'language-switcher-mobile'])
-    </div>
-
     @yield('page-header')
 
     <div class="header-buttons">

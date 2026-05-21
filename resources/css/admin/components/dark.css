@@ -55,7 +55,6 @@
 [data-theme="dark"] .header .header-buttons .button,
 [data-theme="dark"] .header .header-buttons button,
 [data-theme="dark"] .header .header-buttons label,
-[data-theme="dark"] .header .mobile-header-actions .button,
 [data-theme="dark"] .header .mobile-menu button {
     @apply border-gray-600  shadow-gray-600;
     &:hover {
@@ -73,11 +72,13 @@
 }
 
 [data-theme="dark"] .actions-buttons .button-item,
+[data-theme="dark"] .actions-buttons .language-switcher .button,
 [data-theme="dark"] .actions-buttons label {
     @apply border-gray-600  shadow-gray-600;
 }
 
 [data-theme="dark"] .actions-buttons .button-item:hover,
+[data-theme="dark"] .actions-buttons .language-switcher .button:hover,
 [data-theme="dark"] .actions-buttons label:hover {
     @apply bg-primary cursor-pointer;
 }

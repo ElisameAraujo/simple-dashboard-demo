@@ -5,36 +5,25 @@
 .header .mobile-menu {
     @apply hidden items-center justify-center 
     xl:hidden
-    lg:flex lg:col-span-1 max-lg:col-span-1 
+    lg:flex lg:col-span-1 max-lg:col-span-1
     md:flex md:col-span-1 max-md:col-span-1
     sm:flex sm:col-span-2 max-sm:flex max-sm:col-span-2;
-}
-
-.header .mobile-header-actions {
-    @apply hidden items-center justify-end
-    xl:hidden
-    lg:flex lg:col-span-2
-    md:flex md:col-span-3
-    sm:flex sm:col-span-3
-    max-sm:flex max-sm:col-span-3;
 }
 
 .header .page-header {
     @apply col-span-12 flex flex-col gap-1 px-4
     xl:col-span-8
-    lg:col-span-8 
-    md:col-span-8 
-    sm:col-span-7 
-    max-sm:col-span-7;
+    lg:col-span-11
+    md:col-span-11
+    sm:col-span-10
+    max-sm:col-span-10;
 }
 
 .header .header-buttons {
     @apply hidden gap-2 flex-row items-center justify-end pr-2
     xl:flex
-    lg:flex
     xl:col-span-4
-    lg:col-span-3
-    max-lg:col-span-2;
+    max-xl:hidden;
 }
 
 .header .header-buttons-home {
@@ -74,7 +63,6 @@
 .header .header-buttons button,
 .header .header-buttons label,
 .header .mobile-menu button,
-.header .mobile-header-actions .button,
 .header .header-buttons-home .button,
 .header .header-buttons-home button,
 .header .header-buttons-home label,
@@ -95,18 +83,6 @@
 
 .header .language-switcher .language-label-short {
     @apply hidden;
-}
-
-.header .language-switcher-mobile .button {
-    @apply px-3;
-}
-
-.header .language-switcher-mobile .language-label-full {
-    @apply hidden;
-}
-
-.header .language-switcher-mobile .language-label-short {
-    @apply inline;
 }
 
 .header .language-switcher ul li a.active {

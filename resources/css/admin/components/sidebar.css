@@ -179,10 +179,11 @@ body.no-scroll {
 
     /** Action Buttons **/
     .actions-buttons {
-        @apply grid-cols-2 gap-2 mt-4 max-xl:grid xl:hidden border-b border-b-gray-200 pb-3;
+        @apply grid-cols-3 gap-2 mt-4 max-xl:grid xl:hidden border-b border-b-gray-200 pb-3;
     }
 
-    .actions-buttons .button-item {
+    .actions-buttons .button-item,
+    .actions-buttons .language-switcher .button {
         @apply border border-gray-200 py-3 px-4 rounded-md transition-default shadow flex flex-row items-center justify-center gap-2;
     }
 
@@ -191,8 +192,25 @@ body.no-scroll {
     }
 
     .actions-buttons .button-item:hover,
+    .actions-buttons .language-switcher .button:hover,
     .actions-buttons label:hover {
         @apply bg-gray-100 cursor-pointer;
+    }
+
+    .actions-buttons .language-switcher .language-label-full {
+        @apply hidden;
+    }
+
+    .actions-buttons .language-switcher .language-label-short {
+        @apply inline text-sm font-semibold;
+    }
+
+    .actions-buttons .language-switcher ul li a.active {
+        @apply bg-primary text-white;
+    }
+
+    &.side-menu-mobile .actions-buttons .language-switcher ul.dropdown-content {
+        width: min(23rem, calc(100vw - 2rem));
     }
 
     .actions-buttons .indicator {
