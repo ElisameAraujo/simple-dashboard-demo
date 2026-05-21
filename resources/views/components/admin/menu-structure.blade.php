@@ -10,18 +10,18 @@
     </div>
     <ul tabindex="-1" class="dropdown-content">
         <li class="menu-item">
-            <a href="{{ route('admin.account.my-profile') }}">
+            <a href="{{ route('account.my-profile') }}">
                 <i class="fa-solid fa-user"></i> {{ __('ui.my_profile') }}
             </a>
         </li>
 
         <li>
-            <a href="{{ route('admin.account.notifications') }}">
+            <a href="{{ route('account.notifications') }}">
                 <i class="fa-regular fa-bell"></i> {{ __('ui.notifications') }}
             </a>
         </li>
         <li>
-            <a href="{{ route('admin.account.security') }}">
+            <a href="{{ route('account.security') }}">
                 <i class="fa-solid fa-fingerprint"></i> {{ __('ui.security') }}
             </a>
         </li>
@@ -65,15 +65,32 @@
     <h2 class="menu-section">{{ __('ui.demo') }}</h2>
     <ul>
         <li>
-            <a class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                href="{{ route('admin.dashboard') }}">
+            <a class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                href="{{ route('dashboard') }}">
                 <i class="fa-solid fa-chart-line"></i>
                 {{ __('ui.dashboard') }}
             </a>
         </li>
+        <h2 class="menu-section">{{ __('ui.helpers') }}</h2>
+        <li>
+            <a class="menu-item {{ request()->routeIs('helpers.index') ? 'active' : '' }}"
+                href="{{ route('helpers.index') }}">
+                <i class="fa-solid fa-table-cells-large"></i>
+                {{ __('ui.summary') }}
+            </a>
+        </li>
+        @foreach (\App\Support\HelperDemoCatalog::all() as $menuHelper)
+            <li>
+                <a class="menu-item {{ request()->routeIs('helpers.show') && request()->route('helper') === $menuHelper['slug'] ? 'active' : '' }}"
+                    href="{{ $menuHelper['url'] }}">
+                    <i class="{{ $menuHelper['icon'] }}"></i>
+                    {{ $menuHelper['name'] }}
+                </a>
+            </li>
+        @endforeach
         <h2 class="menu-section">{{ __('ui.account') }}</h2>
         <li data-submenu-id="account-settings"
-            class="{{ request()->routeIs('admin.account.*') ? 'open' : '' }}">
+            class="{{ request()->routeIs('account.*') ? 'open' : '' }}">
             <a href="#" class="has-submenu">
                 <span>
                     <i class="fa-solid fa-user-gear"></i>
@@ -83,16 +100,16 @@
             </a>
             <ul>
                 <li>
-                    <a class="{{ request()->routeIs('admin.account.my-profile') ? 'active' : '' }}"
-                        href="{{ route('admin.account.my-profile') }}">{{ __('ui.my_profile') }}</a>
+                    <a class="{{ request()->routeIs('account.my-profile') ? 'active' : '' }}"
+                        href="{{ route('account.my-profile') }}">{{ __('ui.my_profile') }}</a>
                 </li>
                 <li>
-                    <a class="{{ request()->routeIs('admin.account.notifications') ? 'active' : '' }}"
-                        href="{{ route('admin.account.notifications') }}">{{ __('ui.notifications') }}</a>
+                    <a class="{{ request()->routeIs('account.notifications') ? 'active' : '' }}"
+                        href="{{ route('account.notifications') }}">{{ __('ui.notifications') }}</a>
                 </li>
                 <li>
-                    <a class="{{ request()->routeIs('admin.account.security') ? 'active' : '' }}"
-                        href="{{ route('admin.account.security') }}">{{ __('ui.security') }}</a>
+                    <a class="{{ request()->routeIs('account.security') ? 'active' : '' }}"
+                        href="{{ route('account.security') }}">{{ __('ui.security') }}</a>
                 </li>
             </ul>
         </li>
@@ -105,15 +122,6 @@
                 target="_blank" rel="noopener noreferrer">
                 <i class="fa-brands fa-readme"></i>
                 {{ __('ui.readme') }}
-            </a>
-        </li>
-        <li>
-            <a class="menu-item" href="{{ app()->getLocale() === 'pt_BR'
-                ? 'https://github.com/ElisameAraujo/simple-dashboard/tree/main/documentation/pt-BR'
-                : 'https://github.com/ElisameAraujo/simple-dashboard/tree/main/documentation/en' }}"
-                target="_blank" rel="noopener noreferrer">
-                <i class="fa-solid fa-book-open"></i>
-                {{ __('ui.helpers') }}
             </a>
         </li>
         <li>

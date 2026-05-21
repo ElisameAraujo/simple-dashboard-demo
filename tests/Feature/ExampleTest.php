@@ -10,38 +10,73 @@ class ExampleTest extends TestCase
     /**
      * A basic test example.
      */
-    public function test_the_admin_dashboard_route_is_registered(): void
+    public function test_the_dashboard_route_is_registered(): void
     {
-        $this->assertSame(url('/admin'), route('admin.dashboard'));
+        $this->assertSame(url('/'), route('dashboard'));
     }
 
-    public function test_the_admin_dashboard_page_renders_demo_summary(): void
+    public function test_the_dashboard_page_renders_demo_summary(): void
     {
         app()->setLocale('pt_BR');
 
-        $this->get(route('admin.dashboard'))
+        $this->get(route('dashboard'))
             ->assertOk()
             ->assertSee('Resumo geral da demo')
             ->assertSee('Páginas disponíveis')
+            ->assertSee('Documentação interna das classes helper do dashboard.')
             ->assertSee('Links úteis')
             ->assertSee('Documentação dos helpers');
     }
 
-    public function test_the_admin_dashboard_page_renders_in_english(): void
+    public function test_the_dashboard_page_renders_in_english(): void
     {
         app()->setLocale('en');
 
-        $this->get(route('admin.dashboard'))
+        $this->get(route('dashboard'))
             ->assertOk()
             ->assertSee('General demo summary')
             ->assertSee('Available pages')
+            ->assertSee('Internal documentation for the dashboard helper classes.')
             ->assertSee('Useful links')
             ->assertSee('Helper documentation');
     }
 
-    public function test_the_admin_header_renders_a_language_switcher(): void
+    public function test_the_helpers_section_lists_registered_helpers(): void
     {
-        $this->get(route('admin.dashboard'))
+        app()->setLocale('pt_BR');
+
+        $this->get(route('helpers.index'))
+            ->assertOk()
+            ->assertSee('Estrutura base')
+            ->assertSee('DateHelper')
+            ->assertSee('HTMLHelper')
+            ->assertSee('RuleHelper')
+            ->assertSee('1 método');
+    }
+
+    public function test_the_helper_detail_page_documents_methods_and_examples(): void
+    {
+        app()->setLocale('pt_BR');
+
+        $this->get(route('helpers.show', 'date-helper'))
+            ->assertOk()
+            ->assertSee('Como funciona')
+            ->assertSee('Métodos disponíveis')
+            ->assertSee('simpleDate')
+            ->assertSee('DateHelper::simpleDate(&#039;2026-05-19&#039;, &#039;pt-BR&#039;);', false)
+            ->assertSee('19/05/2026')
+            ->assertSee('mockup-code');
+    }
+
+    public function test_an_unknown_helper_page_returns_not_found(): void
+    {
+        $this->get('/helpers/unknown-helper')
+            ->assertNotFound();
+    }
+
+    public function test_the_header_renders_a_language_switcher(): void
+    {
+        $this->get(route('dashboard'))
             ->assertOk()
             ->assertSee('English')
             ->assertSee('Português (Brasil)')
@@ -50,13 +85,13 @@ class ExampleTest extends TestCase
 
     public function test_the_locale_switcher_updates_the_session_locale(): void
     {
-        $this->from(route('admin.dashboard'))
+        $this->from(route('dashboard'))
             ->get(route('locale.switch', 'pt_BR'))
-            ->assertRedirect(route('admin.dashboard'))
+            ->assertRedirect(route('dashboard'))
             ->assertSessionHas('locale', 'pt_BR');
 
         $this->withSession(['locale' => 'pt_BR'])
-            ->get(route('admin.dashboard'))
+            ->get(route('dashboard'))
             ->assertOk()
             ->assertSee('Resumo geral da demo')
             ->assertSee('Português (Brasil)');

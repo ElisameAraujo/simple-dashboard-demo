@@ -24,7 +24,7 @@
                 <p>{{ __('pages/dashboard.intro.description') }}</p>
             </div>
             <div class="dashboard-actions">
-                <a class="btn btn-primary" href="{{ route('admin.account.my-profile') }}">
+                <a class="btn btn-primary" href="{{ route('account.my-profile') }}">
                     <i class="fa-solid fa-user"></i>
                     {{ __('pages/dashboard.actions.profile') }}
                 </a>
@@ -129,7 +129,7 @@
 
             <div class="dashboard-helper-grid">
                 @foreach ($helperDocs as $helper)
-                    <a href="{{ $helper['url'] }}" target="_blank" rel="noopener noreferrer">
+                    <a href="{{ $helper['url'] }}">
                         <span>
                             <i class="{{ $helper['icon'] }}"></i>
                         </span>

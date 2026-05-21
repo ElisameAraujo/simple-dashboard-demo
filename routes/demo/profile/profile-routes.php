@@ -8,11 +8,11 @@ $middleware = ['verified'];
 Route::prefix('profile')->group(function () {
 
     Route::get('my-profile', [ProfileController::class, 'myProfile'])
-        ->name('admin.account.my-profile');
+        ->name('account.my-profile');
 
     Route::get('security', [ProfileController::class, 'security'])
-        ->name('admin.account.security');
+        ->name('account.security');
 
     Route::get('notifications', [ProfileController::class, 'notifications'])
-        ->name('admin.account.notifications');
+        ->name('account.notifications');
 });

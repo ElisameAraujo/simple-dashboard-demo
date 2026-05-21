@@ -7,7 +7,7 @@
         <div class="breadcrumbs">
             <ul>
                 <li>
-                    <a href="{{ route('admin.dashboard') }}">
+                    <a href="{{ route('dashboard') }}">
                         <i class="fa-regular fa-house"></i>Dashboard
                     </a>
                 </li>

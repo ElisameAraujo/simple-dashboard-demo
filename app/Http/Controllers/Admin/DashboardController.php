@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\HelperDemoCatalog;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $helperDocs = $this->helperDocs();
+        $helperDocs = HelperDemoCatalog::all();
 
         $summaryItems = [
             [
@@ -34,7 +35,7 @@ class DashboardController extends Controller
             ],
             [
                 'label' => __('pages/dashboard.summary.pages.label'),
-                'value' => '4',
+                'value' => '5',
                 'description' => __('pages/dashboard.summary.pages.description'),
                 'icon' => 'fa-solid fa-layer-group',
                 'tone' => 'info',
@@ -45,22 +46,29 @@ class DashboardController extends Controller
             [
                 'title' => __('pages/dashboard.demo_pages.profile.title'),
                 'description' => __('pages/dashboard.demo_pages.profile.description'),
-                'route' => 'admin.account.my-profile',
+                'route' => 'account.my-profile',
                 'icon' => 'fa-solid fa-user',
                 'status' => __('pages/dashboard.status.available'),
             ],
             [
                 'title' => __('pages/dashboard.demo_pages.notifications.title'),
                 'description' => __('pages/dashboard.demo_pages.notifications.description'),
-                'route' => 'admin.account.notifications',
+                'route' => 'account.notifications',
                 'icon' => 'fa-regular fa-bell',
                 'status' => __('pages/dashboard.status.available'),
             ],
             [
                 'title' => __('pages/dashboard.demo_pages.security.title'),
                 'description' => __('pages/dashboard.demo_pages.security.description'),
-                'route' => 'admin.account.security',
+                'route' => 'account.security',
                 'icon' => 'fa-solid fa-fingerprint',
+                'status' => __('pages/dashboard.status.available'),
+            ],
+            [
+                'title' => __('pages/dashboard.demo_pages.helpers.title'),
+                'description' => __('pages/dashboard.demo_pages.helpers.description'),
+                'route' => 'helpers.index',
+                'icon' => 'fa-solid fa-toolbox',
                 'status' => __('pages/dashboard.status.available'),
             ],
         ];
@@ -89,29 +97,6 @@ class DashboardController extends Controller
             'usefulLinks',
             'nextSteps'
         ));
-    }
-
-    private function helperDocs(): array
-    {
-        $documentationLocale = app()->getLocale() === 'pt_BR' ? 'pt-BR' : 'en';
-
-        return collect([
-            ['key' => 'date-helper', 'file' => 'DateHelper.md', 'icon' => 'fa-regular fa-calendar-days'],
-            ['key' => 'disk-helper', 'file' => 'DiskHelper.md', 'icon' => 'fa-regular fa-hard-drive'],
-            ['key' => 'media-helper', 'file' => 'MediaHelper.md', 'icon' => 'fa-regular fa-image'],
-            ['key' => 'notification-helper', 'file' => 'NotificationHelper.md', 'icon' => 'fa-regular fa-bell'],
-            ['key' => 'number-helper', 'file' => 'NumberHelper.md', 'icon' => 'fa-solid fa-arrow-down-1-9'],
-            ['key' => 'routes-helper', 'file' => 'RoutesHelper.md', 'icon' => 'fa-solid fa-route'],
-            ['key' => 'text-helper', 'file' => 'TextHelper.md', 'icon' => 'fa-solid fa-font'],
-            ['key' => 'user-helper', 'file' => 'UserHelper.md', 'icon' => 'fa-regular fa-user'],
-        ])->map(function (array $helper) use ($documentationLocale): array {
-            return [
-                'name' => __("docs/helpers/{$helper['key']}.name"),
-                'description' => __("docs/helpers/{$helper['key']}.description"),
-                'url' => "https://github.com/ElisameAraujo/simple-dashboard/blob/main/documentation/{$documentationLocale}/{$helper['file']}",
-                'icon' => $helper['icon'],
-            ];
-        })->all();
     }
 
     private function readmeUrl(): string

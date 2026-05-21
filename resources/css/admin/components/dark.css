@@ -147,3 +147,33 @@
 [data-theme="dark"] .dashboard-helper-grid a > span:first-child {
     @apply bg-base-300;
 }
+
+/** Helpers **/
+[data-theme="dark"] .helpers-intro,
+[data-theme="dark"] .helper-detail-intro,
+[data-theme="dark"] .helper-panel,
+[data-theme="dark"] .helper-card,
+[data-theme="dark"] .helper-method-card,
+[data-theme="dark"] .helper-method-card-header,
+[data-theme="dark"] .helper-method-params p,
+[data-theme="dark"] .helper-method-params dl > div,
+[data-theme="dark"] .helper-explanation-list p,
+[data-theme="dark"] .helper-method-table {
+    @apply border-gray-600;
+}
+
+[data-theme="dark"] .helpers-intro p,
+[data-theme="dark"] .helper-detail-title p,
+[data-theme="dark"] .helper-method-card > p,
+[data-theme="dark"] .helper-method-grid h4,
+[data-theme="dark"] .helper-method-params p,
+[data-theme="dark"] .helper-method-params dt small,
+[data-theme="dark"] .helper-method-params dd,
+[data-theme="dark"] .helper-explanation-list p,
+[data-theme="dark"] .helper-card-copy small {
+    @apply text-gray-400;
+}
+
+[data-theme="dark"] .helper-card-icon {
+    @apply bg-base-300;
+}

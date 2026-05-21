@@ -7,5 +7,5 @@ $middleware = ['verified'];
 
 Route::prefix('')->group(function () {
 
-    Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('', [DashboardController::class, 'index'])->name('dashboard');
 });

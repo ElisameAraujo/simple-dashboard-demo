@@ -24,7 +24,7 @@ return [
         ],
         'pages' => [
             'label' => 'Páginas da demo',
-            'description' => 'Dashboard, perfil, notificações e segurança.',
+            'description' => 'Dashboard, helpers, perfil, notificações e segurança.',
         ],
     ],
     'sections' => [
@@ -57,6 +57,10 @@ return [
         'security' => [
             'title' => 'Segurança',
             'description' => 'Fluxo visual para senha, recuperação de acesso e remoção de conta.',
+        ],
+        'helpers' => [
+            'title' => 'Helpers',
+            'description' => 'Documentação interna das classes helper do dashboard.',
         ],
     ],
     'status' => [

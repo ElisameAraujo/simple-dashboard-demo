@@ -10,6 +10,7 @@ return [
     'readme' => 'README',
     'repository' => 'Repository',
     'search' => 'Search',
+    'summary' => 'Summary',
     'my_profile' => 'My Profile',
     'security' => 'Security',
     'logout' => 'Logout',
