@@ -2,19 +2,113 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationHelper
 {
     /**
-     * `namespace`:
-     * Generates the full path of the notification class
-     * @param string $type Name of the notification class
-     * @param string|null $subfolder Subfolder within App\Notifications
-     * @return string
+     * `unreadNotificationsByType`:
+     * Lists unread notifications of a specific notification class.
+     * @param string $type Notification class name or fully qualified class name.
+     * @param string|null $subfolder Optional subfolder within App\Notifications.
+     * @param int|null $limit Optional maximum number of records returned.
+     * @return Collection
      */
-    protected static function namespace(string $type, ?string $subfolder = null): string
+    public static function unreadNotificationsByType(string $type, ?string $subfolder = null, ?int $limit = 5): Collection
     {
+        if (!Auth::check()) {
+            return collect();
+        }
+
+        $query = Auth::user()
+            ->unreadNotifications()
+            ->where('type', self::notificationClass($type, $subfolder))
+            ->latest('created_at');
+
+        return self::limit($query, $limit)->get();
+    }
+
+    /**
+     * `unreadNotificationsByTypeCount`:
+     * Counts unread notifications of a specific notification class.
+     * @param string $type Notification class name or fully qualified class name.
+     * @param string|null $subfolder Optional subfolder within App\Notifications.
+     * @return int
+     */
+    public static function unreadNotificationsByTypeCount(string $type, ?string $subfolder = null): int
+    {
+        if (!Auth::check()) {
+            return 0;
+        }
+
+        return Auth::user()
+            ->unreadNotifications()
+            ->where('type', self::notificationClass($type, $subfolder))
+            ->count();
+    }
+
+    /**
+     * `allUnreadNotifications`:
+     * Lists unread notifications for the authenticated user.
+     * @param int|null $limit Optional maximum number of records returned. Null returns all unread notifications.
+     * @return Collection
+     */
+    public static function allUnreadNotifications(?int $limit = null): Collection
+    {
+        if (!Auth::check()) {
+            return collect();
+        }
+
+        $query = Auth::user()
+            ->unreadNotifications()
+            ->latest('created_at');
+
+        return self::limit($query, $limit)->get();
+    }
+
+    /**
+     * `allUnreadNotificationsCount`:
+     * Counts all unread notifications for the authenticated user.
+     * @return int
+     */
+    public static function allUnreadNotificationsCount(): int
+    {
+        return Auth::check()
+            ? Auth::user()->unreadNotifications()->count()
+            : 0;
+    }
+
+    /**
+     * `latestNotifications`:
+     * Lists the latest notifications, read or unread, for dropdown previews.
+     * @param int|null $limit Maximum number of records returned. Null returns all notifications.
+     * @return Collection
+     */
+    public static function latestNotifications(?int $limit = 10): Collection
+    {
+        if (!Auth::check()) {
+            return collect();
+        }
+
+        $query = Auth::user()
+            ->notifications()
+            ->latest('created_at');
+
+        return self::limit($query, $limit)->get();
+    }
+
+    /**
+     * Builds the stored notification type value.
+     */
+    private static function notificationClass(string $type, ?string $subfolder = null): string
+    {
+        $type = trim($type, '\\');
+
+        if (str_contains($type, '\\')) {
+            return $type;
+        }
+
         $base = 'App\\Notifications';
 
         if ($subfolder) {
@@ -25,167 +119,12 @@ class NotificationHelper
     }
 
     /**
-     * `unreadNotificationsByType`:
-     * Lists unread notifications by type
-     * @param string $type Notification class name
-     * @param string|null $subfolder Subfolder within App\Notifications
-     * @param int|null $limit Limit of returned records
-     * @return \Illuminate\Support\Collection
+     * Applies a positive limit to a notification query.
      */
-    public static function unreadNotificationsByType(string $type, ?string $subfolder = null, ?int $limit = 5)
+    private static function limit($query, ?int $limit)
     {
-        $class = self::namespace($type, $subfolder);
-
-        return Auth::check()
-            ? Auth::user()
-            ->unreadNotifications()
-            ->where('type', $class)
-            ->latest('created_at')
-            ->limit($limit)
-            ->get()
-            : collect();
-    }
-
-    /**
-     * `unreadNotificationsByTypeCount`:
-     * Total number of unread notifications by type
-     * @param string $type Notification class name
-     * @param string|null $subfolder Subfolder within App\Notifications
-     * @return int
-     */
-    public static function unreadNotificationsByTypeCount(string $type, ?string $subfolder = null): int
-    {
-        $class = self::namespace($type, $subfolder);
-
-        return Auth::check()
-            ? Auth::user()->unreadNotifications->where('type', $class)->count()
-            : 0;
-    }
-
-    /**
-     * `allUnreadNotifications`:
-     * Lists all unread notifications
-     * @param int|null $limit Limit of returned records
-     * @return \Illuminate\Support\Collection
-     */
-    public static function allUnreadNotifications(?int $limit = 10)
-    {
-        return Auth::check()
-            ? Auth::user()
-            ->unreadNotifications()
-            ->latest('created_at')
-            ->limit($limit)
-            ->get()
-            : collect();
-    }
-
-    /**
-     * `allUnreadNotificationsCount`:
-     * Total number of unread notifications for the user
-     * @return int
-     */
-    public static function allUnreadNotificationsCount(): int
-    {
-        return Auth::check()
-            ? Auth::user()->unreadNotifications->count()
-            : 0;
-    }
-
-    /**
-     * `markAllAsRead`:
-     * Marks all unread notifications as read
-     * @return void
-     */
-    public static function markAllAsRead(): void
-    {
-        if (Auth::check()) {
-            Auth::user()->unreadNotifications->markAsRead();
-        }
-    }
-
-    /**
-     * `markAllAsReadByType`:
-     * Marks all unread notifications of a specific type as read
-     * @param string $type Notification class name
-     * @param string|null $subfolder Subfolder within App\Notifications
-     * @return void
-     */
-    public static function markAllAsReadByType(string $type, ?string $subfolder = null): void
-    {
-        if (Auth::check()) {
-            $class = self::namespace($type, $subfolder);
-            Auth::user()->unreadNotifications->where('type', $class)->markAsRead();
-        }
-    }
-
-    /**
-     * `latestNotifications`:
-     * Lists the latest notifications (read or unread)
-     * @param int|null $limit Limit of returned records
-     * @return \Illuminate\Support\Collection
-     */
-    public static function latestNotifications(?int $limit = 10)
-    {
-        return Auth::check()
-            ? Auth::user()
-            ->notifications()
-            ->latest('created_at')
-            ->limit($limit)
-            ->get()
-            : collect();
-    }
-
-    /**
-     * `markAsRead`:
-     * Marks a specific notification as read
-     * @param string $notificationId ID of the notification
-     * @return bool
-     */
-    public static function markAsRead(string $notificationId): bool
-    {
-        if (Auth::check()) {
-            $notification = Auth::user()->notifications()->find($notificationId);
-            if ($notification) {
-                $notification->markAsRead();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * `markAsUnread`:
-     * Marks a specific notification as unread
-     * @param string $notificationId ID of the notification
-     * @return bool
-     */
-    public static function markAsUnread(string $notificationId): bool
-    {
-        if (Auth::check()) {
-            $notification = Auth::user()->notifications()->find($notificationId);
-            if ($notification && $notification->read_at) {
-                $notification->update(['read_at' => null]);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * `deleteNotification`:
-     * Removes an specific notification
-     * @param string $notificationId ID of the notification
-     * @return bool
-     */
-    public static function deleteNotification(string $notificationId): bool
-    {
-        if (Auth::check()) {
-            $notification = Auth::user()->notifications()->find($notificationId);
-            if ($notification) {
-                $notification->delete();
-                return true;
-            }
-        }
-        return false;
+        return $limit !== null && $limit > 0
+            ? $query->limit($limit)
+            : $query;
     }
 }

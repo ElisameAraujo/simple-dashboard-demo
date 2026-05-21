@@ -7,6 +7,7 @@ use App\Helpers\DiskHelper;
 use App\Helpers\HTMLHelper;
 use App\Helpers\MediaHelper;
 use App\Helpers\NumberHelper;
+use App\Helpers\NotificationHelper;
 use App\Helpers\Support\LocaleResolver;
 use App\Support\HelperDemoCatalog;
 use Carbon\Carbon;
@@ -117,7 +118,13 @@ class TranslationTest extends TestCase
 
     public function test_helper_yaml_documentation_is_translated_and_matches_public_methods(): void
     {
-        foreach (['date-helper' => DateHelper::class, 'disk-helper' => DiskHelper::class, 'html-helper' => HTMLHelper::class, 'media-helper' => MediaHelper::class] as $slug => $class) {
+        foreach ([
+            'date-helper' => DateHelper::class,
+            'disk-helper' => DiskHelper::class,
+            'html-helper' => HTMLHelper::class,
+            'media-helper' => MediaHelper::class,
+            'notification-helper' => NotificationHelper::class,
+        ] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
 
@@ -146,11 +153,13 @@ class TranslationTest extends TestCase
         $diskHelper = HelperDemoCatalog::find('disk-helper');
         $htmlHelper = HelperDemoCatalog::find('html-helper');
         $mediaHelper = HelperDemoCatalog::find('media-helper');
+        $notificationHelper = HelperDemoCatalog::find('notification-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
         $heading = collect($htmlHelper['methods'])->firstWhere('name', 'heading');
         $showMedia = collect($mediaHelper['methods'])->firstWhere('name', 'showMedia');
+        $latestNotifications = collect($notificationHelper['methods'])->firstWhere('name', 'latestNotifications');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -166,6 +175,10 @@ class TranslationTest extends TestCase
         $this->assertSame('Retorna a URL pública da mídia existente ou a URL de um placeholder quando o arquivo não existe.', $showMedia['summary']);
         $this->assertSame('Caminho relativo da mídia dentro do disco.', $showMedia['parameters'][0]['description']);
         $this->assertSame(['/storage/products/demo.jpg'], $showMedia['example']['output']);
+
+        $this->assertSame('Lista as notificações mais recentes do usuário autenticado, lidas ou não lidas, para resumos como dropdowns.', $latestNotifications['summary']);
+        $this->assertSame('Quantidade máxima de notificações retornadas. Quando null ou menor que 1, retorna todas.', $latestNotifications['parameters'][0]['description']);
+        $this->assertSame(['Collection com as 10 notificações mais recentes.'], $latestNotifications['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array
