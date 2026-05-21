@@ -20,7 +20,7 @@ return [
         ],
         'locales' => [
             'label' => 'Idiomas preparados',
-            'description' => 'Interface com arquivos em Português e Inglês.',
+            'description' => 'Interface com arquivos em Português do Brasil e Inglês.',
         ],
         'pages' => [
             'label' => 'Páginas da demo',
