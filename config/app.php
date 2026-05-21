@@ -86,7 +86,7 @@ return [
 
     'supported_locales' => [
         'en' => 'English',
-        'pt_BR' => 'Português',
+        'pt_BR' => 'Português (Brasil)',
     ],
 
     /*
