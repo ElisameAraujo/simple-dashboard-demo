@@ -11,7 +11,10 @@
                     </a>
                 </li>
                 <li>
-                    <span>{{ __('ui.helpers') }}</span>
+                    <span>
+                        <i class="fa-solid fa-circle-question"></i>
+                        {{ __('ui.helpers') }}
+                    </span>
                 </li>
             </ul>
         </div>

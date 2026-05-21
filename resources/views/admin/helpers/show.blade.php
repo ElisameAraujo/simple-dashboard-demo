@@ -11,10 +11,16 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('helpers.index') }}">{{ __('ui.helpers') }}</a>
+                    <a href="{{ route('helpers.index') }}">
+                        <i class="fa-solid fa-circle-question"></i>
+                        {{ __('ui.helpers') }}
+                    </a>
                 </li>
                 <li>
-                    <span>{{ $helper['name'] }}</span>
+                    <span>
+                        <i class="{{ $helper['icon'] }}"></i>
+                        {{ $helper['name'] }}
+                    </span>
                 </li>
             </ul>
         </div>
@@ -72,7 +78,8 @@
                                     <h3>{{ $method['name'] }}</h3>
                                     <code>{{ $helper['alias'] }}::{{ $method['signature'] }}</code>
                                 </div>
-                                <span>{{ __('pages/helpers.methods.return') }}: <code>{{ $method['return'] }}</code></span>
+                                <span>{{ __('pages/helpers.methods.return') }}:
+                                    <code>{{ $method['return'] }}</code></span>
                             </div>
 
                             <p>{{ $method['summary'] }}</p>
