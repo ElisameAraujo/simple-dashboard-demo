@@ -9,12 +9,13 @@ class DiskHelper
 {
     /**
      * `saveFile`:
-     * Save a file to the specified disk and accepts subfolder(s) if user need more organization.
-     * @param mixed $file File that will be saved
-     * @param string $disk Disk where the file will be saved
-     * @param array|string|null $subfolders Subfolders within the disk where the file will be saved (optional)
+     * Saves an uploaded file to a configured disk and returns the relative path that should be persisted.
+     * @param mixed $file Uploaded file that will be saved.
+     * @param string|null $disk Disk where the file will be saved.
+     * @param array|string|null $subfolders Optional subfolder or list of subfolders within the disk.
+     * @return string Relative path of the saved file within the selected disk.
      */
-    public static function saveFile($file, ?string $disk = 'public', array|string|null $subfolders = null)
+    public static function saveFile($file, ?string $disk = 'public', array|string|null $subfolders = null): string
     {
         $filename   = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $extension  = $file->getClientOriginalExtension();
@@ -30,19 +31,20 @@ class DiskHelper
 
     /**
      * `updateFile`:
-     * This function allow to update an existing file by saving a new one and deleting the old one.
-     * @param mixed $newFile File that will be saved
-     * @param string $oldFile Path to the old file that will be removed
-     * @param string $disk Disk where the file will be saved
-     * @param array|string|null $subfolders Subfolders where the file can be located (optional)
-     * @return string
+     * Saves a new uploaded file and removes the previous file from the same disk and optional subfolders.
+     * @param mixed $newFile New uploaded file that will be saved.
+     * @param string $oldFile Name of the old file, or relative path when subfolders are not provided.
+     * @param string|null $disk Disk where the old file exists and the new file will be saved.
+     * @param array|string|null $subfolders Optional subfolder or list of subfolders used for both files.
+     * @return string Relative path of the new saved file within the selected disk.
      */
     public static function updateFile($newFile, string $oldFile, ?string $disk = 'public', array|string|null $subfolders = null): string
     {
         $newPath = self::saveFile($newFile, $disk, $subfolders);
+        $oldPath = self::getFilePath($oldFile, $subfolders);
 
-        if ($oldFile && Storage::disk($disk)->exists($oldFile)) {
-            Storage::disk($disk)->delete($oldFile);
+        if ($oldFile && Storage::disk($disk)->exists($oldPath)) {
+            Storage::disk($disk)->delete($oldPath);
         }
 
         return $newPath;
@@ -59,7 +61,7 @@ class DiskHelper
      */
     public static function removeFile(string $file, ?string $disk = 'public', array|string|null $subfolders = null): bool
     {
-        $path = self::getFilePath($file, $subfolders, $disk);
+        $path = self::getFilePath($file, $subfolders);
 
         if (Storage::disk($disk)->exists($path)) {
             return Storage::disk($disk)->delete($path);
@@ -71,20 +73,20 @@ class DiskHelper
     /**
      * `fileUrl`:
      * Returns the public URL of a file stored on a disk.
-     * @param string $file Relative path saved in the database (e.g., "my-disk/uploads/file.jpg" or "file.jpg")
+     * @param string $file Relative path saved in the database (e.g., "uploads/file.jpg" or "file.jpg")
      * @param string|null $disk Name of the disk where the file is stored (default: public)
      * @param array|string|null $subfolders Optional subfolders (if necessary)
      * @return string|null Public URL or null if the file does not exist
      */
     public static function fileUrl(string $file, ?string $disk = 'public', array|string|null $subfolders = null): ?string
     {
-        $path = self::getFilePath($file, $subfolders, $disk);
+        $path = self::getFilePath($file, $subfolders);
 
         if (!Storage::disk($disk)->exists($path)) {
             return null;
         }
 
-        return Storage::url($path);
+        return Storage::disk($disk)->url($path);
     }
 
     /**
@@ -97,7 +99,7 @@ class DiskHelper
      */
     public static function fileSize(string $file, ?string $disk = 'public', array|string|null $subfolders = null): ?string
     {
-        $path = self::getFilePath($file, $subfolders, $disk);
+        $path = self::getFilePath($file, $subfolders);
 
         if (!Storage::disk($disk)->exists($path)) {
             return null;
@@ -137,7 +139,7 @@ class DiskHelper
      * @param array|string|null $subfolders Optional subfolders
      * @return string Full path
      */
-    private static function getFilePath(string $file, array|string|null $subfolders = null, ?string $disk = 'public'): string
+    private static function getFilePath(string $file, array|string|null $subfolders = null): string
     {
         $folderPath = self::buildFolderPath($subfolders);
         $relative   = $folderPath ? $folderPath . '/' . ltrim($file, '/') : $file;
