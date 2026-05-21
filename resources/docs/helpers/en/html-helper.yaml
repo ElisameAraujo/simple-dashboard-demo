@@ -1,8 +1,9 @@
 name: HTMLHelper
 description: Builds fake HTML blocks for demos, editor previews, and content placeholders.
 works:
-  - HTMLHelper starts with make(), then chains builder methods such as heading(), paragraphs(), lists, images, and tables.
-  - Call generate() at the end of the chain to return the final HTML string.
+  - Use HTMLHelper when you need to fill a page with fake HTML markup that still looks structurally close to real content.
+  - The helper starts with make(), chains builder methods such as heading(), paragraphs(), lists, images, videos, tables, and grids, then finishes with generate().
+  - Text, links, images, and videos are generated with Faker, so the content changes on each execution while the HTML structure stays predictable.
 example:
   code: |
     echo HTMLHelper::make()
@@ -10,54 +11,56 @@ example:
         ->paragraphs(1)
         ->generate();
   output: |
-    <h2>Example Title</h2><p>Generated paragraph...</p>
+    <h2>Example Title</h2><p>Generated paragraph for preview.</p>
 methods:
   make:
-    description: Creates a new HTML builder instance and prepares the fake data generator.
+    description: Starts a new fluent HTML generator chain.
     example:
       code: |
-        $html = HTMLHelper::make();
+        HTMLHelper::make()
+            ->heading(2)
+            ->generate();
       output: |
-        HTMLHelper instance ready for chained methods.
+        <h2>Example Title</h2>
   heading:
-    description: Adds a heading with generated text to the accumulated HTML.
+    description: Adds a heading tag with generated title-style text.
     parameters:
-      level: HTML heading level, such as 1, 2, or 3.
+      level: Heading level between 1 and 6. Invalid, empty, or out-of-range values use 2.
     example:
       code: |
         HTMLHelper::make()->heading(2)->generate();
       output: |
         <h2>Example Title</h2>
   headingWithLink:
-    description: Adds a heading with a generated link inside the text.
+    description: Adds a heading with generated text and a link in the middle of the content.
     parameters:
-      level: HTML heading level, such as 1, 2, or 3.
+      level: Heading level between 1 and 6. Invalid, empty, or out-of-range values use 2.
     example:
       code: |
         HTMLHelper::make()->headingWithLink(2)->generate();
       output: |
-        <h2>Example <a href="#">Generated Link</a> Title</h2>
+        <h2>Generated Title <a href="#">Example Link</a> Final Text</h2>
   emptyParagraph:
-    description: Adds an empty paragraph.
+    description: Adds an empty paragraph, useful for testing spacing and contentless states.
     example:
       code: |
         HTMLHelper::make()->emptyParagraph()->generate();
       output: |
         <p></p>
   paragraphs:
-    description: Adds one or more generated paragraphs, optionally with random links.
+    description: Adds one or more generated paragraphs, with an option to insert random links inside the text.
     parameters:
-      count: Number of paragraphs that will be generated.
-      withRandomLinks: Whether generated paragraphs should include fake links.
+      count: Number of paragraphs that will be generated. Values below 1 use 1.
+      withRandomLinks: When true, each paragraph receives a fake link at a random position.
     example:
       code: |
-        HTMLHelper::make()->paragraphs(1)->generate();
+        HTMLHelper::make()->paragraphs(1, true)->generate();
       output: |
-        <p>Generated paragraph for preview.</p>
+        <p>Generated text with <a href="https://example.com">Generated Link</a> inside the paragraph.</p>
   unorderedList:
     description: Adds an unordered list with generated items.
     parameters:
-      count: Number of items that will be generated.
+      count: Number of items that will be generated. Values below 1 use 1.
     example:
       code: |
         HTMLHelper::make()->unorderedList(3)->generate();
@@ -66,24 +69,24 @@ methods:
   orderedList:
     description: Adds an ordered list with generated items.
     parameters:
-      count: Number of items that will be generated.
+      count: Number of items that will be generated. Values below 1 use 1.
     example:
       code: |
         HTMLHelper::make()->orderedList(3)->generate();
       output: |
         <ol><li>first</li><li>second</li><li>third</li></ol>
   image:
-    description: Adds a generated image with width, height, and alt text.
+    description: Adds a generated image with src, alt, width, and height.
     parameters:
-      width: Width used in the generated HTML.
-      height: Height used in the generated HTML.
+      width: Width applied to the image URL and width attribute. Invalid values use 640.
+      height: Height applied to the image URL and height attribute. Invalid values use 480.
     example:
       code: |
         HTMLHelper::make()->image(640, 480)->generate();
       output: |
-        <img src="https://via.placeholder.com/640x480" alt="Example image" width="640" height="480">
+        <img src="https://via.placeholder.com/640x480.png/00aa33?text=demo" alt="Generated alt text." width="640" height="480">
   link:
-    description: Adds a generated link.
+    description: Adds a generated link with a fake URL and text.
     example:
       code: |
         HTMLHelper::make()->link()->generate();
@@ -92,37 +95,55 @@ methods:
   video:
     description: Adds a generated video iframe for YouTube or Vimeo.
     parameters:
-      provider: Provider used in the video embed.
-      width: Width used in the iframe.
-      height: Height used in the iframe.
+      provider: Provider used in the embed. Accepts youtube or vimeo; other values use youtube.
+      width: Width applied to the iframe. Invalid values use 640.
+      height: Height applied to the iframe. Invalid values use 480.
     example:
       code: |
         HTMLHelper::make()->video('youtube', 640, 480)->generate();
       output: |
-        <iframe width="640" height="480" src="https://www.youtube.com/embed/abc123def45" allowfullscreen></iframe>
+        <iframe width="640" height="480" src="https://www.youtube.com/embed/abc123def45" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   details:
     description: Adds a details block with a summary and generated content.
     example:
       code: |
         HTMLHelper::make()->details()->generate();
       output: |
-        <details><summary>Example question?</summary><div>Generated detail content.</div></details>
+        <details><summary>Generated question?</summary><div>Generated detail content for testing.</div></details>
   code:
     description: Adds a pre/code block with an optional CSS class.
     parameters:
-      className: CSS class applied to the generated code block.
+      className: CSS class applied to the pre element. Empty values use hljs.
     example:
       code: |
         HTMLHelper::make()->code('hljs')->generate();
       output: |
-        <pre class="hljs"><code>export default function testComponent(...)</code></pre>
+        <pre class="hljs"><code>export default function testComponent({
+        
+        state,
+        
+        }) {
+        
+        return {
+        
+        state,
+        
+        init: function () {
+        
+        // Initialise the Alpine component here, if you need to.
+        
+        },
+        
+        }
+        
+        }</code></pre>
   blockquote:
     description: Adds a generated quote.
     example:
       code: |
         HTMLHelper::make()->blockquote()->generate();
       output: |
-        <blockquote>Example quote.</blockquote>
+        <blockquote>Generated quote.</blockquote>
   hr:
     description: Adds a horizontal rule.
     example:
@@ -143,16 +164,16 @@ methods:
       code: |
         HTMLHelper::make()->table()->generate();
       output: |
-        <table><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Demo</td><td>Active</td></tr></tbody></table>
+        <table><thead><tr><th>Name</th><th>Status</th><th>Category</th></tr></thead><tbody><tr><td>Demo</td><td>Active</td><td>Blog</td></tr><tr><td>Preview</td><td>Draft</td><td>Product</td></tr></tbody></table>
   grid:
-    description: Adds a responsive grid with generated columns.
+    description: Adds a responsive grid where each item uses the span defined in the columns array.
     parameters:
-      cols: Column distribution for the generated grid.
+      cols: Array of spans for the grid items. For example, [1, 2, 1] creates three items distributed across four columns.
     example:
       code: |
-        HTMLHelper::make()->grid([1, 1, 1])->generate();
+        HTMLHelper::make()->grid([1, 2, 1])->generate();
       output: |
-        <div class="grid" data-type="responsive" data-cols="3">...</div>
+        <div class="grid" data-type="responsive" data-cols="4" style="grid-template-columns: repeat(4, 1fr);" data-stack-at="md"><div class="grid__column" data-col-span="1" style="grid-column: span 1;">...</div><div class="grid__column" data-col-span="2" style="grid-column: span 2;">...</div><div class="grid__column" data-col-span="1" style="grid-column: span 1;">...</div></div>
   generate:
     description: Returns all HTML accumulated in the method chain.
     example:

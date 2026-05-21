@@ -1,8 +1,9 @@
 name: HTMLHelper
 description: Monta blocos HTML fictícios para demos, previews de editor e placeholders de conteúdo.
 works:
-  - HTMLHelper começa com make() e encadeia métodos construtores como heading(), paragraphs(), listas, imagens e tabelas.
-  - Chame generate() no fim da cadeia para retornar a string HTML final.
+  - Use HTMLHelper quando precisar preencher uma página com marcação HTML falsa, mas estruturalmente parecida com conteúdo real.
+  - O helper começa com make(), encadeia métodos construtores como heading(), paragraphs(), listas, imagens, vídeos, tabelas e grids, e finaliza com generate().
+  - Os textos, links, imagens e vídeos são gerados com Faker, então o conteúdo muda a cada execução, mas a estrutura HTML permanece previsível.
 example:
   code: |
     echo HTMLHelper::make()
@@ -10,54 +11,56 @@ example:
         ->paragraphs(1)
         ->generate();
   output: |
-    <h2>Título de Exemplo</h2><p>Parágrafo gerado...</p>
+    <h2>Título de Exemplo</h2><p>Parágrafo fictício gerado para visualização.</p>
 methods:
   make:
-    description: Cria uma nova instância do construtor HTML e prepara o gerador de dados fictícios.
+    description: Inicia uma nova cadeia fluente do gerador HTML.
     example:
       code: |
-        $html = HTMLHelper::make();
+        HTMLHelper::make()
+            ->heading(2)
+            ->generate();
       output: |
-        Instância de HTMLHelper pronta para encadear métodos.
+        <h2>Título de Exemplo</h2>
   heading:
-    description: Adiciona um heading com texto fictício ao HTML acumulado.
+    description: Adiciona uma tag heading com texto fictício em formato de título.
     parameters:
-      level: Nível da tag heading, como 1, 2 ou 3.
+      level: Nível da heading entre 1 e 6. Valores inválidos, vazios ou fora desse intervalo usam 2.
     example:
       code: |
         HTMLHelper::make()->heading(2)->generate();
       output: |
         <h2>Título de Exemplo</h2>
   headingWithLink:
-    description: Adiciona um heading com um link fictício dentro do texto.
+    description: Adiciona uma heading com texto fictício e um link no meio do conteúdo.
     parameters:
-      level: Nível da tag heading, como 1, 2 ou 3.
+      level: Nível da heading entre 1 e 6. Valores inválidos, vazios ou fora desse intervalo usam 2.
     example:
       code: |
         HTMLHelper::make()->headingWithLink(2)->generate();
       output: |
-        <h2>Título <a href="#">Link de Exemplo</a> Gerado</h2>
+        <h2>Título Gerado <a href="#">Link de Exemplo</a> Texto Final</h2>
   emptyParagraph:
-    description: Adiciona um parágrafo vazio.
+    description: Adiciona um parágrafo vazio, útil para testar espaçamentos e estados sem conteúdo.
     example:
       code: |
         HTMLHelper::make()->emptyParagraph()->generate();
       output: |
         <p></p>
   paragraphs:
-    description: Adiciona um ou mais parágrafos fictícios, com opção de inserir links aleatórios.
+    description: Adiciona um ou mais parágrafos fictícios, com opção de inserir links aleatórios dentro do texto.
     parameters:
-      count: Quantidade de parágrafos que serão gerados.
-      withRandomLinks: Define se os parágrafos gerados terão links fictícios.
+      count: Quantidade de parágrafos que serão gerados. Valores menores que 1 usam 1.
+      withRandomLinks: Quando true, cada parágrafo recebe um link fictício em uma posição aleatória.
     example:
       code: |
-        HTMLHelper::make()->paragraphs(1)->generate();
+        HTMLHelper::make()->paragraphs(1, true)->generate();
       output: |
-        <p>Parágrafo fictício gerado para visualização.</p>
+        <p>Texto fictício com <a href="https://example.com">Link Gerado</a> dentro do parágrafo.</p>
   unorderedList:
     description: Adiciona uma lista não ordenada com itens fictícios.
     parameters:
-      count: Quantidade de itens que serão gerados.
+      count: Quantidade de itens que serão gerados. Valores menores que 1 usam 1.
     example:
       code: |
         HTMLHelper::make()->unorderedList(3)->generate();
@@ -66,24 +69,24 @@ methods:
   orderedList:
     description: Adiciona uma lista ordenada com itens fictícios.
     parameters:
-      count: Quantidade de itens que serão gerados.
+      count: Quantidade de itens que serão gerados. Valores menores que 1 usam 1.
     example:
       code: |
         HTMLHelper::make()->orderedList(3)->generate();
       output: |
         <ol><li>primeiro</li><li>segundo</li><li>terceiro</li></ol>
   image:
-    description: Adiciona uma imagem fictícia com largura, altura e texto alternativo.
+    description: Adiciona uma imagem fictícia com src, alt, width e height.
     parameters:
-      width: Largura usada no HTML gerado.
-      height: Altura usada no HTML gerado.
+      width: Largura aplicada no URL da imagem e no atributo width. Valores inválidos usam 640.
+      height: Altura aplicada no URL da imagem e no atributo height. Valores inválidos usam 480.
     example:
       code: |
         HTMLHelper::make()->image(640, 480)->generate();
       output: |
-        <img src="https://via.placeholder.com/640x480" alt="Imagem de exemplo" width="640" height="480">
+        <img src="https://via.placeholder.com/640x480.png/00aa33?text=demo" alt="Texto alternativo gerado." width="640" height="480">
   link:
-    description: Adiciona um link fictício.
+    description: Adiciona um link fictício com URL e texto gerados.
     example:
       code: |
         HTMLHelper::make()->link()->generate();
@@ -92,37 +95,55 @@ methods:
   video:
     description: Adiciona um iframe de vídeo fictício para YouTube ou Vimeo.
     parameters:
-      provider: Provedor usado no embed de vídeo.
-      width: Largura usada no iframe.
-      height: Altura usada no iframe.
+      provider: Provedor usado no embed. Aceita youtube ou vimeo; outros valores usam youtube.
+      width: Largura aplicada no iframe. Valores inválidos usam 640.
+      height: Altura aplicada no iframe. Valores inválidos usam 480.
     example:
       code: |
         HTMLHelper::make()->video('youtube', 640, 480)->generate();
       output: |
-        <iframe width="640" height="480" src="https://www.youtube.com/embed/abc123def45" allowfullscreen></iframe>
+        <iframe width="640" height="480" src="https://www.youtube.com/embed/abc123def45" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   details:
     description: Adiciona um bloco details com summary e conteúdo fictício.
     example:
       code: |
         HTMLHelper::make()->details()->generate();
       output: |
-        <details><summary>Pergunta de exemplo?</summary><div>Conteúdo detalhado gerado.</div></details>
+        <details><summary>Pergunta gerada?</summary><div>Conteúdo detalhado gerado para teste.</div></details>
   code:
     description: Adiciona um bloco pre/code com uma classe CSS opcional.
     parameters:
-      className: Classe CSS aplicada ao bloco de código gerado.
+      className: Classe CSS aplicada ao elemento pre. Valores vazios usam hljs.
     example:
       code: |
         HTMLHelper::make()->code('hljs')->generate();
       output: |
-        <pre class="hljs"><code>export default function testComponent(...)</code></pre>
+        <pre class="hljs"><code>export default function testComponent({
+        
+        state,
+        
+        }) {
+        
+        return {
+        
+        state,
+        
+        init: function () {
+        
+        // Initialise the Alpine component here, if you need to.
+        
+        },
+        
+        }
+        
+        }</code></pre>
   blockquote:
     description: Adiciona uma citação fictícia.
     example:
       code: |
         HTMLHelper::make()->blockquote()->generate();
       output: |
-        <blockquote>Citação de exemplo.</blockquote>
+        <blockquote>Citação fictícia gerada.</blockquote>
   hr:
     description: Adiciona uma linha horizontal.
     example:
@@ -143,16 +164,16 @@ methods:
       code: |
         HTMLHelper::make()->table()->generate();
       output: |
-        <table><thead><tr><th>Nome</th><th>Status</th></tr></thead><tbody><tr><td>Demo</td><td>Ativo</td></tr></tbody></table>
+        <table><thead><tr><th>Nome</th><th>Status</th><th>Categoria</th></tr></thead><tbody><tr><td>Demo</td><td>Ativo</td><td>Blog</td></tr><tr><td>Preview</td><td>Rascunho</td><td>Produto</td></tr></tbody></table>
   grid:
-    description: Adiciona um grid responsivo com colunas fictícias.
+    description: Adiciona um grid responsivo em que cada item usa o span definido no array de colunas.
     parameters:
-      cols: Distribuição das colunas no grid gerado.
+      cols: Array de spans para os itens do grid. Por exemplo, [1, 2, 1] cria três itens distribuídos em quatro colunas.
     example:
       code: |
-        HTMLHelper::make()->grid([1, 1, 1])->generate();
+        HTMLHelper::make()->grid([1, 2, 1])->generate();
       output: |
-        <div class="grid" data-type="responsive" data-cols="3">...</div>
+        <div class="grid" data-type="responsive" data-cols="4" style="grid-template-columns: repeat(4, 1fr);" data-stack-at="md"><div class="grid__column" data-col-span="1" style="grid-column: span 1;">...</div><div class="grid__column" data-col-span="2" style="grid-column: span 2;">...</div><div class="grid__column" data-col-span="1" style="grid-column: span 1;">...</div></div>
   generate:
     description: Retorna todo o HTML acumulado na cadeia de métodos.
     example:
