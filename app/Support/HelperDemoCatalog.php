@@ -267,6 +267,7 @@ class HelperDemoCatalog
             'file' => "'avatars/user.jpg'",
             'filename' => "'dashboard-routes'",
             'folders', 'subfolders' => "'demo'",
+            'gender' => "'m'",
             'height' => '480',
             'id' => "'id'",
             'limit' => '3',

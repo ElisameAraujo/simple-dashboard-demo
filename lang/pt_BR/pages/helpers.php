@@ -58,6 +58,7 @@ return [
         'file' => 'Arquivo ou caminho relativo dentro do disco.',
         'filename' => 'Nome do arquivo de rotas, sem a extensão .php.',
         'folders' => 'Pasta ou lista de pastas dentro de routes/.',
+        'gender' => 'Gênero usado em ordinais em português. Use m para masculino ou f para feminino.',
         'height' => 'Altura usada no HTML gerado.',
         'id' => 'Coluna que representa o identificador do usuário.',
         'level' => 'Nível da heading HTML, como 1, 2 ou 3.',

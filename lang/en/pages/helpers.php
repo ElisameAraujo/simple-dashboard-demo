@@ -58,6 +58,7 @@ return [
         'file' => 'File or relative path inside the disk.',
         'filename' => 'Route filename without the .php extension.',
         'folders' => 'Folder or list of folders inside routes/.',
+        'gender' => 'Gender used by Portuguese ordinals. Use m for masculine or f for feminine.',
         'height' => 'Height used in the generated HTML.',
         'id' => 'Column that represents the user identifier.',
         'level' => 'HTML heading level, such as 1, 2, or 3.',
