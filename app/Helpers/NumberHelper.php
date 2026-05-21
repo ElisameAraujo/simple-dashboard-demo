@@ -40,17 +40,6 @@ class NumberHelper
     ];
 
     /**
-     * Mapping currency symbols by code
-     */
-    protected static array $currencySymbolMap = [
-        'BRL' => 'R$',
-        'USD' => '$',
-        'EUR' => '€',
-        'GBP' => '£',
-        'JPY' => '¥',
-    ];
-
-    /**
      * Mapping of area units by location
      */
     protected static array $localeAreaUnitMap = [
@@ -133,23 +122,6 @@ class NumberHelper
     }
 
     /**
-     * `currencyFormat`:
-     * Formats a monetary value with the currency symbol and locale decimal format.
-     * @param float|int $number Number to be formatted.
-     * @param string|null $locale Locale code (e.g., 'pt_BR', 'en_US').
-     * @param string|null $currency Currency code (e.g., 'BRL', 'USD').
-     * @return string
-     */
-    public static function currencyFormat(float|int $number, ?string $locale = null, ?string $currency = null): string
-    {
-        $locale = self::resolveLocale($locale);
-        $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
-        $formatted = $formatter->format($number);
-
-        return self::currencySymbol($locale, $currency) . " {$formatted}";
-    }
-
-    /**
      * `areaFormat`:
      * Formata área de acordo com locale
      * @param float|int|null $value Area value
@@ -227,16 +199,6 @@ class NumberHelper
         }
 
         return 2;
-    }
-
-    /**
-     * Returns the currency symbol based on locale or explicit currency.
-     */
-    private static function currencySymbol(string $locale, ?string $currency = null): string
-    {
-        $currency = $currency ?? self::$localeCurrencyMap[$locale] ?? 'USD';
-
-        return self::$currencySymbolMap[$currency] ?? $currency;
     }
 
     /**

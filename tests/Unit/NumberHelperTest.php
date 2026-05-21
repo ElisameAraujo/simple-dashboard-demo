@@ -21,17 +21,12 @@ class NumberHelperTest extends TestCase
         $this->assertSame('$1,234.56', NumberHelper::priceFormat(1234.56, 'en_US'));
     }
 
-    public function test_currency_format_uses_symbol_without_duplicating_currency_output(): void
+    public function test_currency_helpers_do_not_duplicate_price_format(): void
     {
-        $this->assertSame('R$ 1.234,56', NumberHelper::currencyFormat(1234.56, 'pt-BR'));
-        $this->assertSame('$ 1,234.56', NumberHelper::currencyFormat(1234.56, 'en_US'));
-        $this->assertSame('$ 1.234,56', NumberHelper::currencyFormat(1234.56, 'pt-BR', 'USD'));
-    }
+        $reflection = new ReflectionClass(NumberHelper::class);
 
-    public function test_currency_symbol_is_not_part_of_the_public_helper_api(): void
-    {
-        $this->assertFalse((new ReflectionClass(NumberHelper::class))->hasMethod('currencySymbol') &&
-            (new ReflectionClass(NumberHelper::class))->getMethod('currencySymbol')->isPublic());
+        $this->assertFalse($reflection->hasMethod('currencyFormat'));
+        $this->assertFalse($reflection->hasMethod('currencySymbol'));
     }
 
     public function test_area_format_converts_square_meters_to_locale_area_unit(): void

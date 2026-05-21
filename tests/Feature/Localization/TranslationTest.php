@@ -124,6 +124,7 @@ class TranslationTest extends TestCase
             'html-helper' => HTMLHelper::class,
             'media-helper' => MediaHelper::class,
             'notification-helper' => NotificationHelper::class,
+            'number-helper' => NumberHelper::class,
         ] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
@@ -154,12 +155,14 @@ class TranslationTest extends TestCase
         $htmlHelper = HelperDemoCatalog::find('html-helper');
         $mediaHelper = HelperDemoCatalog::find('media-helper');
         $notificationHelper = HelperDemoCatalog::find('notification-helper');
+        $numberHelper = HelperDemoCatalog::find('number-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
         $heading = collect($htmlHelper['methods'])->firstWhere('name', 'heading');
         $showMedia = collect($mediaHelper['methods'])->firstWhere('name', 'showMedia');
         $latestNotifications = collect($notificationHelper['methods'])->firstWhere('name', 'latestNotifications');
+        $ordinal = collect($numberHelper['methods'])->firstWhere('name', 'ordinal');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -179,6 +182,10 @@ class TranslationTest extends TestCase
         $this->assertSame('Lista as notificações mais recentes do usuário autenticado, lidas ou não lidas, para resumos como dropdowns.', $latestNotifications['summary']);
         $this->assertSame('Quantidade máxima de notificações retornadas. Quando null ou menor que 1, retorna todas.', $latestNotifications['parameters'][0]['description']);
         $this->assertSame(['Collection com as 10 notificações mais recentes.'], $latestNotifications['example']['output']);
+
+        $this->assertSame('Retorna um número ordinal, com suporte a masculino e feminino em português.', $ordinal['summary']);
+        $this->assertSame('Gênero usado apenas em português. Use m para masculino ou f para feminino.', $ordinal['parameters'][2]['description']);
+        $this->assertSame(['1ª'], $ordinal['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array
