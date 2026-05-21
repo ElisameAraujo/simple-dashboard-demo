@@ -1,0 +1,162 @@
+name: HTMLHelper
+description: Builds fake HTML blocks for demos, editor previews, and content placeholders.
+works:
+  - HTMLHelper starts with make(), then chains builder methods such as heading(), paragraphs(), lists, images, and tables.
+  - Call generate() at the end of the chain to return the final HTML string.
+example:
+  code: |
+    echo HTMLHelper::make()
+        ->heading(2)
+        ->paragraphs(1)
+        ->generate();
+  output: |
+    <h2>Example Title</h2><p>Generated paragraph...</p>
+methods:
+  make:
+    description: Creates a new HTML builder instance and prepares the fake data generator.
+    example:
+      code: |
+        $html = HTMLHelper::make();
+      output: |
+        HTMLHelper instance ready for chained methods.
+  heading:
+    description: Adds a heading with generated text to the accumulated HTML.
+    parameters:
+      level: HTML heading level, such as 1, 2, or 3.
+    example:
+      code: |
+        HTMLHelper::make()->heading(2)->generate();
+      output: |
+        <h2>Example Title</h2>
+  headingWithLink:
+    description: Adds a heading with a generated link inside the text.
+    parameters:
+      level: HTML heading level, such as 1, 2, or 3.
+    example:
+      code: |
+        HTMLHelper::make()->headingWithLink(2)->generate();
+      output: |
+        <h2>Example <a href="#">Generated Link</a> Title</h2>
+  emptyParagraph:
+    description: Adds an empty paragraph.
+    example:
+      code: |
+        HTMLHelper::make()->emptyParagraph()->generate();
+      output: |
+        <p></p>
+  paragraphs:
+    description: Adds one or more generated paragraphs, optionally with random links.
+    parameters:
+      count: Number of paragraphs that will be generated.
+      withRandomLinks: Whether generated paragraphs should include fake links.
+    example:
+      code: |
+        HTMLHelper::make()->paragraphs(1)->generate();
+      output: |
+        <p>Generated paragraph for preview.</p>
+  unorderedList:
+    description: Adds an unordered list with generated items.
+    parameters:
+      count: Number of items that will be generated.
+    example:
+      code: |
+        HTMLHelper::make()->unorderedList(3)->generate();
+      output: |
+        <ul><li>first</li><li>second</li><li>third</li></ul>
+  orderedList:
+    description: Adds an ordered list with generated items.
+    parameters:
+      count: Number of items that will be generated.
+    example:
+      code: |
+        HTMLHelper::make()->orderedList(3)->generate();
+      output: |
+        <ol><li>first</li><li>second</li><li>third</li></ol>
+  image:
+    description: Adds a generated image with width, height, and alt text.
+    parameters:
+      width: Width used in the generated HTML.
+      height: Height used in the generated HTML.
+    example:
+      code: |
+        HTMLHelper::make()->image(640, 480)->generate();
+      output: |
+        <img src="https://via.placeholder.com/640x480" alt="Example image" width="640" height="480">
+  link:
+    description: Adds a generated link.
+    example:
+      code: |
+        HTMLHelper::make()->link()->generate();
+      output: |
+        <a href="https://example.com">Example link</a>
+  video:
+    description: Adds a generated video iframe for YouTube or Vimeo.
+    parameters:
+      provider: Provider used in the video embed.
+      width: Width used in the iframe.
+      height: Height used in the iframe.
+    example:
+      code: |
+        HTMLHelper::make()->video('youtube', 640, 480)->generate();
+      output: |
+        <iframe width="640" height="480" src="https://www.youtube.com/embed/abc123def45" allowfullscreen></iframe>
+  details:
+    description: Adds a details block with a summary and generated content.
+    example:
+      code: |
+        HTMLHelper::make()->details()->generate();
+      output: |
+        <details><summary>Example question?</summary><div>Generated detail content.</div></details>
+  code:
+    description: Adds a pre/code block with an optional CSS class.
+    parameters:
+      className: CSS class applied to the generated code block.
+    example:
+      code: |
+        HTMLHelper::make()->code('hljs')->generate();
+      output: |
+        <pre class="hljs"><code>export default function testComponent(...)</code></pre>
+  blockquote:
+    description: Adds a generated quote.
+    example:
+      code: |
+        HTMLHelper::make()->blockquote()->generate();
+      output: |
+        <blockquote>Example quote.</blockquote>
+  hr:
+    description: Adds a horizontal rule.
+    example:
+      code: |
+        HTMLHelper::make()->hr()->generate();
+      output: |
+        <hr>
+  br:
+    description: Adds a line break.
+    example:
+      code: |
+        HTMLHelper::make()->br()->generate();
+      output: |
+        <br>
+  table:
+    description: Adds a generated table with a header and two content rows.
+    example:
+      code: |
+        HTMLHelper::make()->table()->generate();
+      output: |
+        <table><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Demo</td><td>Active</td></tr></tbody></table>
+  grid:
+    description: Adds a responsive grid with generated columns.
+    parameters:
+      cols: Column distribution for the generated grid.
+    example:
+      code: |
+        HTMLHelper::make()->grid([1, 1, 1])->generate();
+      output: |
+        <div class="grid" data-type="responsive" data-cols="3">...</div>
+  generate:
+    description: Returns all HTML accumulated in the method chain.
+    example:
+      code: |
+        HTMLHelper::make()->heading(2)->generate();
+      output: |
+        <h2>Example Title</h2>

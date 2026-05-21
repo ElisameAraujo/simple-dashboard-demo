@@ -1,0 +1,155 @@
+name: DateHelper
+description: Formats dates, relative intervals, and email-friendly date labels with localized output.
+works:
+  - Use DateHelper when dates need to be displayed for people, not only stored or compared.
+  - The helper resolves the requested locale, loads the project date translations, and applies the application timezone before formatting.
+example:
+  code: |
+    DateHelper::simpleDate('2026-05-19', 'en_US');
+  output: |
+    05/19/2026
+methods:
+  currentYear:
+    description: Returns the current year as four digits.
+    example:
+      code: |
+        DateHelper::currentYear();
+      output: |
+        2026
+  currentDate:
+    description: Returns the current date using the format configured for the given locale.
+    parameters:
+      locale: Locale used to define the output format. When omitted, the current application locale is used.
+    example:
+      code: |
+        DateHelper::currentDate('en_US');
+      output: |
+        05/21/2026
+  fullCurrentDate:
+    description: Returns the current date in full, with translated weekday and month names.
+    parameters:
+      locale: Locale used to translate the weekday, month, and final format.
+    example:
+      code: |
+        DateHelper::fullCurrentDate('en_US');
+      output: |
+        Thursday, May 21, 2026
+  fullExtendedDate:
+    description: Formats a date string using the locale's full date format.
+    parameters:
+      date: Date that will be formatted.
+      locale: Locale used to translate the weekday, month, and final format.
+    example:
+      code: |
+        DateHelper::fullExtendedDate('2026-05-19', 'en_US');
+      output: |
+        Tuesday, May 19, 2026
+  currentFullDateWithHours:
+    description: Formats a date in full including the time.
+    parameters:
+      date: Date and time that will be formatted.
+      locale: Locale used to translate and build the final output.
+    example:
+      code: |
+        DateHelper::currentFullDateWithHours('2026-05-19 10:30:00', 'en_US');
+      output: |
+        May 19, 2026 at 10:30
+  diffDatesHuman:
+    description: Returns the difference between a date and the current moment in human-readable text.
+    parameters:
+      date: Date that will be compared with the current moment.
+      locale: Locale used to translate units such as minutes, hours, days, and months.
+    example:
+      code: |
+        DateHelper::diffDatesHuman('2026-05-19 11:58:00', 'en_US');
+      output: |
+        2 minutes ago
+  dateWithHoursAndSeconds:
+    description: Formats a date with hour, minute, and second.
+    parameters:
+      date: Date and time that will be formatted.
+      locale: Locale used to define the output format.
+    example:
+      code: |
+        DateHelper::dateWithHoursAndSeconds('2026-05-19 10:30:15', 'en_US');
+      output: |
+        05/19/2026 10:30:15
+  dateExcel:
+    description: Formats a date using the spreadsheet-friendly pattern for the given locale.
+    parameters:
+      date: Date that will be formatted.
+      locale: Locale used to define the date pattern.
+    example:
+      code: |
+        DateHelper::dateExcel('2026-05-19', 'en_US');
+      output: |
+        05/19/2026
+  dateWithHours:
+    description: Formats a date with hour and minute, without seconds.
+    parameters:
+      date: Date and time that will be formatted.
+      locale: Locale used to define the output format.
+    example:
+      code: |
+        DateHelper::dateWithHours('2026-05-19 10:30:15', 'en_US');
+      output: |
+        05/19/2026 10:30
+  simpleDate:
+    description: Formats a simple date with day, month, and year.
+    parameters:
+      date: Date that will be formatted.
+      locale: Locale used to define the output format.
+    example:
+      code: |
+        DateHelper::simpleDate('2026-05-19', 'en_US');
+      output: |
+        05/19/2026
+  isTodayCheck:
+    description: Checks whether the given date is today.
+    parameters:
+      date: Date that will be compared with today.
+    example:
+      code: |
+        DateHelper::isTodayCheck('2026-05-21');
+      output: |
+        true
+  daysDifference:
+    description: Returns the difference in days between two dates.
+    parameters:
+      startDate: Start date used in the calculation.
+      endDate: End date used in the calculation.
+    example:
+      code: |
+        DateHelper::daysDifference('2026-05-19', '2026-05-22');
+      output: |
+        3
+  shortDate:
+    description: Displays only the day and month using the locale's short format.
+    parameters:
+      date: Date that will be formatted.
+      locale: Locale used to define the short format.
+    example:
+      code: |
+        DateHelper::shortDate('2026-05-19', 'en_US');
+      output: |
+        May 19
+  shortTime:
+    description: Displays only hour and minute.
+    parameters:
+      date: Date and time that will be formatted.
+      locale: Locale used to define the time format.
+    example:
+      code: |
+        DateHelper::shortTime('2026-05-19 10:30:15', 'en_US');
+      output: |
+        10:30
+  emailDate:
+    description: Formats a date for email display by combining a short date and relative time.
+    parameters:
+      date: Date and time that will be formatted.
+      locale: Locale used to translate the date and relative time.
+    example:
+      code: |
+        DateHelper::emailDate('2026-05-19 11:58:00', 'en_US');
+      output: |
+        Tue, may. 19, 11:58 (2 minutes ago)

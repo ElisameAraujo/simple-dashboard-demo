@@ -1,0 +1,155 @@
+name: DateHelper
+description: Formata datas, intervalos relativos e rótulos de data para e-mail com saída localizada.
+works:
+  - Use DateHelper quando datas precisam ser exibidas para pessoas, não apenas armazenadas ou comparadas.
+  - O helper resolve o locale solicitado, carrega as traduções de datas do projeto e aplica o timezone da aplicação antes de formatar.
+example:
+  code: |
+    DateHelper::simpleDate('2026-05-19', 'pt-BR');
+  output: |
+    19/05/2026
+methods:
+  currentYear:
+    description: Retorna o ano atual no formato de quatro dígitos.
+    example:
+      code: |
+        DateHelper::currentYear();
+      output: |
+        2026
+  currentDate:
+    description: Retorna a data atual usando o formato configurado para o locale informado.
+    parameters:
+      locale: Locale usado para definir o formato da saída. Quando omitido, usa o locale atual da aplicação.
+    example:
+      code: |
+        DateHelper::currentDate('pt-BR');
+      output: |
+        21/05/2026
+  fullCurrentDate:
+    description: Retorna a data atual por extenso, com dia da semana e mês traduzidos.
+    parameters:
+      locale: Locale usado para traduzir o dia da semana, o mês e o formato final.
+    example:
+      code: |
+        DateHelper::fullCurrentDate('pt-BR');
+      output: |
+        quinta-feira, 21 de maio de 2026
+  fullExtendedDate:
+    description: Formata uma data recebida em string no formato completo do locale.
+    parameters:
+      date: Data que será formatada.
+      locale: Locale usado para traduzir o dia da semana, o mês e o formato final.
+    example:
+      code: |
+        DateHelper::fullExtendedDate('2026-05-19', 'pt-BR');
+      output: |
+        terça-feira, 19 de maio de 2026
+  currentFullDateWithHours:
+    description: Formata uma data por extenso incluindo a hora.
+    parameters:
+      date: Data e hora que serão formatadas.
+      locale: Locale usado para traduzir e montar a saída final.
+    example:
+      code: |
+        DateHelper::currentFullDateWithHours('2026-05-19 10:30:00', 'pt-BR');
+      output: |
+        19 de maio de 2026 às 10:30
+  diffDatesHuman:
+    description: Retorna a diferença entre uma data e o momento atual em texto humanizado.
+    parameters:
+      date: Data que será comparada com o momento atual.
+      locale: Locale usado para traduzir unidades como minutos, horas, dias e meses.
+    example:
+      code: |
+        DateHelper::diffDatesHuman('2026-05-19 11:58:00', 'pt-BR');
+      output: |
+        2 minutos atrás
+  dateWithHoursAndSeconds:
+    description: Formata uma data com hora, minuto e segundo.
+    parameters:
+      date: Data e hora que serão formatadas.
+      locale: Locale usado para definir o formato da saída.
+    example:
+      code: |
+        DateHelper::dateWithHoursAndSeconds('2026-05-19 10:30:15', 'pt-BR');
+      output: |
+        19/05/2026 às 10:30:15
+  dateExcel:
+    description: Formata uma data no padrão esperado para planilhas no locale informado.
+    parameters:
+      date: Data que será formatada.
+      locale: Locale usado para definir o padrão da data.
+    example:
+      code: |
+        DateHelper::dateExcel('2026-05-19', 'pt-BR');
+      output: |
+        19/05/2026
+  dateWithHours:
+    description: Formata uma data com hora e minuto, sem segundos.
+    parameters:
+      date: Data e hora que serão formatadas.
+      locale: Locale usado para definir o formato da saída.
+    example:
+      code: |
+        DateHelper::dateWithHours('2026-05-19 10:30:15', 'pt-BR');
+      output: |
+        19/05/2026 às 10:30
+  simpleDate:
+    description: Formata uma data simples com dia, mês e ano.
+    parameters:
+      date: Data que será formatada.
+      locale: Locale usado para definir o formato da saída.
+    example:
+      code: |
+        DateHelper::simpleDate('2026-05-19', 'pt-BR');
+      output: |
+        19/05/2026
+  isTodayCheck:
+    description: Verifica se a data informada corresponde ao dia atual.
+    parameters:
+      date: Data que será comparada com o dia atual.
+    example:
+      code: |
+        DateHelper::isTodayCheck('2026-05-21');
+      output: |
+        true
+  daysDifference:
+    description: Retorna a diferença em dias entre duas datas.
+    parameters:
+      startDate: Data inicial usada no cálculo.
+      endDate: Data final usada no cálculo.
+    example:
+      code: |
+        DateHelper::daysDifference('2026-05-19', '2026-05-22');
+      output: |
+        3
+  shortDate:
+    description: Exibe apenas o dia e o mês no formato curto do locale.
+    parameters:
+      date: Data que será formatada.
+      locale: Locale usado para definir o formato curto.
+    example:
+      code: |
+        DateHelper::shortDate('2026-05-19', 'pt-BR');
+      output: |
+        19/05
+  shortTime:
+    description: Exibe apenas hora e minuto.
+    parameters:
+      date: Data e hora que serão formatadas.
+      locale: Locale usado para definir o formato do horário.
+    example:
+      code: |
+        DateHelper::shortTime('2026-05-19 10:30:15', 'pt-BR');
+      output: |
+        10:30
+  emailDate:
+    description: Formata uma data para exibição em e-mails, combinando data curta e tempo relativo.
+    parameters:
+      date: Data e hora que serão formatadas.
+      locale: Locale usado para traduzir a data e o tempo relativo.
+    example:
+      code: |
+        DateHelper::emailDate('2026-05-19 11:58:00', 'pt-BR');
+      output: |
+        Ter, 19 de mai., 11:58 (2 minutos atrás)

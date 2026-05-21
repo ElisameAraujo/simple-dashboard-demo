@@ -49,22 +49,23 @@ class HelperDemoCatalog
     {
         $class = config("helpers.global.{$definition['alias']}");
         $content = trans("pages/helpers.helpers.{$slug}");
+        $documentation = HelperDocumentationRepository::for($slug);
 
         return [
             'slug' => $slug,
             'alias' => $definition['alias'],
             'class' => $class,
             'icon' => $definition['icon'],
-            'name' => $content['name'] ?? $definition['alias'],
-            'description' => $content['description'] ?? '',
-            'works' => $content['works'] ?? [],
-            'example' => $content['example'] ?? ['usage' => [], 'output' => []],
-            'methods' => $class ? self::methodsFor($class) : [],
+            'name' => $documentation['name'] ?? $content['name'] ?? $definition['alias'],
+            'description' => $documentation['description'] ?? $content['description'] ?? '',
+            'works' => $documentation['works'] ?? $content['works'] ?? [],
+            'example' => self::normalizeExample($documentation['example'] ?? $content['example'] ?? []),
+            'methods' => $class ? self::methodsFor($class, $documentation['methods'] ?? []) : [],
             'url' => route('helpers.show', $slug),
         ];
     }
 
-    private static function methodsFor(string $class): array
+    private static function methodsFor(string $class, array $documentation = []): array
     {
         if (!class_exists($class)) {
             return [];
@@ -75,14 +76,18 @@ class HelperDemoCatalog
         return Collection::make($reflection->getMethods(ReflectionMethod::IS_PUBLIC))
             ->filter(fn(ReflectionMethod $method) => $method->getDeclaringClass()->getName() === $class)
             ->sortBy(fn(ReflectionMethod $method) => $method->getStartLine())
-            ->map(fn(ReflectionMethod $method) => [
-                'name' => $method->getName(),
-                'signature' => self::signatureFor($method),
-                'summary' => self::summaryFor($method),
-                'parameters' => self::parametersFor($method),
-                'return' => self::formatType($method->getReturnType()) ?: 'mixed',
-                'example' => self::exampleFor($class, $method),
-            ])
+            ->map(function (ReflectionMethod $method) use ($class, $documentation) {
+                $methodDocumentation = $documentation[$method->getName()] ?? [];
+
+                return [
+                    'name' => $method->getName(),
+                    'signature' => self::signatureFor($method),
+                    'summary' => $methodDocumentation['description'] ?? self::summaryFor($method),
+                    'parameters' => self::parametersFor($method, $methodDocumentation['parameters'] ?? []),
+                    'return' => self::formatType($method->getReturnType()) ?: 'mixed',
+                    'example' => self::exampleFor($class, $method, $methodDocumentation['example'] ?? []),
+                ];
+            })
             ->values()
             ->all();
     }
@@ -126,12 +131,12 @@ class HelperDemoCatalog
         ]);
     }
 
-    private static function parametersFor(ReflectionMethod $method): array
+    private static function parametersFor(ReflectionMethod $method, array $documentation = []): array
     {
         $descriptions = self::parameterDescriptionsFor($method);
 
         return collect($method->getParameters())
-            ->map(function (ReflectionParameter $parameter) use ($descriptions) {
+            ->map(function (ReflectionParameter $parameter) use ($descriptions, $documentation) {
                 $type = self::formatType($parameter->getType()) ?: 'mixed';
                 $name = $parameter->getName();
 
@@ -141,7 +146,7 @@ class HelperDemoCatalog
                     'default' => $parameter->isOptional() && $parameter->isDefaultValueAvailable()
                         ? self::formatDefault($parameter->getDefaultValue())
                         : null,
-                    'description' => $descriptions[$name] ?? self::parameterDescriptionFallback($name),
+                    'description' => $documentation[$name] ?? $descriptions[$name] ?? self::parameterDescriptionFallback($name),
                 ];
             })
             ->values()
@@ -186,8 +191,12 @@ class HelperDemoCatalog
             ->all();
     }
 
-    private static function exampleFor(string $class, ReflectionMethod $method): array
+    private static function exampleFor(string $class, ReflectionMethod $method, array $documentation = []): array
     {
+        if ($documentation !== []) {
+            return self::normalizeExample($documentation);
+        }
+
         $alias = array_search($class, config('helpers.global', []), true) ?: class_basename($class);
         $arguments = collect($method->getParameters())
             ->map(fn(ReflectionParameter $parameter) => self::sampleArgumentFor($parameter))
@@ -199,6 +208,27 @@ class HelperDemoCatalog
             'usage' => [$usage],
             'output' => [self::outputFor($method)],
         ];
+    }
+
+    private static function normalizeExample(array $example): array
+    {
+        return [
+            'usage' => self::linesFrom($example['code'] ?? $example['usage'] ?? []),
+            'output' => self::linesFrom($example['output'] ?? []),
+        ];
+    }
+
+    private static function linesFrom(string|array|null $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if ($value === null || $value === '') {
+            return [];
+        }
+
+        return preg_split('/\R/', rtrim($value));
     }
 
     private static function usageFor(string $alias, ReflectionMethod $method, string $arguments): string

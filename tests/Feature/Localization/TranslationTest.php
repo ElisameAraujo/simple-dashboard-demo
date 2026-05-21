@@ -3,11 +3,16 @@
 namespace Tests\Feature\Localization;
 
 use App\Helpers\DateHelper;
+use App\Helpers\HTMLHelper;
 use App\Helpers\NumberHelper;
 use App\Helpers\Support\LocaleResolver;
+use App\Support\HelperDemoCatalog;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use ReflectionClass;
+use ReflectionMethod;
+use Symfony\Component\Yaml\Yaml;
 use Tests\TestCase;
 
 class TranslationTest extends TestCase
@@ -106,6 +111,47 @@ class TranslationTest extends TestCase
 
         $this->assertSame('DateHelper', __('docs/helpers/date-helper.name'));
         $this->assertSame('Formatação de datas, datas relativas e saídas localizadas.', __('docs/helpers/date-helper.description'));
+    }
+
+    public function test_helper_yaml_documentation_is_translated_and_matches_public_methods(): void
+    {
+        foreach (['date-helper' => DateHelper::class, 'html-helper' => HTMLHelper::class] as $slug => $class) {
+            $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
+            $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
+
+            $this->assertSame(
+                array_keys(Arr::dot($english)),
+                array_keys(Arr::dot($portuguese)),
+                "The [{$slug}] helper YAML docs should expose matching translation keys."
+            );
+
+            $publicMethods = collect((new ReflectionClass($class))->getMethods(ReflectionMethod::IS_PUBLIC))
+                ->filter(fn(ReflectionMethod $method) => $method->getDeclaringClass()->getName() === $class)
+                ->pluck('name')
+                ->values()
+                ->all();
+
+            $this->assertSame($publicMethods, array_keys($english['methods']));
+            $this->assertSame($publicMethods, array_keys($portuguese['methods']));
+        }
+    }
+
+    public function test_helper_catalog_prefers_yaml_documentation_when_available(): void
+    {
+        app()->setLocale('pt_BR');
+
+        $dateHelper = HelperDemoCatalog::find('date-helper');
+        $htmlHelper = HelperDemoCatalog::find('html-helper');
+
+        $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
+        $heading = collect($htmlHelper['methods'])->firstWhere('name', 'heading');
+
+        $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
+        $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
+
+        $this->assertSame(['HTMLHelper::make()->heading(2)->generate();'], $heading['example']['usage']);
+        $this->assertSame(['<h2>Título de Exemplo</h2>'], $heading['example']['output']);
+        $this->assertNotContains('HTMLHelper instance', $heading['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array
