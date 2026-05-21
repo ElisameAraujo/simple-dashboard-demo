@@ -1,0 +1,68 @@
+name: DiskHelper
+description: Saves, replaces, removes, and inspects files on configured Laravel disks.
+works:
+  - Use DiskHelper to centralize file operations when a feature receives uploads and only needs to persist the relative path in the database.
+  - The disk parameter always points to a disk configured in config/filesystems.php; subfolders organize folders inside that disk.
+  - Subfolders may be a simple string or an array of strings, allowing paths such as feminine or feminine/march.
+example:
+  code: |
+    $path = DiskHelper::saveFile($image, 'products', ['feminine', 'march']);
+  output: |
+    feminine/march/image-20260521183000.jpg
+methods:
+  saveFile:
+    description: Saves an uploaded file to a configured disk and returns the relative path that should be persisted.
+    parameters:
+      file: Uploaded file that will be saved.
+      disk: Disk where the file will be saved. When omitted, public is used.
+      subfolders: Subfolder or list of subfolders within the disk.
+    example:
+      code: |
+        $path = DiskHelper::saveFile($image, 'products', 'feminine');
+      output: |
+        feminine/image-20260521183000.jpg
+  updateFile:
+    description: Saves a new uploaded file and removes the previous file from the same disk and subfolders.
+    parameters:
+      newFile: New uploaded file that will be saved.
+      oldFile: Name of the old file, or relative path when subfolders are not used.
+      disk: Disk where the old file exists and the new file will be saved.
+      subfolders: Subfolder or list of subfolders used to locate the old file and save the new file.
+    example:
+      code: |
+        $path = DiskHelper::updateFile($image, 'old.jpg', 'products', ['feminine', 'march']);
+      output: |
+        feminine/march/image-20260521183000.jpg
+  removeFile:
+    description: Removes a file from a configured disk, with optional subfolder support.
+    parameters:
+      file: File name or relative path that will be removed.
+      disk: Disk where the file is stored.
+      subfolders: Subfolder or list of subfolders used to build the file path.
+    example:
+      code: |
+        DiskHelper::removeFile('image.jpg', 'products', 'feminine');
+      output: |
+        true
+  fileUrl:
+    description: Returns the public URL of an existing file on the given disk.
+    parameters:
+      file: File name or relative path stored on the disk.
+      disk: Disk where the file is stored.
+      subfolders: Subfolder or list of subfolders used to build the file path.
+    example:
+      code: |
+        DiskHelper::fileUrl('avatar.jpg', 'public', 'avatars');
+      output: |
+        /storage/avatars/avatar.jpg
+  fileSize:
+    description: Returns the formatted size of an existing file on the given disk.
+    parameters:
+      file: File name or relative path stored on the disk.
+      disk: Disk where the file is stored.
+      subfolders: Subfolder or list of subfolders used to build the file path.
+    example:
+      code: |
+        DiskHelper::fileSize('manual.pdf', 'public', 'downloads');
+      output: |
+        256 KB

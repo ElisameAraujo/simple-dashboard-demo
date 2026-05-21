@@ -3,6 +3,7 @@
 namespace Tests\Feature\Localization;
 
 use App\Helpers\DateHelper;
+use App\Helpers\DiskHelper;
 use App\Helpers\HTMLHelper;
 use App\Helpers\NumberHelper;
 use App\Helpers\Support\LocaleResolver;
@@ -115,7 +116,7 @@ class TranslationTest extends TestCase
 
     public function test_helper_yaml_documentation_is_translated_and_matches_public_methods(): void
     {
-        foreach (['date-helper' => DateHelper::class, 'html-helper' => HTMLHelper::class] as $slug => $class) {
+        foreach (['date-helper' => DateHelper::class, 'disk-helper' => DiskHelper::class, 'html-helper' => HTMLHelper::class] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
 
@@ -141,13 +142,19 @@ class TranslationTest extends TestCase
         app()->setLocale('pt_BR');
 
         $dateHelper = HelperDemoCatalog::find('date-helper');
+        $diskHelper = HelperDemoCatalog::find('disk-helper');
         $htmlHelper = HelperDemoCatalog::find('html-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
+        $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
         $heading = collect($htmlHelper['methods'])->firstWhere('name', 'heading');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
+
+        $this->assertSame('Salva um novo arquivo e remove o arquivo antigo do mesmo disco e das mesmas subpastas.', $updateFile['summary']);
+        $this->assertSame('Nome do arquivo antigo, ou caminho relativo quando subfolders não for usado.', $updateFile['parameters'][1]['description']);
+        $this->assertSame(['feminino/marco/imagem-20260521183000.jpg'], $updateFile['example']['output']);
 
         $this->assertSame(['HTMLHelper::make()->heading(2)->generate();'], $heading['example']['usage']);
         $this->assertSame(['<h2>Título de Exemplo</h2>'], $heading['example']['output']);

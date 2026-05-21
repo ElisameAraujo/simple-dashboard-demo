@@ -1,0 +1,68 @@
+name: DiskHelper
+description: Salva, substitui, remove e consulta arquivos em discos configurados do Laravel.
+works:
+  - Use DiskHelper para centralizar operações de arquivo quando uma funcionalidade recebe uploads e precisa persistir apenas o caminho relativo no banco.
+  - O parâmetro disk sempre aponta para um disco configurado em config/filesystems.php; subfolders organiza pastas dentro desse disco.
+  - As subpastas podem ser uma string simples ou um array de strings, permitindo montar caminhos como feminino ou feminino/marco.
+example:
+  code: |
+    $path = DiskHelper::saveFile($image, 'products', ['feminino', 'marco']);
+  output: |
+    feminino/marco/imagem-20260521183000.jpg
+methods:
+  saveFile:
+    description: Salva um arquivo enviado em um disco configurado e retorna o caminho relativo que deve ser persistido.
+    parameters:
+      file: Arquivo de upload que será salvo.
+      disk: Disco onde o arquivo será salvo. Quando omitido, usa public.
+      subfolders: Subpasta ou lista de subpastas dentro do disco.
+    example:
+      code: |
+        $path = DiskHelper::saveFile($image, 'products', 'feminino');
+      output: |
+        feminino/imagem-20260521183000.jpg
+  updateFile:
+    description: Salva um novo arquivo e remove o arquivo antigo do mesmo disco e das mesmas subpastas.
+    parameters:
+      newFile: Novo arquivo de upload que será salvo.
+      oldFile: Nome do arquivo antigo, ou caminho relativo quando subfolders não for usado.
+      disk: Disco onde o arquivo antigo existe e onde o novo arquivo será salvo.
+      subfolders: Subpasta ou lista de subpastas usada para localizar o antigo e salvar o novo arquivo.
+    example:
+      code: |
+        $path = DiskHelper::updateFile($image, 'antigo.jpg', 'products', ['feminino', 'marco']);
+      output: |
+        feminino/marco/imagem-20260521183000.jpg
+  removeFile:
+    description: Remove um arquivo de um disco configurado, com suporte opcional a subpastas.
+    parameters:
+      file: Nome ou caminho relativo do arquivo que será removido.
+      disk: Disco onde o arquivo está armazenado.
+      subfolders: Subpasta ou lista de subpastas usada para montar o caminho do arquivo.
+    example:
+      code: |
+        DiskHelper::removeFile('imagem.jpg', 'products', 'feminino');
+      output: |
+        true
+  fileUrl:
+    description: Retorna a URL pública de um arquivo existente no disco informado.
+    parameters:
+      file: Nome ou caminho relativo do arquivo salvo no disco.
+      disk: Disco onde o arquivo está armazenado.
+      subfolders: Subpasta ou lista de subpastas usada para montar o caminho do arquivo.
+    example:
+      code: |
+        DiskHelper::fileUrl('avatar.jpg', 'public', 'avatars');
+      output: |
+        /storage/avatars/avatar.jpg
+  fileSize:
+    description: Retorna o tamanho formatado de um arquivo existente no disco informado.
+    parameters:
+      file: Nome ou caminho relativo do arquivo salvo no disco.
+      disk: Disco onde o arquivo está armazenado.
+      subfolders: Subpasta ou lista de subpastas usada para montar o caminho do arquivo.
+    example:
+      code: |
+        DiskHelper::fileSize('manual.pdf', 'public', 'downloads');
+      output: |
+        256 KB
