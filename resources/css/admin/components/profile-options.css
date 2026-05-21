@@ -27,7 +27,7 @@
     @apply xl:w-160 lg:w-160 md:w-130 sm:w-100;
 }
 
-/** Imagem de Perfil **/
+/** Profile Image **/
 .profile-options .action .avatar-upload {
     @apply flex items-center justify-start w-full text-gray-500 gap-2;
 }
