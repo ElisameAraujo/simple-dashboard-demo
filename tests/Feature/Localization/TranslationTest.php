@@ -8,6 +8,7 @@ use App\Helpers\HTMLHelper;
 use App\Helpers\MediaHelper;
 use App\Helpers\NumberHelper;
 use App\Helpers\NotificationHelper;
+use App\Helpers\RouteHelper;
 use App\Helpers\Support\LocaleResolver;
 use App\Support\HelperDemoCatalog;
 use Carbon\Carbon;
@@ -125,6 +126,7 @@ class TranslationTest extends TestCase
             'media-helper' => MediaHelper::class,
             'notification-helper' => NotificationHelper::class,
             'number-helper' => NumberHelper::class,
+            'route-helper' => RouteHelper::class,
         ] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
@@ -156,6 +158,7 @@ class TranslationTest extends TestCase
         $mediaHelper = HelperDemoCatalog::find('media-helper');
         $notificationHelper = HelperDemoCatalog::find('notification-helper');
         $numberHelper = HelperDemoCatalog::find('number-helper');
+        $routeHelper = HelperDemoCatalog::find('route-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
@@ -163,6 +166,7 @@ class TranslationTest extends TestCase
         $showMedia = collect($mediaHelper['methods'])->firstWhere('name', 'showMedia');
         $latestNotifications = collect($notificationHelper['methods'])->firstWhere('name', 'latestNotifications');
         $ordinal = collect($numberHelper['methods'])->firstWhere('name', 'ordinal');
+        $importRoutesFromFolder = collect($routeHelper['methods'])->firstWhere('name', 'importRoutesFromFolder');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -186,6 +190,10 @@ class TranslationTest extends TestCase
         $this->assertSame('Retorna um número ordinal, com suporte a masculino e feminino em português.', $ordinal['summary']);
         $this->assertSame('Gênero usado apenas em português. Use m para masculino ou f para feminino.', $ordinal['parameters'][2]['description']);
         $this->assertSame(['1ª'], $ordinal['example']['output']);
+
+        $this->assertSame('Importa todos os arquivos .php diretamente dentro de uma pasta de rotas, com suporte a subpastas e exclusões.', $importRoutesFromFolder['summary']);
+        $this->assertSame('Pasta principal dentro de routes/.', $importRoutesFromFolder['parameters'][0]['description']);
+        $this->assertSame(['Arquivos .php diretos de routes/demo/helpers carregados, exceto legacy-routes.php.'], $importRoutesFromFolder['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array

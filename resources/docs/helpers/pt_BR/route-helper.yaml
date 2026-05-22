@@ -1,0 +1,43 @@
+name: RouteHelper
+description: Importa arquivos de rotas organizados em pastas dentro de routes/ e lista as rotas registradas da aplicação.
+works:
+  - Use RouteHelper para manter routes/web.php enxuto quando o projeto separa rotas por áreas como demo, admin, auth ou web.
+  - importRoutesFromFolder() é o fluxo principal. Ele carrega os arquivos .php diretamente dentro da pasta final informada.
+  - O import por pasta não é recursivo. Para carregar routes/web/home/secoes/*.php, informe web como rootFolder e ['home', 'secoes'] como subfolders.
+  - Os nomes de arquivo são protegidos contra extensões inválidas e os caminhos são validados para permanecer dentro de routes/.
+example:
+  code: |
+    RouteHelper::importRoutesFromFolder('demo', 'helpers');
+  output: |
+    Arquivos .php diretos de routes/demo/helpers carregados.
+methods:
+  importRouteFile:
+    description: Importa um único arquivo de rota dentro de routes/ ou de uma subpasta.
+    parameters:
+      filename: Nome do arquivo de rota. Prefira informar sem .php; uma única extensão .php também é aceita.
+      folders: Pasta ou lista de pastas dentro de routes/ onde o arquivo está localizado.
+    example:
+      code: |
+        RouteHelper::importRouteFile('helper-routes', ['demo', 'helpers']);
+      output: |
+        routes/demo/helpers/helper-routes.php carregado.
+  importRoutesFromFolder:
+    description: Importa todos os arquivos .php diretamente dentro de uma pasta de rotas, com suporte a subpastas e exclusões.
+    parameters:
+      rootFolder: Pasta principal dentro de routes/.
+      subfolders: Subpasta ou lista de subpastas dentro da pasta principal.
+      except: Nome ou lista de arquivos que devem ser ignorados no carregamento.
+    example:
+      code: |
+        RouteHelper::importRoutesFromFolder('demo', ['helpers'], 'legacy-routes');
+      output: |
+        Arquivos .php diretos de routes/demo/helpers carregados, exceto legacy-routes.php.
+  listAllRoutes:
+    description: Retorna um inventário simples das rotas registradas, incluindo URI, nome, método HTTP e action.
+    example:
+      code: |
+        RouteHelper::listAllRoutes();
+      output: |
+        [
+            ['uri' => 'helpers', 'name' => 'helpers.index', 'method' => 'GET|HEAD', 'action' => 'App\Http\Controllers\Admin\HelpersController@index'],
+        ]
