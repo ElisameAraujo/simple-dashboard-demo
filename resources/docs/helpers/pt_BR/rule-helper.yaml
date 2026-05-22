@@ -1,0 +1,32 @@
+name: RuleHelper
+description: Extrai valores de regras de validação textuais para manter limites da interface sincronizados com a validação.
+works:
+  - Use RuleHelper quando a interface precisa exibir o mesmo limite já definido nas regras de validação, como maxlength, contadores e textos auxiliares.
+  - O helper extrai apenas regras textuais no formato rule:value, como max:120, min:3, size:10 ou between:3,120.
+  - A fonte de regras pode ser um array direto, um objeto com formRules(), uma classe com formRules() estático ou uma classe com constantes públicas RULES, FORM_RULES ou REGRAS.
+  - Objetos complexos de validação do Laravel são ignorados. O objetivo é ler valores textuais simples, não interpretar toda a API de validação.
+example:
+  code: |
+    $rules = [
+        'title' => ['required', 'string', 'max:120'],
+    ];
+
+    RuleHelper::extractValue('title', 'max', $rules);
+  output: |
+    120
+methods:
+  extractValue:
+    description: Retorna o valor de uma regra textual aplicada a um campo específico.
+    parameters:
+      field: Campo cujas regras serão analisadas.
+      ruleName: Nome da regra que será extraída, sem dois-pontos ou valor.
+      rulesSource: Array de regras, objeto com formRules(), classe com formRules() estático ou classe com constante pública de regras.
+    example:
+      code: |
+        $rules = [
+            'comment' => ['required', 'max:5000'],
+        ];
+
+        RuleHelper::extractValue('comment', 'max', $rules);
+      output: |
+        5000

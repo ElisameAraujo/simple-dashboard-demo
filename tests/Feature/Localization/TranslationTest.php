@@ -9,6 +9,7 @@ use App\Helpers\MediaHelper;
 use App\Helpers\NumberHelper;
 use App\Helpers\NotificationHelper;
 use App\Helpers\RouteHelper;
+use App\Helpers\RuleHelper;
 use App\Helpers\Support\LocaleResolver;
 use App\Support\HelperDemoCatalog;
 use Carbon\Carbon;
@@ -127,6 +128,7 @@ class TranslationTest extends TestCase
             'notification-helper' => NotificationHelper::class,
             'number-helper' => NumberHelper::class,
             'route-helper' => RouteHelper::class,
+            'rule-helper' => RuleHelper::class,
         ] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
@@ -159,6 +161,7 @@ class TranslationTest extends TestCase
         $notificationHelper = HelperDemoCatalog::find('notification-helper');
         $numberHelper = HelperDemoCatalog::find('number-helper');
         $routeHelper = HelperDemoCatalog::find('route-helper');
+        $ruleHelper = HelperDemoCatalog::find('rule-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
@@ -167,6 +170,7 @@ class TranslationTest extends TestCase
         $latestNotifications = collect($notificationHelper['methods'])->firstWhere('name', 'latestNotifications');
         $ordinal = collect($numberHelper['methods'])->firstWhere('name', 'ordinal');
         $importRoutesFromFolder = collect($routeHelper['methods'])->firstWhere('name', 'importRoutesFromFolder');
+        $extractValue = collect($ruleHelper['methods'])->firstWhere('name', 'extractValue');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -194,6 +198,10 @@ class TranslationTest extends TestCase
         $this->assertSame('Importa todos os arquivos .php diretamente dentro de uma pasta de rotas, com suporte a subpastas e exclusões.', $importRoutesFromFolder['summary']);
         $this->assertSame('Pasta principal dentro de routes/.', $importRoutesFromFolder['parameters'][0]['description']);
         $this->assertSame(['Arquivos .php diretos de routes/demo/helpers carregados, exceto legacy-routes.php.'], $importRoutesFromFolder['example']['output']);
+
+        $this->assertSame('Retorna o valor de uma regra textual aplicada a um campo específico.', $extractValue['summary']);
+        $this->assertSame('Nome da regra que será extraída, sem dois-pontos ou valor.', $extractValue['parameters'][1]['description']);
+        $this->assertSame(['5000'], $extractValue['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array
