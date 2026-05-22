@@ -1,0 +1,236 @@
+name: TextHelper
+description: Normalizes, limits, counts, sanitizes, pluralizes, and transforms text for consistent application data and interface output.
+works:
+  - Use TextHelper when strings from forms, imports, comments, or titles need to be cleaned before display, storage, or transformation.
+  - Limit, count, and cleanup methods remove HTML when it makes sense, preventing tags from being counted as real content.
+  - Name and pluralization methods can receive a locale so connectors and plural files follow the active language rules.
+  - slug() applies the special character map before Str::slug(), preserving meaning in titles with symbols such as &, $, @, #, and /.
+example:
+  code: |
+    TextHelper::slug('Ke$ha & AC/DC', '-', 'en-US');
+  output: |
+    kesha-and-ac-dc
+methods:
+  limitByCharacters:
+    description: Limits text by character count after removing HTML tags.
+    parameters:
+      text: Text that will be truncated.
+      limit: Maximum number of characters before the ellipsis.
+    example:
+      code: |
+        TextHelper::limitByCharacters('<p>Lorem ipsum dolor sit amet</p>', 10);
+      output: |
+        Lorem ipsu...
+  limitByWords:
+    description: Limits text by word count after removing HTML tags.
+    parameters:
+      text: Text that will be truncated.
+      limit: Maximum number of words before the ellipsis.
+    example:
+      code: |
+        TextHelper::limitByWords('<p>Lorem ipsum dolor sit amet</p>', 3);
+      output: |
+        Lorem ipsum dolor...
+  countWords:
+    description: Counts words in text while ignoring HTML tags and preserving accented words.
+    parameters:
+      text: Text whose words will be counted.
+    example:
+      code: |
+        TextHelper::countWords('<p>Hello beautiful world</p>');
+      output: |
+        3
+  countCharacters:
+    description: Counts characters in text after removing HTML tags, with the option to ignore spaces and line breaks.
+    parameters:
+      text: Text whose characters will be counted.
+      ignoreSpaces: Whether spaces, tabs, and line breaks should be ignored.
+    example:
+      code: |
+        TextHelper::countCharacters("Hello \n world", true);
+      output: |
+        10
+  removePunctuation:
+    description: Removes punctuation marks from text.
+    parameters:
+      text: Text whose punctuation will be removed.
+    example:
+      code: |
+        TextHelper::removePunctuation('Hello, world!');
+      output: |
+        Hello world
+  stripHTML:
+    description: Removes HTML tags from a string.
+    parameters:
+      text: Text whose tags will be removed.
+    example:
+      code: |
+        TextHelper::stripHTML('<p>Hello <strong>world</strong></p>');
+      output: |
+        Hello world
+  cleanText:
+    description: Normalizes duplicate spaces, tabs, and line breaks in a string.
+    parameters:
+      text: Text that will be cleaned.
+    example:
+      code: |
+        TextHelper::cleanText("  Hello \n\t world  ");
+      output: |
+        Hello world
+  normalizeWhitespace:
+    description: Collapses any whitespace sequence into a single space and trims surrounding spaces.
+    parameters:
+      text: Text whose spacing will be normalized.
+    example:
+      code: |
+        TextHelper::normalizeWhitespace("  Hello \n\t world  ");
+      output: |
+        Hello world
+  removeLineBreaks:
+    description: Replaces line breaks with spaces.
+    parameters:
+      text: Text whose line breaks will be removed.
+    example:
+      code: |
+        TextHelper::removeLineBreaks("Hello\nworld");
+      output: |
+        Hello world
+  removeAccents:
+    description: Converts accented characters to ASCII.
+    parameters:
+      text: Text whose accents will be removed.
+    example:
+      code: |
+        TextHelper::removeAccents('ação');
+      output: |
+        acao
+  convertSpecialCharacters:
+    description: Replaces special characters with the helper fixed map.
+    parameters:
+      text: Text whose special characters will be replaced.
+    example:
+      code: |
+        TextHelper::convertSpecialCharacters('Rock & Roll / 2026');
+      output: |
+        Rock and Roll - 2026
+  slug:
+    description: Generates a URL-friendly slug, removing HTML and converting special characters before normalization.
+    parameters:
+      text: Text that will be converted to a slug.
+      separator: Separator used between slug words.
+      locale: Locale used to choose transliteration.
+    example:
+      code: |
+        TextHelper::slug('Ke$ha & AC/DC', '-', 'en-US');
+      output: |
+        kesha-and-ac-dc
+  excerpt:
+    description: Builds a clean text excerpt by removing HTML, normalizing spaces, and applying a character limit.
+    parameters:
+      text: Text that will be summarized.
+      limit: Maximum number of characters before the ellipsis.
+    example:
+      code: |
+        TextHelper::excerpt('<p>Beautiful clean content</p>', 14);
+      output: |
+        Beautiful clean...
+  capitalizeNames:
+    description: Capitalizes names while preserving lowercase connectors for the locale.
+    parameters:
+      name: Name that will be capitalized.
+      locale: Locale used to resolve connectors.
+    example:
+      code: |
+        TextHelper::capitalizeNames('john doe', 'en-US');
+      output: |
+        John Doe
+  sanitize:
+    description: Removes HTML, replaces line breaks with spaces, and normalizes duplicate spaces.
+    parameters:
+      text: Text that will be sanitized.
+    example:
+      code: |
+        TextHelper::sanitize("<p>Hello</p>\n world");
+      output: |
+        Hello world
+  normalizeNames:
+    description: Sanitizes and capitalizes a name in one call.
+    parameters:
+      text: Name that will be normalized.
+      locale: Locale used to resolve lowercase connectors.
+    example:
+      code: |
+        TextHelper::normalizeNames('  john   doe  ', 'en-US');
+      output: |
+        John Doe
+  firstName:
+    description: Returns the first name after sanitizing and capitalizing the full name.
+    parameters:
+      name: Input full name.
+      locale: Locale used to normalize the name before extraction.
+    example:
+      code: |
+        TextHelper::firstName('john doe', 'en-US');
+      output: |
+        John
+  initials:
+    description: Builds initials from a name, ignoring locale connectors when they exist.
+    parameters:
+      name: Name used to generate initials.
+      limit: Maximum number of initials returned.
+      locale: Locale used to ignore connectors.
+    example:
+      code: |
+        TextHelper::initials('john doe', 2, 'en-US');
+      output: |
+        JD
+  onlyNumbers:
+    description: Removes all non-numeric characters from a string.
+    parameters:
+      text: Text that will be filtered.
+    example:
+      code: |
+        TextHelper::onlyNumbers('(61) 99999-0000');
+      output: |
+        61999990000
+  emptyFallback:
+    description: Returns fallback text when the value is null or an empty string.
+    parameters:
+      value: Value that would be displayed.
+      fallback: Text displayed when the value is empty.
+    example:
+      code: |
+        TextHelper::emptyFallback('', 'Unavailable');
+      output: |
+        Unavailable
+  readingTime:
+    description: Estimates reading time in minutes based on word count.
+    parameters:
+      text: Text whose words will be counted.
+      wordsPerMinute: Words per minute used in the calculation.
+    example:
+      code: |
+        TextHelper::readingTime(str_repeat('word ', 201), 200);
+      output: |
+        2
+  booleanLabel:
+    description: Returns a localized label for a boolean value.
+    parameters:
+      value: Boolean value that will be converted to text.
+      locale: Locale used to choose the label.
+    example:
+      code: |
+        TextHelper::booleanLabel(false, 'en-US');
+      output: |
+        No
+  plural:
+    description: Pluralizes a word or translation key using locale rules when available.
+    parameters:
+      string: Base word or key defined in lang/{locale}/plurals.php.
+      count: Number of items or array that will be counted automatically.
+      locale: Locale used to resolve pluralization.
+    example:
+      code: |
+        TextHelper::plural('comments', 2, 'en-US');
+      output: |
+        comments

@@ -11,6 +11,7 @@ use App\Helpers\NotificationHelper;
 use App\Helpers\RouteHelper;
 use App\Helpers\RuleHelper;
 use App\Helpers\Support\LocaleResolver;
+use App\Helpers\TextHelper;
 use App\Support\HelperDemoCatalog;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -129,6 +130,7 @@ class TranslationTest extends TestCase
             'number-helper' => NumberHelper::class,
             'route-helper' => RouteHelper::class,
             'rule-helper' => RuleHelper::class,
+            'text-helper' => TextHelper::class,
         ] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
@@ -162,6 +164,7 @@ class TranslationTest extends TestCase
         $numberHelper = HelperDemoCatalog::find('number-helper');
         $routeHelper = HelperDemoCatalog::find('route-helper');
         $ruleHelper = HelperDemoCatalog::find('rule-helper');
+        $textHelper = HelperDemoCatalog::find('text-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
@@ -171,6 +174,7 @@ class TranslationTest extends TestCase
         $ordinal = collect($numberHelper['methods'])->firstWhere('name', 'ordinal');
         $importRoutesFromFolder = collect($routeHelper['methods'])->firstWhere('name', 'importRoutesFromFolder');
         $extractValue = collect($ruleHelper['methods'])->firstWhere('name', 'extractValue');
+        $slug = collect($textHelper['methods'])->firstWhere('name', 'slug');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -202,6 +206,10 @@ class TranslationTest extends TestCase
         $this->assertSame('Retorna o valor de uma regra textual aplicada a um campo específico.', $extractValue['summary']);
         $this->assertSame('Nome da regra que será extraída, sem dois-pontos ou valor.', $extractValue['parameters'][1]['description']);
         $this->assertSame(['5000'], $extractValue['example']['output']);
+
+        $this->assertSame('Gera um slug amigável para URL, removendo HTML e convertendo caracteres especiais antes da normalização.', $slug['summary']);
+        $this->assertSame('Texto que será convertido em slug.', $slug['parameters'][0]['description']);
+        $this->assertSame(['kesha-and-ac-dc'], $slug['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array

@@ -1,0 +1,236 @@
+name: TextHelper
+description: Normaliza, limita, conta, sanitiza, pluraliza e transforma textos para uso consistente na interface e nos dados da aplicação.
+works:
+  - Use TextHelper quando strings vindas de formulários, imports, comentários ou títulos precisam ser limpas antes de exibir, salvar ou transformar.
+  - Os métodos de limite, contagem e limpeza removem HTML quando isso faz sentido, evitando que tags sejam contadas como conteúdo real.
+  - Os métodos de nomes e pluralização podem receber locale para respeitar conectores em português e arquivos de tradução de plurais.
+  - slug() aplica o mapa de caracteres especiais antes do Str::slug(), preservando sentido em títulos com símbolos como &, $, @, # e /.
+example:
+  code: |
+    TextHelper::slug('Ke$ha & AC/DC', '-', 'en-US');
+  output: |
+    kesha-and-ac-dc
+methods:
+  limitByCharacters:
+    description: Limita um texto pela quantidade de caracteres depois de remover tags HTML.
+    parameters:
+      text: Texto que será truncado.
+      limit: Quantidade máxima de caracteres antes das reticências.
+    example:
+      code: |
+        TextHelper::limitByCharacters('<p>Lorem ipsum dolor sit amet</p>', 10);
+      output: |
+        Lorem ipsu...
+  limitByWords:
+    description: Limita um texto pela quantidade de palavras depois de remover tags HTML.
+    parameters:
+      text: Texto que será truncado.
+      limit: Quantidade máxima de palavras antes das reticências.
+    example:
+      code: |
+        TextHelper::limitByWords('<p>Lorem ipsum dolor sit amet</p>', 3);
+      output: |
+        Lorem ipsum dolor...
+  countWords:
+    description: Conta palavras em um texto, ignorando tags HTML e preservando palavras com acentos.
+    parameters:
+      text: Texto cujas palavras serão contadas.
+    example:
+      code: |
+        TextHelper::countWords('<p>Olá ação coração</p>');
+      output: |
+        3
+  countCharacters:
+    description: Conta caracteres em um texto depois de remover tags HTML, com opção de ignorar espaços e quebras.
+    parameters:
+      text: Texto cujos caracteres serão contados.
+      ignoreSpaces: Define se espaços, tabs e quebras de linha devem ser ignorados.
+    example:
+      code: |
+        TextHelper::countCharacters("Olá \n mundo", true);
+      output: |
+        8
+  removePunctuation:
+    description: Remove sinais de pontuação do texto.
+    parameters:
+      text: Texto cuja pontuação será removida.
+    example:
+      code: |
+        TextHelper::removePunctuation('Olá, mundo!');
+      output: |
+        Olá mundo
+  stripHTML:
+    description: Remove tags HTML de uma string.
+    parameters:
+      text: Texto que terá as tags removidas.
+    example:
+      code: |
+        TextHelper::stripHTML('<p>Olá <strong>mundo</strong></p>');
+      output: |
+        Olá mundo
+  cleanText:
+    description: Normaliza espaços duplicados, tabs e quebras de linha em uma string.
+    parameters:
+      text: Texto que será limpo.
+    example:
+      code: |
+        TextHelper::cleanText("  Olá \n\t mundo  ");
+      output: |
+        Olá mundo
+  normalizeWhitespace:
+    description: Compacta qualquer sequência de espaços em branco para um único espaço e remove espaços nas bordas.
+    parameters:
+      text: Texto cujo espaçamento será normalizado.
+    example:
+      code: |
+        TextHelper::normalizeWhitespace("  Olá \n\t mundo  ");
+      output: |
+        Olá mundo
+  removeLineBreaks:
+    description: Substitui quebras de linha por espaços.
+    parameters:
+      text: Texto cujas quebras de linha serão removidas.
+    example:
+      code: |
+        TextHelper::removeLineBreaks("Olá\nmundo");
+      output: |
+        Olá mundo
+  removeAccents:
+    description: Converte caracteres acentuados para ASCII.
+    parameters:
+      text: Texto cujos acentos serão removidos.
+    example:
+      code: |
+        TextHelper::removeAccents('ação');
+      output: |
+        acao
+  convertSpecialCharacters:
+    description: Substitui caracteres especiais pelo mapa fixo do helper.
+    parameters:
+      text: Texto que terá caracteres especiais substituídos.
+    example:
+      code: |
+        TextHelper::convertSpecialCharacters('Rock & Roll / 2026');
+      output: |
+        Rock and Roll - 2026
+  slug:
+    description: Gera um slug amigável para URL, removendo HTML e convertendo caracteres especiais antes da normalização.
+    parameters:
+      text: Texto que será convertido em slug.
+      separator: Separador usado entre as palavras do slug.
+      locale: Locale usado para escolher a transliteração.
+    example:
+      code: |
+        TextHelper::slug('Ke$ha & AC/DC', '-', 'en-US');
+      output: |
+        kesha-and-ac-dc
+  excerpt:
+    description: Cria um resumo limpo de texto, removendo HTML, normalizando espaços e aplicando limite de caracteres.
+    parameters:
+      text: Texto que será resumido.
+      limit: Quantidade máxima de caracteres antes das reticências.
+    example:
+      code: |
+        TextHelper::excerpt('<p>Ação coração brasileira</p>', 12);
+      output: |
+        Ação coração...
+  capitalizeNames:
+    description: Capitaliza nomes preservando conectores em minúsculo de acordo com o locale.
+    parameters:
+      name: Nome que será capitalizado.
+      locale: Locale usado para resolver conectores como da, de, do, das, dos e e.
+    example:
+      code: |
+        TextHelper::capitalizeNames('maria da silva e souza', 'pt-BR');
+      output: |
+        Maria da Silva e Souza
+  sanitize:
+    description: Remove HTML, troca quebras de linha por espaços e normaliza espaços duplicados.
+    parameters:
+      text: Texto que será sanitizado.
+    example:
+      code: |
+        TextHelper::sanitize("<p>Olá</p>\n mundo");
+      output: |
+        Olá mundo
+  normalizeNames:
+    description: Sanitiza e capitaliza um nome em uma única chamada.
+    parameters:
+      text: Nome que será normalizado.
+      locale: Locale usado para resolver conectores em minúsculo.
+    example:
+      code: |
+        TextHelper::normalizeNames('  maria   da silva  ', 'pt-BR');
+      output: |
+        Maria da Silva
+  firstName:
+    description: Retorna o primeiro nome depois de sanitizar e capitalizar o nome completo.
+    parameters:
+      name: Nome completo de entrada.
+      locale: Locale usado para normalizar o nome antes da extração.
+    example:
+      code: |
+        TextHelper::firstName('maria da silva', 'pt-BR');
+      output: |
+        Maria
+  initials:
+    description: Gera iniciais de um nome, ignorando conectores do locale quando existirem.
+    parameters:
+      name: Nome usado para gerar as iniciais.
+      limit: Quantidade máxima de iniciais retornadas.
+      locale: Locale usado para ignorar conectores como da, de, do, das, dos e e.
+    example:
+      code: |
+        TextHelper::initials('maria da silva', 2, 'pt-BR');
+      output: |
+        MS
+  onlyNumbers:
+    description: Remove todos os caracteres não numéricos de uma string.
+    parameters:
+      text: Texto que será filtrado.
+    example:
+      code: |
+        TextHelper::onlyNumbers('(61) 99999-0000');
+      output: |
+        61999990000
+  emptyFallback:
+    description: Retorna um fallback quando o valor é null ou uma string vazia.
+    parameters:
+      value: Valor que seria exibido.
+      fallback: Texto exibido quando o valor está vazio.
+    example:
+      code: |
+        TextHelper::emptyFallback('', 'Indisponível');
+      output: |
+        Indisponível
+  readingTime:
+    description: Estima o tempo de leitura em minutos com base na quantidade de palavras.
+    parameters:
+      text: Texto que terá as palavras contadas.
+      wordsPerMinute: Quantidade de palavras por minuto usada no cálculo.
+    example:
+      code: |
+        TextHelper::readingTime(str_repeat('palavra ', 201), 200);
+      output: |
+        2
+  booleanLabel:
+    description: Retorna um rótulo localizado para um valor booleano.
+    parameters:
+      value: Valor booleano que será convertido em texto.
+      locale: Locale usado para escolher o rótulo.
+    example:
+      code: |
+        TextHelper::booleanLabel(false, 'pt-BR');
+      output: |
+        Não
+  plural:
+    description: Pluraliza uma palavra ou chave de tradução usando as regras do locale quando existirem.
+    parameters:
+      string: Palavra base ou chave definida em lang/{locale}/plurals.php.
+      count: Número de itens ou array que será contado automaticamente.
+      locale: Locale usado para resolver a pluralização.
+    example:
+      code: |
+        TextHelper::plural('comments', 2, 'pt-BR');
+      output: |
+        comentários
