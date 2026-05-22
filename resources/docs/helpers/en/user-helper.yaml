@@ -1,0 +1,210 @@
+name: UserHelper
+description: Provides defensive shortcuts for authenticated user data, avatar output, email handling, summaries, and optional Spatie Permission integration.
+works:
+  - Use UserHelper in views, headers, menus, and admin components that need simple authenticated user data without repeating Auth checks.
+  - info() reads only direct attributes from the User model. It does not load relationships and returns the fallback when the user or column does not exist.
+  - userIsActive() is configurable for projects that use booleans, status strings, or numeric identifiers to represent active users.
+  - Spatie methods are optional. They return safe values when the package is installed but the User model has not implemented HasRoles yet.
+example:
+  code: |
+    UserHelper::userShortSummary();
+  output: |
+    Maria S. — maria@example.com
+methods:
+  userLogged:
+    description: Checks if there is an authenticated user.
+    example:
+      code: |
+        UserHelper::userLogged();
+      output: |
+        true
+  info:
+    description: Returns a direct authenticated user attribute or a fallback when the attribute does not exist.
+    parameters:
+      column: Column or direct attribute name from the User model.
+      default: Value returned when there is no authenticated user or when the attribute does not exist.
+    example:
+      code: |
+        UserHelper::info('name', 'Guest');
+      output: |
+        Maria da Silva
+  userIsActive:
+    description: Checks if a user attribute matches the value configured as active.
+    parameters:
+      column: Attribute that represents the user status.
+      activeValue: Value considered active in the project, such as true, active, or 1.
+    example:
+      code: |
+        UserHelper::userIsActive('status', 'active');
+      output: |
+        true
+  userId:
+    description: Returns the authenticated user identifier.
+    parameters:
+      column: Attribute used as identifier.
+    example:
+      code: |
+        UserHelper::userId();
+      output: |
+        1
+  username:
+    description: Returns the authenticated user's name.
+    parameters:
+      column: Attribute used as name.
+    example:
+      code: |
+        UserHelper::username();
+      output: |
+        Maria da Silva
+  userFirstName:
+    description: Returns the authenticated user's first name.
+    parameters:
+      column: Attribute used as name.
+    example:
+      code: |
+        UserHelper::userFirstName();
+      output: |
+        Maria
+  userShortName:
+    description: Returns the first name with the last surname initial.
+    parameters:
+      column: Attribute used as name.
+    example:
+      code: |
+        UserHelper::userShortName();
+      output: |
+        Maria S.
+  userEmail:
+    description: Returns the authenticated user's email.
+    parameters:
+      column: Attribute used as email.
+    example:
+      code: |
+        UserHelper::userEmail();
+      output: |
+        maria@example.com
+  emailDomain:
+    description: Returns the authenticated user's email domain.
+    parameters:
+      column: Attribute used as email.
+    example:
+      code: |
+        UserHelper::emailDomain();
+      output: |
+        example.com
+  maskEmail:
+    description: Masks the local part of an email address for safe display.
+    parameters:
+      email: Email that will be masked.
+      charactersToMask: Number of characters to mask. When null or lower than 1, masks the full part before @.
+      position: Mask position. Accepts start, middle, or end.
+    example:
+      code: |
+        UserHelper::maskEmail('maria.silva@example.com', 5, 'middle');
+      output: |
+        maria*****a@example.com
+  sanitizeEmail:
+    description: Removes invalid characters from an email and converts the result to lowercase.
+    parameters:
+      email: Email that will be sanitized.
+    example:
+      code: |
+        UserHelper::sanitizeEmail(' MARIA@example.com ');
+      output: |
+        maria@example.com
+  userAvatar:
+    description: Returns the public user avatar URL when the attribute exists, or a placeholder when provided.
+    parameters:
+      column: Attribute that stores the avatar path.
+      disk: Disk configured in filesystems.php.
+      placeholder: Public path used when the avatar does not exist.
+    example:
+      code: |
+        UserHelper::userAvatar('avatar', 'public', 'img/placeholders/avatars/default-avatar.jpg');
+      output: |
+        /storage/avatars/user.jpg
+  userAvatarPath:
+    description: Returns the stored user avatar path without resolving a public URL.
+    parameters:
+      column: Attribute that stores the avatar path.
+    example:
+      code: |
+        UserHelper::userAvatarPath();
+      output: |
+        avatars/user.jpg
+  userAvatarFallback:
+    description: Returns initials and a stable color for displaying a text avatar when there is no image.
+    parameters:
+      column: Attribute used as name to generate initials.
+    example:
+      code: |
+        UserHelper::userAvatarFallback();
+      output: |
+        ['initials' => 'MS', 'color' => '#3498db']
+  userSummary:
+    description: Returns a simple array with authenticated user id, name, and email.
+    parameters:
+      id: Attribute used as identifier.
+      name: Attribute used as name.
+      email: Attribute used as email.
+    example:
+      code: |
+        UserHelper::userSummary();
+      output: |
+        ['id' => 1, 'name' => 'Maria da Silva', 'email' => 'maria@example.com']
+  userShortSummary:
+    description: Returns a compact summary with abbreviated authenticated user name and email.
+    parameters:
+      name: Attribute used as name.
+      email: Attribute used as email.
+    example:
+      code: |
+        UserHelper::userShortSummary();
+      output: |
+        Maria S. — maria@example.com
+  userHasRole:
+    description: Checks if the authenticated user has a role when HasRoles is implemented.
+    parameters:
+      role: Role name that will be checked.
+    example:
+      code: |
+        UserHelper::userHasRole('admin');
+      output: |
+        true
+  userHasPermission:
+    description: Checks if the authenticated user has a permission.
+    parameters:
+      permission: Permission name that will be checked.
+    example:
+      code: |
+        UserHelper::userHasPermission('posts.edit');
+      output: |
+        true
+  userRoles:
+    description: Returns the user's role names when HasRoles is implemented.
+    example:
+      code: |
+        UserHelper::userRoles();
+      output: |
+        ['admin', 'editor']
+  userPermissions:
+    description: Returns all user permission names when HasRoles is implemented.
+    example:
+      code: |
+        UserHelper::userPermissions();
+      output: |
+        ['posts.create', 'posts.edit']
+  allPermissions:
+    description: Returns all permission names registered by Spatie Permission.
+    example:
+      code: |
+        UserHelper::allPermissions();
+      output: |
+        collect(['posts.create', 'posts.edit'])
+  allRoles:
+    description: Returns all role names registered by Spatie Permission.
+    example:
+      code: |
+        UserHelper::allRoles();
+      output: |
+        collect(['admin', 'editor'])

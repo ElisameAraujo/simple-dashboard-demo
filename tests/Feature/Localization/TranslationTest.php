@@ -12,6 +12,7 @@ use App\Helpers\RouteHelper;
 use App\Helpers\RuleHelper;
 use App\Helpers\Support\LocaleResolver;
 use App\Helpers\TextHelper;
+use App\Helpers\UserHelper;
 use App\Support\HelperDemoCatalog;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -131,6 +132,7 @@ class TranslationTest extends TestCase
             'route-helper' => RouteHelper::class,
             'rule-helper' => RuleHelper::class,
             'text-helper' => TextHelper::class,
+            'user-helper' => UserHelper::class,
         ] as $slug => $class) {
             $english = Yaml::parseFile(resource_path("docs/helpers/en/{$slug}.yaml"));
             $portuguese = Yaml::parseFile(resource_path("docs/helpers/pt_BR/{$slug}.yaml"));
@@ -165,6 +167,7 @@ class TranslationTest extends TestCase
         $routeHelper = HelperDemoCatalog::find('route-helper');
         $ruleHelper = HelperDemoCatalog::find('rule-helper');
         $textHelper = HelperDemoCatalog::find('text-helper');
+        $userHelper = HelperDemoCatalog::find('user-helper');
 
         $simpleDate = collect($dateHelper['methods'])->firstWhere('name', 'simpleDate');
         $updateFile = collect($diskHelper['methods'])->firstWhere('name', 'updateFile');
@@ -175,6 +178,8 @@ class TranslationTest extends TestCase
         $importRoutesFromFolder = collect($routeHelper['methods'])->firstWhere('name', 'importRoutesFromFolder');
         $extractValue = collect($ruleHelper['methods'])->firstWhere('name', 'extractValue');
         $slug = collect($textHelper['methods'])->firstWhere('name', 'slug');
+        $info = collect($userHelper['methods'])->firstWhere('name', 'info');
+        $userIsActive = collect($userHelper['methods'])->firstWhere('name', 'userIsActive');
 
         $this->assertSame('Formata uma data simples com dia, mês e ano.', $simpleDate['summary']);
         $this->assertSame('Data que será formatada.', $simpleDate['parameters'][0]['description']);
@@ -210,6 +215,14 @@ class TranslationTest extends TestCase
         $this->assertSame('Gera um slug amigável para URL, removendo HTML e convertendo caracteres especiais antes da normalização.', $slug['summary']);
         $this->assertSame('Texto que será convertido em slug.', $slug['parameters'][0]['description']);
         $this->assertSame(['kesha-and-ac-dc'], $slug['example']['output']);
+
+        $this->assertSame('Retorna um atributo direto do usuário autenticado ou um fallback quando o atributo não existe.', $info['summary']);
+        $this->assertSame('Nome da coluna ou atributo direto do model User.', $info['parameters'][0]['description']);
+        $this->assertSame(['Maria da Silva'], $info['example']['output']);
+
+        $this->assertSame('Verifica se um atributo do usuário corresponde ao valor configurado como ativo.', $userIsActive['summary']);
+        $this->assertSame('Valor considerado ativo no projeto, como true, active ou 1.', $userIsActive['parameters'][1]['description']);
+        $this->assertSame(['true'], $userIsActive['example']['output']);
     }
 
     private function flattenTranslations(string $locale): array
