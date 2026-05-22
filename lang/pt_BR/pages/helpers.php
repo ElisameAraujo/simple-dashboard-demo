@@ -50,7 +50,6 @@ return [
         'date' => 'Data de entrada que será formatada ou comparada.',
         'default' => 'Valor retornado quando a informação principal não existe.',
         'disk' => 'Disco configurado em config/filesystems.php.',
-        'eachSide' => 'Quantidade de páginas exibidas em cada lado da página atual.',
         'email' => 'Endereço de e-mail que será tratado.',
         'endDate' => 'Data final usada no cálculo de diferença.',
         'except' => 'Arquivo ou lista de arquivos que devem ser ignorados na importação.',
@@ -69,7 +68,6 @@ return [
         'notificationId' => 'ID da notificação que será atualizada ou removida.',
         'number' => 'Número que será formatado.',
         'oldFile' => 'Caminho do arquivo antigo que será removido.',
-        'paginator' => 'Instância de paginator do Laravel.',
         'path' => 'Caminho relativo da mídia dentro do disco.',
         'permission' => 'Permissão que será verificada no usuário autenticado.',
         'placeholder' => 'Asset de fallback usado quando a mídia não existe.',
@@ -185,22 +183,6 @@ return [
                 ],
                 'output' => [
                     'R$ 1.299,90',
-                ],
-            ],
-        ],
-        'pagination-helper' => [
-            'name' => 'PaginationHelper',
-            'description' => 'Monta uma lista compacta de números de página ao redor da posição atual do paginator.',
-            'works' => [
-                'Use PaginationHelper quando um componente customizado de paginação precisa das primeiras páginas, últimas páginas e janela próxima à página atual.',
-                'Ele lê currentPage(), lastPage() e onEachSide do paginator e retorna um array ordenado de páginas.',
-            ],
-            'example' => [
-                'usage' => [
-                    '$pages = PaginationHelper::build($products->paginate(15), 2);',
-                ],
-                'output' => [
-                    '[1, 2, 3, 4, 5, 19, 20]',
                 ],
             ],
         ],

@@ -50,7 +50,6 @@ return [
         'date' => 'Input date that will be formatted or compared.',
         'default' => 'Value returned when the main information does not exist.',
         'disk' => 'Disk configured in config/filesystems.php.',
-        'eachSide' => 'Number of pages shown on each side of the current page.',
         'email' => 'Email address that will be handled.',
         'endDate' => 'End date used in the difference calculation.',
         'except' => 'File or list of files that should be skipped during import.',
@@ -69,7 +68,6 @@ return [
         'notificationId' => 'Notification ID that will be updated or removed.',
         'number' => 'Number that will be formatted.',
         'oldFile' => 'Old file path that will be removed.',
-        'paginator' => 'Laravel paginator instance.',
         'path' => 'Relative media path inside the disk.',
         'permission' => 'Permission checked against the authenticated user.',
         'placeholder' => 'Fallback asset used when the media does not exist.',
@@ -185,22 +183,6 @@ return [
                 ],
                 'output' => [
                     '$1,299.90',
-                ],
-            ],
-        ],
-        'pagination-helper' => [
-            'name' => 'PaginationHelper',
-            'description' => 'Builds a compact list of page numbers around the current paginator position.',
-            'works' => [
-                'Use PaginationHelper when a custom pagination component needs the first pages, the last pages, and the window around the current page.',
-                'It reads currentPage(), lastPage(), and onEachSide from the paginator and returns a sorted array of page numbers.',
-            ],
-            'example' => [
-                'usage' => [
-                    '$pages = PaginationHelper::build($products->paginate(15), 2);',
-                ],
-                'output' => [
-                    '[1, 2, 3, 4, 5, 19, 20]',
                 ],
             ],
         ],

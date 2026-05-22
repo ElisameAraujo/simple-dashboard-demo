@@ -20,7 +20,6 @@ return [
         'MediaHelper'           => App\Helpers\MediaHelper::class,
         'NotificationHelper'    => App\Helpers\NotificationHelper::class,
         'NumberHelper'          => App\Helpers\NumberHelper::class,
-        'PaginationHelper'      => App\Helpers\PaginationHelper::class,
         'RouteHelper'           => App\Helpers\RouteHelper::class,
         'RuleHelper'            => App\Helpers\RuleHelper::class,
         'TextHelper'            => App\Helpers\TextHelper::class,

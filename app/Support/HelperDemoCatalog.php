@@ -21,7 +21,6 @@ class HelperDemoCatalog
         'media-helper' => ['alias' => 'MediaHelper', 'icon' => 'fa-regular fa-image'],
         'notification-helper' => ['alias' => 'NotificationHelper', 'icon' => 'fa-regular fa-bell'],
         'number-helper' => ['alias' => 'NumberHelper', 'icon' => 'fa-solid fa-arrow-down-1-9'],
-        'pagination-helper' => ['alias' => 'PaginationHelper', 'icon' => 'fa-solid fa-ellipsis'],
         'route-helper' => ['alias' => 'RouteHelper', 'icon' => 'fa-solid fa-route'],
         'rule-helper' => ['alias' => 'RuleHelper', 'icon' => 'fa-solid fa-scale-balanced'],
         'text-helper' => ['alias' => 'TextHelper', 'icon' => 'fa-solid fa-font'],
@@ -260,7 +259,6 @@ class HelperDemoCatalog
             'customName' => "'relatorio.pdf'",
             'date' => "'2026-05-19'",
             'disk' => "'public'",
-            'eachSide' => '2',
             'email' => "'john.doe@example.com'",
             'endDate' => "'2026-05-22'",
             'field' => "'title'",
@@ -297,7 +295,6 @@ class HelperDemoCatalog
             'default' => "'Guest'",
             'except' => "['debug']",
             'level' => '2',
-            'paginator' => '$paginator',
             default => self::defaultArgumentFor($parameter),
         };
     }
@@ -394,7 +391,6 @@ class HelperDemoCatalog
             'userRoles' => "['admin', 'editor']",
             'userPermissions' => "['posts.create', 'posts.edit']",
             'allRoles', 'allPermissions' => "collect(['admin', 'editor'])",
-            'build' => '[1, 2, 3, 8, 9, 10]',
             'listAllRoutes' => "[['uri' => 'helpers', 'name' => 'helpers.index']]",
             'downloadMedia' => 'BinaryFileResponse',
             default => 'mixed',
