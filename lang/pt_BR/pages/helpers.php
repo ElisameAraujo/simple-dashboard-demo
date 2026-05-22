@@ -60,6 +60,7 @@ return [
         'gender' => 'Gênero usado em ordinais em português. Use m para masculino ou f para feminino.',
         'height' => 'Altura usada no HTML gerado.',
         'id' => 'Coluna que representa o identificador do usuário.',
+        'ignoreSpaces' => 'Define se espaços e quebras devem ser ignorados na contagem.',
         'level' => 'Nível da heading HTML, como 1, 2 ou 3.',
         'limit' => 'Limite numérico aplicado ao método.',
         'locale' => 'Locale usado para formatar a saída.',
@@ -76,6 +77,7 @@ return [
         'role' => 'Role que será verificada no usuário autenticado.',
         'ruleName' => 'Nome da regra que será procurada, como max ou min.',
         'rulesSource' => 'Array de regras ou classe que expõe formRules().',
+        'separator' => 'Separador usado entre as palavras geradas.',
         'startDate' => 'Data inicial usada no cálculo de diferença.',
         'string' => 'Texto ou chave de pluralização.',
         'subfolder' => 'Subpasta dentro do namespace App\\Notifications.',
@@ -85,6 +87,7 @@ return [
         'value' => 'Valor numérico que será formatado.',
         'width' => 'Largura usada no HTML gerado.',
         'withRandomLinks' => 'Define se os parágrafos gerados terão links fictícios.',
+        'wordsPerMinute' => 'Quantidade de palavras por minuto usada para estimar leitura.',
     ],
     'helpers' => [
         'date-helper' => [

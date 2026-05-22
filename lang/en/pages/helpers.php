@@ -60,6 +60,7 @@ return [
         'gender' => 'Gender used by Portuguese ordinals. Use m for masculine or f for feminine.',
         'height' => 'Height used in the generated HTML.',
         'id' => 'Column that represents the user identifier.',
+        'ignoreSpaces' => 'Whether spaces and line breaks should be ignored while counting.',
         'level' => 'HTML heading level, such as 1, 2, or 3.',
         'limit' => 'Numeric limit applied to the method.',
         'locale' => 'Locale used to format the output.',
@@ -76,6 +77,7 @@ return [
         'role' => 'Role checked against the authenticated user.',
         'ruleName' => 'Rule name to search for, such as max or min.',
         'rulesSource' => 'Rules array or class that exposes formRules().',
+        'separator' => 'Separator used between generated words.',
         'startDate' => 'Start date used in the difference calculation.',
         'string' => 'Text or pluralization key.',
         'subfolder' => 'Subfolder inside the App\\Notifications namespace.',
@@ -85,6 +87,7 @@ return [
         'value' => 'Numeric value that will be formatted.',
         'width' => 'Width used in the generated HTML.',
         'withRandomLinks' => 'Whether generated paragraphs should include fake links.',
+        'wordsPerMinute' => 'Words per minute used to estimate reading time.',
     ],
     'helpers' => [
         'date-helper' => [
