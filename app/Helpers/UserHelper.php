@@ -2,25 +2,26 @@
 
 namespace App\Helpers;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserHelper
 {
     /**
-     * `userModel`:
-     * Returns the complete model of the authenticated user
+     * Returns the authenticated user model.
      */
-    private static function userModel()
+    private static function userModel(): ?Authenticatable
     {
         return Auth::user();
     }
 
     /**
-     * `userLogged`:
-     * Checks if a user is logged in
+     * Checks if a user is authenticated.
      */
     public static function userLogged(): bool
     {
@@ -28,71 +29,79 @@ class UserHelper
     }
 
     /**
-     * `info`:
-     * Returns any information from the authenticated user
-     * @param string $column Name of the column to be returned.
-     * @param mixed $default Default value if the column does not exist.
-     * @return mixed
+     * Returns a direct attribute from the authenticated user.
+     * @param string $column User attribute name.
+     * @param mixed $default Value returned when the user or attribute does not exist.
+     * @return mixed User attribute value or default.
      */
-    public static function info(string $column, $default = null)
+    public static function info(string $column, mixed $default = null): mixed
     {
-        return self::userLogged()
-            ? (self::userModel()->{$column} ?? $default)
-            : $default;
+        $user = self::userModel();
+
+        if (!$user instanceof Model || !array_key_exists($column, $user->getAttributes())) {
+            return $default;
+        }
+
+        return $user->getAttribute($column) ?? $default;
     }
 
     /**
-     * `userIsActive`:
-     * Checks if a user's boolean column is active
-     * @param string $column Boolean column name (e.g., "active").
-     * @return bool
+     * Checks if a user attribute matches the expected active value.
+     * @param string $column Attribute that represents the user status.
+     * @param mixed $activeValue Value considered active for the project.
+     * @return bool Whether the user is considered active.
      */
-    public static function userIsActive(string $column = 'active'): bool
+    public static function userIsActive(string $column = 'active', mixed $activeValue = true): bool
     {
-        return self::info($column, false);
+        $value = self::info($column);
+
+        if ($value === null) {
+            return false;
+        }
+
+        return self::valuesMatch($value, $activeValue);
     }
 
     /**
-     * `userId`:
-     * Returns the user ID
-     * @param string $column Column name (default: "id").
-     * @return mixed
+     * Returns the authenticated user ID.
+     * @param string $column Attribute used as identifier.
+     * @return mixed User ID or null.
      */
-    public static function userId(string $column = 'id')
-    {
-        return self::info($column);
-    }
-
-    /**
-     * `username`:
-     * Returns the user's full name
-     * @param string $column Column name (default: "name").
-     * @return mixed
-     */
-    public static function username(string $column = 'name')
+    public static function userId(string $column = 'id'): mixed
     {
         return self::info($column);
     }
 
     /**
-     * `userFirstName`:
-     * Returns the user's first name
-     * @param string $column Column name (default: "name").
-     * @return string|null
+     * Returns the authenticated user's name.
+     * @param string $column Attribute used as name.
+     * @return string|null User name.
      */
-    public static function userFirstName(string $column = 'name')
+    public static function username(string $column = 'name'): ?string
+    {
+        $name = self::info($column);
+
+        return is_string($name) && trim($name) !== '' ? $name : null;
+    }
+
+    /**
+     * Returns the authenticated user's first name.
+     * @param string $column Attribute used as name.
+     * @return string|null First name.
+     */
+    public static function userFirstName(string $column = 'name'): ?string
     {
         $name = self::username($column);
-        return $name ? explode(' ', trim($name))[0] : null;
+
+        return $name ? TextHelper::firstName($name) : null;
     }
 
     /**
-     * `userShortName`:
-     * Returns the abbreviated name (e.g., "João S.")
-     * @param string $column Column name (default: "name").
-     * @return string|null 
+     * Returns the user's first name plus abbreviated last name.
+     * @param string $column Attribute used as name.
+     * @return string|null Short name.
      */
-    public static function userShortName(string $column = 'name')
+    public static function userShortName(string $column = 'name'): ?string
     {
         $name = self::username($column);
 
@@ -100,43 +109,49 @@ class UserHelper
             return null;
         }
 
-        $parts = explode(' ', trim($name));
+        $parts = preg_split('/\s+/u', TextHelper::normalizeWhitespace($name), -1, PREG_SPLIT_NO_EMPTY);
+
+        if (!$parts) {
+            return null;
+        }
 
         return count($parts) > 1
-            ? $parts[0] . ' ' . mb_substr(end($parts), 0, 1) . '.'
+            ? $parts[0] . ' ' . Str::upper(Str::substr(end($parts), 0, 1)) . '.'
             : $parts[0];
     }
 
     /**
-     * `userEmail`:
-     * Returns the user's email
-     * @param string $column Column name (default: "email").
-     * @return mixed
+     * Returns the authenticated user's email.
+     * @param string $column Attribute used as email.
+     * @return string|null User email.
      */
-    public static function userEmail(string $column = 'email')
+    public static function userEmail(string $column = 'email'): ?string
     {
-        return self::info($column);
+        $email = self::info($column);
+
+        return is_string($email) && trim($email) !== '' ? $email : null;
     }
 
     /**
-     * `emailDomain`:
-     * Returns the email domain of the user
-     * @param string $column Column name (default: "email").
-     * @return string|mixed|null
+     * Returns the domain from the authenticated user's email.
+     * @param string $column Attribute used as email.
+     * @return string|null Email domain.
      */
     public static function emailDomain(string $column = 'email'): ?string
     {
         $email = self::userEmail($column);
-        return $email ? explode('@', $email)[1] ?? null : null;
+
+        return $email && str_contains($email, '@')
+            ? explode('@', $email, 2)[1]
+            : null;
     }
 
     /**
-     * `maskEmail`:
-     * Hides part of the user's email (e.g., j***@gmail.com)
-     * @param string $column Column name (default: "email").
-     * @param int|null $charactersToMask Number of characters to mask (default: null = all).
-     * @param string|null $position Position to mask (start, middle, end) (default: null = end).
-     * @return string|mixed|null
+     * Masks the local part of an email address.
+     * @param string $email Email that will be masked.
+     * @param int|null $charactersToMask Number of characters to mask.
+     * @param string|null $position Position to mask: start, middle, or end.
+     * @return string Masked email.
      */
     public static function maskEmail(string $email, ?int $charactersToMask = null, ?string $position = null): string
     {
@@ -146,118 +161,102 @@ class UserHelper
 
         [$local, $domain] = explode('@', $email, 2);
 
-        // If no parameters were passed → mask everything
-        if ($charactersToMask === null && $position === null) {
-            return self::maskAll($local) . '@' . $domain;
-        }
-
-        // If charactersToMask is 0 → ignore and mask everything
-        if ($charactersToMask === 0) {
+        if ($charactersToMask === null || $charactersToMask <= 0) {
             $charactersToMask = strlen($local);
         }
 
-        // If charactersToMask is null → assume that it should mask everything
-        if ($charactersToMask === null) {
-            $charactersToMask = strlen($local);
-        }
-
-        // If charactersToMask exceeds the size → mask all
         if ($charactersToMask >= strlen($local)) {
             return self::maskAll($local) . '@' . $domain;
         }
 
-        // Normalize position
-        $position = self::normalizePosition($position);
-
-        return match ($position) {
-            'start'  => self::maskStart($local, $charactersToMask) . '@' . $domain,
+        return match (self::normalizePosition($position)) {
+            'start' => self::maskStart($local, $charactersToMask) . '@' . $domain,
             'middle' => self::maskMiddle($local, $charactersToMask) . '@' . $domain,
-            'end'    => self::maskEnd($local, $charactersToMask) . '@' . $domain,
-            default  => self::maskEnd($local, $charactersToMask) . '@' . $domain,
+            default => self::maskEnd($local, $charactersToMask) . '@' . $domain,
         };
     }
 
     /**
-     * `sanitizeEmail`:
-     * Sanitizes an email by removing invalid characters and converting to lowercase
-     * @param string $email Email to be sanitized.
-     * @return string
+     * Sanitizes an email by removing invalid characters and converting it to lowercase.
+     * @param string $email Email that will be sanitized.
+     * @return string Sanitized email.
      */
     public static function sanitizeEmail(string $email): string
     {
-        return Str::lower(filter_var($email, FILTER_SANITIZE_EMAIL));
+        return Str::lower(filter_var(trim($email), FILTER_SANITIZE_EMAIL));
     }
 
     /**
-     * `userAvatar`:
-     * Returns the user's avatar (final URL)
-     * @param string $column Column name (default: "avatar").
+     * Returns the user's avatar URL when an avatar attribute exists.
+     * @param string $column Attribute that stores the avatar path.
      * @param string $disk Storage disk.
-     * @return string|null
+     * @param string|null $placeholder Public placeholder path used when the avatar does not exist.
+     * @return string|null Avatar URL or placeholder URL.
      */
-    public static function userAvatar(string $column = 'avatar', string $disk = 'public')
+    public static function userAvatar(string $column = 'avatar', string $disk = 'public', ?string $placeholder = null): ?string
+    {
+        $path = self::userAvatarPath($column);
+
+        if (!$path) {
+            return $placeholder ? asset($placeholder) : null;
+        }
+
+        return MediaHelper::showMedia($path, $disk, $placeholder);
+    }
+
+    /**
+     * Returns the user's avatar path without resolving a URL.
+     * @param string $column Attribute that stores the avatar path.
+     * @return string|null Avatar path.
+     */
+    public static function userAvatarPath(string $column = 'avatar'): ?string
     {
         $path = self::info($column);
-        return MediaHelper::showMedia($path, $disk);
+
+        return is_string($path) && trim($path) !== '' ? $path : null;
     }
 
     /**
-     * `userAvatarPath`:
-     * Returns the user's avatar path without resolving URL
-     * @param string $column Column name (default: "avatar").
-     * @return mixed
-     */
-    public static function userAvatarPath(string $column = 'avatar')
-    {
-        return self::info($column);
-    }
-
-    /**
-     * `userAvatarFallback`:
-     * Generates data for fallback avatar (initials + color)
-     * @param string $column Column of username (default: "name").
-     * @return array|mixed
+     * Generates fallback avatar data with initials and a stable color.
+     * @param string $column Attribute used as name.
+     * @return array{initials: string, color: string}
      */
     public static function userAvatarFallback(string $column = 'name'): array
     {
         $name = self::username($column);
-
-        $initials = $name
-            ? Str::upper(mb_substr($name, 0, 1))
-            : '?';
+        $initials = $name ? TextHelper::initials($name, 2) : '?';
 
         $colors = ['#1abc9c', '#3498db', '#9b59b6', '#e67e22', '#e74c3c'];
-        $color = $colors[self::userId() % count($colors)] ?? '#3498db';
+        $userId = self::userId();
+        $index = is_numeric($userId) ? (int) $userId % count($colors) : 1;
 
         return [
             'initials' => $initials,
-            'color' => $color,
+            'color' => $colors[$index] ?? '#3498db',
         ];
     }
 
     /**
-     * `userSummary`
-     * Returns a simple summary of the user
-     * @param string $id Define the user's ID column (default: id)
-     * @param string $name Define the user's name column (default: name)
-     * @param string $email Define the user's email column (default: email)
-     * @return array
+     * Returns a simple authenticated user summary.
+     * @param string $id Attribute used as identifier.
+     * @param string $name Attribute used as name.
+     * @param string $email Attribute used as email.
+     * @return array{id: mixed, name: string|null, email: string|null}
      */
     public static function userSummary(string $id = 'id', string $name = 'name', string $email = 'email'): array
     {
         return [
-            'id'    => self::userId($id),
-            'name'  => self::username($name),
+            'id' => self::userId($id),
+            'name' => self::username($name),
             'email' => self::userEmail($email),
         ];
     }
 
     /**
-     * `userShortSummary`
-     * Returns a short summary of the user (e.g., "João S. — joao@email.com")
-     * @param string $name Define the user's name column (default: name)
-     * @param string $email Define the user's email column (default: email)
-     * @return string|null
+     * Returns a compact authenticated user summary.
+     * @param string $name Attribute used as name.
+     * @param string $email Attribute used as email.
+     * @return string|null Compact user summary.
      */
     public static function userShortSummary(string $name = 'name', string $email = 'email'): ?string
     {
@@ -267,77 +266,97 @@ class UserHelper
         return $name && $email ? "{$name} — {$email}" : null;
     }
 
-    /*-----------------------------------------------------------------------------------------
-     *  SPATIE/LARAVEL-PERMISSION
-     * 
-     * If you intend to use permission and user role management using spatie/laravel-permission, 
-     * * these functions will speed up access to some internal package functions
-     * ----------------------------------------------------------------------------------------*/
-
     /**
-     * `userHasRole`:
-     * Verifies if the user has a role
-     * @param string $role Name of the role to check if the user has
-     * @return bool
+     * Checks if the authenticated user has a role when Spatie roles are implemented.
+     * @param string $role Role name.
+     * @return bool Whether the user has the role.
      */
     public static function userHasRole(string $role): bool
     {
-        return self::userLogged() && self::userModel()->hasRole($role);
+        $user = self::userModel();
+
+        return $user && method_exists($user, 'hasRole') && $user->hasRole($role);
     }
 
     /**
-     * `userHasPermission`:
-     * Verifies if the user has a permission
-     * @param string $permission Name of the permission to check if the user has
-     * @return bool
+     * Checks if the authenticated user has a permission.
+     * @param string $permission Permission name.
+     * @return bool Whether the user has the permission.
      */
     public static function userHasPermission(string $permission): bool
     {
-        return self::userLogged() && self::userModel()->can($permission);
+        $user = self::userModel();
+
+        if (!$user) {
+            return false;
+        }
+
+        if (method_exists($user, 'hasPermissionTo')) {
+            return $user->hasPermissionTo($permission);
+        }
+
+        return method_exists($user, 'can') && $user->can($permission);
     }
 
     /**
-     * `userRoles`:
-     * Returns an array with all roles of the user
-     * @return array
+     * Returns role names when Spatie roles are implemented.
+     * @return array<int, string>
      */
     public static function userRoles(): array
     {
-        return self::userLogged()
-            ? self::userModel()->roles->pluck('name')->toArray()
-            : [];
+        $user = self::userModel();
+
+        if (!$user || !method_exists($user, 'getRoleNames')) {
+            return [];
+        }
+
+        return $user->getRoleNames()->values()->all();
     }
 
     /**
-     * `userPermissions`:
-     * Returns all permissions of the user
-     * @return array
+     * Returns all permission names when Spatie permissions are implemented.
+     * @return array<int, string>
      */
     public static function userPermissions(): array
     {
-        return self::userLogged()
-            ? self::userModel()->permissions->pluck('name')->toArray()
-            : [];
+        $user = self::userModel();
+
+        if (!$user || !method_exists($user, 'getAllPermissions')) {
+            return [];
+        }
+
+        return $user->getAllPermissions()->pluck('name')->values()->all();
     }
 
     /**
-     * `allPermissions`:
-     * Returns all permissions existing in the Laravel Permission from Permission model.
-     * @return \Illuminate\Support\Collection<int|string, mixed>
+     * Returns all permission names registered by Spatie.
+     * @return Collection<int, string>
      */
-    public static function allPermissions()
+    public static function allPermissions(): Collection
     {
-        return Permission::all()->pluck('name');
+        return Permission::query()->pluck('name');
     }
 
     /**
-     * `allRoles`:
-     * Returns all roles existing in the Laravel Permission's from Role model.
-     * @return \Illuminate\Support\Collection<int|string, mixed>
+     * Returns all role names registered by Spatie.
+     * @return Collection<int, string>
      */
-    public static function allRoles()
+    public static function allRoles(): Collection
     {
-        return Role::all()->pluck('name');
+        return Role::query()->pluck('name');
+    }
+
+    private static function valuesMatch(mixed $value, mixed $expected): bool
+    {
+        if (is_bool($expected)) {
+            return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === $expected;
+        }
+
+        if (is_scalar($value) && is_scalar($expected)) {
+            return (string) $value === (string) $expected;
+        }
+
+        return $value === $expected;
     }
 
     private static function maskAll(string $local): string
@@ -349,14 +368,11 @@ class UserHelper
     {
         $position = strtolower($position ?? 'end');
 
-        return in_array($position, ['start', 'middle', 'end'])
+        return in_array($position, ['start', 'middle', 'end'], true)
             ? $position
             : 'end';
     }
 
-    /*-----------------------------------------------------------------------------------------
-     *  PRIVATE FUNCTIONS
-     * ----------------------------------------------------------------------------------------*/
     private static function maskStart(string $local, int $count): string
     {
         return str_repeat('*', $count) . substr($local, $count);
@@ -370,17 +386,14 @@ class UserHelper
     private static function maskMiddle(string $local, int $count): string
     {
         $length = strlen($local);
-
-        // Divide o local em duas partes
         $middleStart = (int) ceil($length / 2);
 
-        // Ajusta caso ultrapasse o limite
         if ($middleStart + $count > $length) {
             $middleStart = $length - $count;
         }
 
         $start = substr($local, 0, $middleStart);
-        $end   = substr($local, $middleStart + $count);
+        $end = substr($local, $middleStart + $count);
 
         return $start . str_repeat('*', $count) . $end;
     }
