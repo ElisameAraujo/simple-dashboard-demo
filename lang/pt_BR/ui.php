@@ -6,6 +6,7 @@ return [
     'demo' => 'Demo',
     'helpers' => 'Helpers',
     'language' => 'Idioma',
+    'modules' => 'Módulos',
     'project' => 'Projeto',
     'readme' => 'README',
     'repository' => 'Repositório',

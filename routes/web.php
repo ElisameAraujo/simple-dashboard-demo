@@ -13,6 +13,7 @@ Route::get('locale/{locale}', [LocaleController::class, 'switch'])
 
 RouteHelper::importRoutesFromFolder('demo', 'dashboard');
 RouteHelper::importRoutesFromFolder('demo', 'helpers');
+RouteHelper::importRoutesFromFolder('demo', 'modules');
 RouteHelper::importRoutesFromFolder('demo', 'profile');
 
 /********************************************************

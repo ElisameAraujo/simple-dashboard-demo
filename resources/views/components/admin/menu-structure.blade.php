@@ -93,6 +93,23 @@
                 </a>
             </li>
         @endforeach
+        <h2 class="menu-section">{{ __('ui.modules') }}</h2>
+        <li>
+            <a class="menu-item {{ request()->routeIs('modules.index') ? 'active' : '' }}"
+                href="{{ route('modules.index') }}">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                {{ __('ui.summary') }}
+            </a>
+        </li>
+        @foreach (\App\Support\ModuleDemoCatalog::all() as $menuModule)
+            <li>
+                <a class="menu-item {{ request()->routeIs('modules.show') && request()->route('module') === $menuModule['slug'] ? 'active' : '' }}"
+                    href="{{ $menuModule['url'] }}">
+                    <i class="{{ $menuModule['icon'] }}"></i>
+                    {{ $menuModule['name'] }}
+                </a>
+            </li>
+        @endforeach
         <h2 class="menu-section">{{ __('ui.account') }}</h2>
         <li data-submenu-id="account-settings"
             class="{{ request()->routeIs('account.*') ? 'open' : '' }}">

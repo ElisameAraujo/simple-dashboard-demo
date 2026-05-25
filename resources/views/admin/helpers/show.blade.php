@@ -28,10 +28,10 @@
 @endsection
 
 @section('conteudo')
-    <section class="helper-detail">
-        <div class="helper-detail-intro">
-            <div class="helper-detail-title">
-                <span class="helper-card-icon">
+    <section class="demo-docs-detail">
+        <div class="demo-docs-detail-intro">
+            <div class="demo-docs-detail-title">
+                <span class="demo-docs-card-icon">
                     <i class="{{ $helper['icon'] }}"></i>
                 </span>
                 <div>
@@ -45,8 +45,8 @@
             </a>
         </div>
 
-        <div class="helper-detail-grid">
-            <article class="helper-panel helper-panel-wide">
+        <div class="demo-docs-detail-grid">
+            <article class="demo-docs-panel demo-docs-panel-wide">
                 <div class="dashboard-panel-header">
                     <div>
                         <h2>{{ __('pages/helpers.sections.how_it_works.title') }}</h2>
@@ -54,14 +54,14 @@
                     </div>
                 </div>
 
-                <div class="helper-explanation-list">
+                <div class="demo-docs-explanation-list">
                     @foreach ($helper['works'] as $item)
                         <p>{{ $item }}</p>
                     @endforeach
                 </div>
             </article>
 
-            <article class="helper-panel helper-panel-wide">
+            <article class="demo-docs-panel demo-docs-panel-wide">
                 <div class="dashboard-panel-header">
                     <div>
                         <h2>{{ __('pages/helpers.sections.methods.title') }}</h2>
@@ -69,10 +69,10 @@
                     </div>
                 </div>
 
-                <div class="helper-method-list">
+                <div class="demo-docs-method-list">
                     @foreach ($helper['methods'] as $method)
-                        <article class="helper-method-card" id="{{ $method['name'] }}">
-                            <div class="helper-method-card-header">
+                        <article class="demo-docs-method-card" id="{{ $method['name'] }}">
+                            <div class="demo-docs-method-card-header">
                                 <div>
                                     <h3>{{ $method['name'] }}</h3>
                                     <code>{{ $helper['alias'] }}::{{ $method['signature'] }}</code>
@@ -83,8 +83,8 @@
 
                             <p>{{ $method['summary'] }}</p>
 
-                            <div class="helper-method-grid">
-                                <div class="helper-method-params">
+                            <div class="demo-docs-method-grid">
+                                <div class="demo-docs-params">
                                     <h4>{{ __('pages/helpers.methods.parameters') }}</h4>
                                     @if (count($method['parameters']) === 0)
                                         <p>{{ __('pages/helpers.methods.no_parameters') }}</p>

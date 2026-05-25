@@ -1,0 +1,128 @@
+name: ImagePreview
+description: Preview visual de imagens para formulários Livewire de criação e edição.
+summary:
+  - "ImagePreview descreve melhor a função real do componente: exibir o preview de uma imagem selecionada ou existente."
+  - A persistência do arquivo continua no formulário pai, então o componente fica reutilizável em produtos, posts, banners, perfis, categorias e fluxos em modal.
+  - Ele usa o binding modelable do Livewire para expor o upload temporário ao componente pai sem JavaScript customizado.
+variations:
+  - mode: create
+    title: Modo create
+    description: Mostra uma área vazia de preview até uma nova imagem ser selecionada.
+    behaviors:
+      - Começa com o texto de estado vazio.
+      - Usa o upload temporário selecionado como preview.
+      - Envia o arquivo selecionado para a propriedade pai por wire:model.live.
+      - Não precisa de path, disk, placeholder nem existing.
+  - mode: edit
+    title: Modo edit
+    description: Mostra a imagem atual primeiro e troca o preview quando um novo upload é selecionado.
+    behaviors:
+      - Lê a imagem atual por path e disk quando existing é true.
+      - Usa placeholder quando o arquivo salvo não é encontrado.
+      - Mantém a imagem existente visível até o usuário selecionar um upload substituto.
+      - Mantém o botão de salvar configurável para formulários que salvam a imagem separadamente.
+configuration:
+  - name: mode
+    type: string
+    default: create
+    description: Controla o fluxo visual. Use create para novos registros e edit para registros existentes.
+  - name: name
+    type: string
+    default: image
+    description: Nome do input file e chave de erro de validação usada pelo formulário pai.
+  - name: size
+    type: string
+    default: col-span-3
+    description: Classes de layout aplicadas ao wrapper do componente.
+  - name: existing
+    type: bool
+    default: false
+    description: Informa se o componente deve renderizar uma imagem já salva.
+  - name: path
+    type: string|null
+    default: null
+    description: Caminho relativo da imagem existente dentro do disk configurado.
+  - name: disk
+    type: string|null
+    default: public
+    description: Disk do filesystem Laravel usado para resolver a imagem existente.
+  - name: placeholder
+    type: string|null
+    default: null
+    description: Asset público exibido quando a imagem existente não é encontrada.
+  - name: accept
+    type: string
+    default: image/*
+    description: Valor nativo de accept do input file.
+  - name: hasError
+    type: bool
+    default: false
+    description: Força a borda de erro quando o componente pai valida o upload fora do componente.
+  - name: showSaveButton
+    type: bool|null
+    default: null
+    description: Quando null, o modo edit mostra o botão de salvar e o modo create esconde. Passe false quando o formulário pai já tiver seu próprio submit.
+implementation:
+  - title: Uso em create
+    code: |
+      <livewire:global.image-preview
+          mode="create"
+          name="banner_image"
+          size="col-span-12"
+          wire:model.live="banner_image"
+      />
+  - title: Uso em edit
+    code: |
+      <livewire:global.image-preview
+          mode="edit"
+          name="banner_image"
+          size="col-span-12"
+          :existing="filled($banner->banner_image)"
+          :path="$banner->banner_image"
+          disk="banners"
+          placeholder="img/placeholders/banner-image-not-found.jpg"
+          wire:model.live="banner_image"
+      />
+  - title: Fluxo de salvamento no pai
+    code: |
+      use App\Livewire\Traits\NormalizesLivewireUploads;
+
+      public $banner_image;
+
+      public function save(): void
+      {
+          $this->normalizeUpload('banner_image');
+
+          $data = $this->validate([
+              'banner_image' => ['required', 'image', 'max:2048'],
+          ]);
+
+          $path = DiskHelper::saveFile($data['banner_image'], 'banners');
+      }
+  - title: Fluxo de substituição no pai
+    code: |
+      use App\Livewire\Traits\NormalizesLivewireUploads;
+
+      public $banner_image;
+
+      public function updateImage(): void
+      {
+          $this->normalizeUpload('banner_image');
+
+          $data = $this->validate([
+              'banner_image' => ['required', 'image', 'max:2048'],
+          ]);
+
+          $path = DiskHelper::updateFile($data['banner_image'], $this->banner->banner_image, 'banners');
+      }
+improvements:
+  - O componente instalado foi nomeado como ImagePreview para que a API pública acompanhe a responsabilidade do componente.
+  - O clique com JavaScript inline foi trocado por comportamento nativo de label e input.
+  - Foram adicionados textos traduzidos para os estados vazio, carregando, selecionar, alterar e salvar.
+  - A utility image-preview que existia no projeto de origem, mas não veio no pacote exportado, foi adicionada.
+  - IDs fixos duplicados foram removidos para permitir múltiplos previews na mesma página.
+  - A ação visual de remover foi removida porque excluir imagem é decisão do formulário pai, não comportamento de preview.
+notes:
+  - O componente apenas exibe o preview. Salvar, substituir e remover arquivos fisicamente é responsabilidade do formulário ou componente Livewire pai.
+  - Fluxos em modal que reutilizam a mesma propriedade para o caminho persistido e o upload temporário devem chamar NormalizesLivewireUploads antes da validação.
+  - MediaHelper e DiskHelper continuam sendo dependências esperadas da base do dashboard.

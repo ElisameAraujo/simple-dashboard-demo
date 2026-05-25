@@ -1,0 +1,128 @@
+name: ImagePreview
+description: Visual Livewire image preview for create and edit forms.
+summary:
+  - "ImagePreview describes its real job: previewing selected or existing images."
+  - It keeps file persistence in the parent form, so the component stays reusable across products, posts, banners, profile images, categories, and modal flows.
+  - It uses Livewire's modelable binding to expose the selected temporary upload to the parent component without custom JavaScript.
+variations:
+  - mode: create
+    title: Create mode
+    description: Shows an empty preview area until a new image is selected.
+    behaviors:
+      - Starts with the empty state text.
+      - Uses the selected temporary upload as the preview.
+      - Sends the uploaded file to the parent property through wire:model.live.
+      - Does not need path, disk, placeholder, or existing.
+  - mode: edit
+    title: Edit mode
+    description: Shows the current image first, then replaces the preview when a new upload is selected.
+    behaviors:
+      - Reads the current image from path and disk when existing is true.
+      - Falls back to placeholder when the stored file cannot be found.
+      - Keeps the existing image visible until the user selects a replacement upload.
+      - Keeps the save button configurable for forms that save the image separately.
+configuration:
+  - name: mode
+    type: string
+    default: create
+    description: Controls the visual flow. Use create for new records and edit for existing records.
+  - name: name
+    type: string
+    default: image
+    description: File input name and validation error key used by the parent form.
+  - name: size
+    type: string
+    default: col-span-3
+    description: Layout classes applied to the component wrapper.
+  - name: existing
+    type: bool
+    default: false
+    description: Tells the component whether it should render an already saved image.
+  - name: path
+    type: string|null
+    default: null
+    description: Relative path of the existing image inside the configured disk.
+  - name: disk
+    type: string|null
+    default: public
+    description: Laravel filesystem disk used to resolve the existing image.
+  - name: placeholder
+    type: string|null
+    default: null
+    description: Public asset shown when the existing image is missing.
+  - name: accept
+    type: string
+    default: image/*
+    description: Native file input accept value.
+  - name: hasError
+    type: bool
+    default: false
+    description: Forces the error border when the parent validates the upload outside the component.
+  - name: showSaveButton
+    type: bool|null
+    default: null
+    description: When null, edit mode shows the save button and create mode hides it. Pass false when the parent form has its own submit button.
+implementation:
+  - title: Create usage
+    code: |
+      <livewire:global.image-preview
+          mode="create"
+          name="banner_image"
+          size="col-span-12"
+          wire:model.live="banner_image"
+      />
+  - title: Edit usage
+    code: |
+      <livewire:global.image-preview
+          mode="edit"
+          name="banner_image"
+          size="col-span-12"
+          :existing="filled($banner->banner_image)"
+          :path="$banner->banner_image"
+          disk="banners"
+          placeholder="img/placeholders/banner-image-not-found.jpg"
+          wire:model.live="banner_image"
+      />
+  - title: Parent save flow
+    code: |
+      use App\Livewire\Traits\NormalizesLivewireUploads;
+
+      public $banner_image;
+
+      public function save(): void
+      {
+          $this->normalizeUpload('banner_image');
+
+          $data = $this->validate([
+              'banner_image' => ['required', 'image', 'max:2048'],
+          ]);
+
+          $path = DiskHelper::saveFile($data['banner_image'], 'banners');
+      }
+  - title: Parent replace flow
+    code: |
+      use App\Livewire\Traits\NormalizesLivewireUploads;
+
+      public $banner_image;
+
+      public function updateImage(): void
+      {
+          $this->normalizeUpload('banner_image');
+
+          $data = $this->validate([
+              'banner_image' => ['required', 'image', 'max:2048'],
+          ]);
+
+          $path = DiskHelper::updateFile($data['banner_image'], $this->banner->banner_image, 'banners');
+      }
+improvements:
+  - Renamed the installed component to ImagePreview so the public API matches the component responsibility.
+  - Replaced inline JavaScript click handling with native label and input behavior.
+  - Added translated labels for empty, loading, select, change, and save states.
+  - Added the missing image-preview utility that was present in the source project but not in the exported package.
+  - Removed duplicate fixed DOM ids so multiple previews can render safely on the same page.
+  - Removed the visual remove action because deleting an image is a parent-form/domain decision, not preview behavior.
+notes:
+  - The component previews images only. Storing, replacing, and deleting files belongs to the parent form or Livewire component.
+  - Modal flows that reuse the same property for the persisted path and the temporary upload should call NormalizesLivewireUploads before validation.
+  - MediaHelper and DiskHelper are still expected dashboard-base dependencies.
