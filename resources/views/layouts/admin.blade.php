@@ -24,6 +24,7 @@
         </main>
     </div>
     @livewire('livewire-ui-spotlight')
+    @livewire('wire-elements-modal')
 
     @livewireScripts
 </body>

@@ -54,16 +54,7 @@
         <div class="swap-off"><i class="fa-regular fa-moon"></i></div>
     </label>
 
-    <div class="dropdown dropdown-bottom dropdown-end tooltip" data-tip="{{ __('ui.notifications') }}">
-        <div tabindex="0" role="button" class="button-item">
-            <i class="fa-regular fa-bell"></i>
-            <span class="indicator-item badge badge-xs rounded-sm badge-primary">2</span>
-        </div>
-        <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-92 p-2 shadow-sm">
-            <li><a>Item 1</a></li>
-            <li><a>Item 2</a></li>
-        </ul>
-    </div>
+    <livewire:global.notifications-ui variant="header" />
 </div>
 
 <nav class="side-menu">

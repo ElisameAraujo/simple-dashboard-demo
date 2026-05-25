@@ -95,6 +95,14 @@
                                 </div>
                             @endif
 
+                            @if ($module['slug'] === 'notifications-ui')
+                                <div class="demo-docs-variation-preview">
+                                    <livewire:global.notifications-ui
+                                        :scenario="$variation['mode']"
+                                        :key="'notifications-ui-' . $variation['mode']" />
+                                </div>
+                            @endif
+
                             <div class="demo-docs-variation-copy">
                                 <h3>{{ $variation['title'] }}</h3>
                                 <p>{{ $variation['description'] }}</p>

@@ -1,0 +1,136 @@
+name: Notifications UI
+description: Visual notification dropdown and list for admin panels, with the backend intentionally left open.
+summary:
+  - Notifications UI is a presentation module, not a notification storage system.
+  - It demonstrates unread counters, compact dropdowns, full lists, filters, empty states, and visual actions using fake data.
+  - Real projects can connect the same UI contract to Laravel database notifications, broadcasts, queues, custom tables, or any local notification source.
+variations:
+  - mode: dropdown
+    title: Compact dropdown
+    description: Shows the header trigger, unread badge, latest unread notifications, and quick actions.
+    behaviors:
+      - Displays up to five unread notifications in a compact panel.
+      - Marks one notification or all notifications as read in the mocked Livewire state.
+      - Opens the complete notification list without assuming a backend route.
+  - mode: modal
+    title: Full list
+    description: Shows the larger notification list with filters and destructive actions.
+    behaviors:
+      - Filters mocked notifications by unread, all, or read status.
+      - Keeps delete and mark-as-read actions as UI hooks for the final project backend.
+      - Shows labels, authors, descriptions, icons, and time labels from a normalized array.
+  - mode: empty
+    title: Empty state
+    description: Shows the same UI when there are no notifications to render.
+    behaviors:
+      - Keeps the trigger visible even when the count is zero.
+      - Replaces the list with a clear empty message.
+      - Avoids backend assumptions for notification preferences or account settings.
+configuration:
+  - name: scenario
+    type: string
+    default: dropdown
+    description: Demo-only option that chooses which mocked state is rendered in the documentation page.
+  - name: notifications
+    type: array
+    default: local fake data
+    description: Normalized notification items used by the UI. Real projects should fill this from their own source.
+  - name: filter
+    type: string
+    default: unread
+    description: Current list filter used by the full list. Accepted values are unread, all, and read.
+  - name: read_at
+    type: string|null
+    default: null
+    description: Null marks a notification as unread. Any non-null value marks it as read.
+  - name: time_label
+    type: string|null
+    default: null
+    description: Preformatted display value for the notification date, keeping the UI independent from Carbon objects.
+  - name: wire-elements/modal
+    type: composer package
+    default: 3.0.*
+    description: Handles the complete notification list modal, including click-away, escape, close button, and Livewire state.
+implementation:
+  - title: Normalized data contract
+    code: |
+      [
+          'id' => 'order-approved',
+          'title' => 'Order approved',
+          'description' => 'The newest order is ready for fulfillment.',
+          'author' => 'Sales',
+          'label' => 'Order',
+          'icon' => 'fa-solid fa-bag-shopping',
+          'url' => route('admin.orders.index'),
+          'read_at' => null,
+          'time_label' => '2 minutes ago',
+      ]
+  - title: Demo usage
+    code: |
+      <livewire:global.notifications-ui scenario="dropdown" />
+      <livewire:global.notifications-ui scenario="modal" />
+      <livewire:global.notifications-ui scenario="empty" />
+  - title: Header modal trigger
+    code: |
+      <livewire:global.notifications-ui variant="header" />
+
+      <button
+          type="button"
+          wire:click="$dispatch('openModal', { component: 'global.notifications-ui-modal' })"
+      >
+          View all notifications
+      </button>
+  - title: Laravel notification adapter
+    code: |
+      $notifications = Auth::user()
+          ->notifications()
+          ->latest()
+          ->limit(30)
+          ->get()
+          ->map(fn ($notification) => [
+              'id' => $notification->id,
+              'title' => $notification->data['title'] ?? 'Notification',
+              'description' => $notification->data['description'] ?? $notification->data['content'] ?? '',
+              'author' => $notification->data['author'] ?? 'System',
+              'label' => $notification->data['label'] ?? 'Notification',
+              'icon' => $notification->data['icon'] ?? 'fa-regular fa-bell',
+              'url' => $notification->data['url'] ?? route('dashboard'),
+              'read_at' => $notification->read_at,
+              'time_label' => $notification->created_at->diffForHumans(),
+          ]);
+methods:
+  - name: markAsRead()
+    returns: void
+    description: UI hook used by the demo to mark one notification as read. In a real project, connect it to your persistence layer.
+    example: |
+      public function markAsRead(string $notificationId): void
+      {
+          Auth::user()->notifications()->whereKey($notificationId)->first()?->markAsRead();
+      }
+  - name: markAllAsRead()
+    returns: void
+    description: UI hook used by the demo to clear the unread count. Real projects can map it to Laravel notifications or a custom table.
+    example: |
+      Auth::user()->unreadNotifications->markAsRead();
+  - name: setFilter()
+    returns: void
+    description: Changes the visual list filter between unread, all, and read.
+    example: |
+      $this->setFilter('read');
+  - name: deleteRead()
+    returns: void
+    description: Optional destructive action for projects that allow removing already read notifications.
+    example: |
+      Auth::user()->notifications()->whereNotNull('read_at')->delete();
+improvements:
+  - Renamed the module to Notifications UI so the name describes the visual responsibility instead of promising a backend system.
+  - Removed notification preferences from the generic module because email settings, quiet hours, comments, and messages are project-specific features.
+  - Replaced the exported Laravel notification object dependency with a normalized array contract.
+  - Removed fixed account preference routes and kept all actions as hooks for the consuming project.
+  - Consolidated the visual classes under the notifications-ui prefix to avoid collisions with project-specific notification styles.
+  - Moved the complete notification list into wire-elements/modal so closing, escape, click-away, and Livewire modal state are handled by the same modal layer used in the source project.
+notes:
+  - The demo uses fake data only. It does not create migrations, notification classes, events, queues, or database records.
+  - The UI can be connected to Laravel database notifications, but it does not require that implementation.
+  - Preferences can be documented later as a separate module if the dashboard needs a reusable settings flow.
+  - The dropdown and the complete list intentionally use separate Livewire state in the demo; a real project can synchronize them through its notification source.

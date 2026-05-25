@@ -15,6 +15,11 @@ class ModuleDemoCatalog
             'icon' => 'fa-solid fa-chart-line',
             'status' => 'ready',
         ],
+        'notifications-ui' => [
+            'component' => 'global.notifications-ui',
+            'icon' => 'fa-regular fa-bell',
+            'status' => 'ready',
+        ],
     ];
 
     public static function all(): array

@@ -182,3 +182,33 @@
 [data-theme="dark"] .demo-docs-card-icon {
     @apply bg-base-300;
 }
+
+/** Notifications UI **/
+[data-theme="dark"] .notifications-ui-shell,
+[data-theme="dark"] .notifications-ui-trigger,
+[data-theme="dark"] .notifications-ui-dropdown,
+[data-theme="dark"] .notifications-ui-header-dropdown,
+[data-theme="dark"] .notifications-ui-dropdown-header,
+[data-theme="dark"] .notifications-ui-dropdown-footer,
+[data-theme="dark"] .notifications-ui-item,
+[data-theme="dark"] .notifications-ui-action,
+[data-theme="dark"] .notifications-ui-modal-embedded,
+[data-theme="dark"] .notifications-ui-modal-header,
+[data-theme="dark"] .notifications-ui-toolbar,
+[data-theme="dark"] .notifications-ui-modal-footer {
+    @apply border-gray-600;
+}
+
+[data-theme="dark"] .notifications-ui-author,
+[data-theme="dark"] .notifications-ui-date,
+[data-theme="dark"] .notifications-ui-content,
+[data-theme="dark"] .notifications-ui-empty,
+[data-theme="dark"] .notifications-ui-dropdown-footer span,
+[data-theme="dark"] .notifications-ui-modal-header p,
+[data-theme="dark"] .notifications-ui-modal-footer span {
+    @apply text-gray-400;
+}
+
+[data-theme="dark"] .notifications-ui-icon {
+    @apply bg-base-300;
+}

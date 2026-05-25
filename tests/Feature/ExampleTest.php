@@ -83,6 +83,18 @@ class ExampleTest extends TestCase
             ->assertSee(route('locale.switch', 'pt_BR'), false);
     }
 
+    public function test_the_header_renders_live_notifications_ui(): void
+    {
+        app()->setLocale('en');
+
+        $this->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Order approved')
+            ->assertSee('View all notifications')
+            ->assertDontSee('Item 1')
+            ->assertDontSee('Item 2');
+    }
+
     public function test_the_locale_switcher_updates_the_session_locale(): void
     {
         $this->from(route('dashboard'))
