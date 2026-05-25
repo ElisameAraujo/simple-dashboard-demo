@@ -149,32 +149,36 @@
     @apply bg-base-300;
 }
 
-/** Helpers **/
-[data-theme="dark"] .helpers-intro,
-[data-theme="dark"] .helper-detail-intro,
-[data-theme="dark"] .helper-panel,
-[data-theme="dark"] .helper-card,
-[data-theme="dark"] .helper-method-card,
-[data-theme="dark"] .helper-method-card-header,
-[data-theme="dark"] .helper-method-params p,
-[data-theme="dark"] .helper-method-params dl > div,
-[data-theme="dark"] .helper-explanation-list p,
-[data-theme="dark"] .helper-method-table {
+/** Demo docs **/
+[data-theme="dark"] .demo-docs-intro,
+[data-theme="dark"] .demo-docs-detail-intro,
+[data-theme="dark"] .demo-docs-panel,
+[data-theme="dark"] .demo-docs-card,
+[data-theme="dark"] .demo-docs-method-card,
+[data-theme="dark"] .demo-docs-method-card-header,
+[data-theme="dark"] .demo-docs-params p,
+[data-theme="dark"] .demo-docs-params dl > div,
+[data-theme="dark"] .demo-docs-explanation-list p,
+[data-theme="dark"] .demo-docs-config-list > div,
+[data-theme="dark"] .demo-docs-variation-card {
     @apply border-gray-600;
 }
 
-[data-theme="dark"] .helpers-intro p,
-[data-theme="dark"] .helper-detail-title p,
-[data-theme="dark"] .helper-method-card > p,
-[data-theme="dark"] .helper-method-grid h4,
-[data-theme="dark"] .helper-method-params p,
-[data-theme="dark"] .helper-method-params dt small,
-[data-theme="dark"] .helper-method-params dd,
-[data-theme="dark"] .helper-explanation-list p,
-[data-theme="dark"] .helper-card-copy small {
+[data-theme="dark"] .demo-docs-intro p,
+[data-theme="dark"] .demo-docs-detail-title p,
+[data-theme="dark"] .demo-docs-method-card > p,
+[data-theme="dark"] .demo-docs-method-grid h4,
+[data-theme="dark"] .demo-docs-params p,
+[data-theme="dark"] .demo-docs-params dt small,
+[data-theme="dark"] .demo-docs-params dd,
+[data-theme="dark"] .demo-docs-explanation-list p,
+[data-theme="dark"] .demo-docs-card-copy small,
+[data-theme="dark"] .demo-docs-variation-copy p,
+[data-theme="dark"] .demo-docs-variation-copy li,
+[data-theme="dark"] .demo-docs-config-list dd {
     @apply text-gray-400;
 }
 
-[data-theme="dark"] .helper-card-icon {
+[data-theme="dark"] .demo-docs-card-icon {
     @apply bg-base-300;
 }
