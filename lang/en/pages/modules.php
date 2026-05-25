@@ -19,16 +19,20 @@ return [
             'description' => 'What this module adds to an admin dashboard.',
         ],
         'variations' => [
-            'title' => 'Variations',
-            'description' => 'The two normal states this module needs to handle.',
+            'title' => 'Flows',
+            'description' => 'The main behaviors this module needs to handle.',
         ],
         'implementation' => [
             'title' => 'Implementation',
-            'description' => 'Copyable usage shapes for real forms and Livewire parents.',
+            'description' => 'Copyable usage shapes for real projects.',
         ],
         'configuration' => [
             'title' => 'Configuration',
-            'description' => 'Inputs accepted by the component and how each one changes behavior.',
+            'description' => 'Public pieces accepted by the module and how each one changes behavior.',
+        ],
+        'methods' => [
+            'title' => 'Methods',
+            'description' => 'Public calls worth knowing before using the module in a real project.',
         ],
         'improvements' => [
             'title' => 'Refinements',

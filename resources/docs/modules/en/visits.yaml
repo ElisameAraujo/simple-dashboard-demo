@@ -1,0 +1,145 @@
+name: Visits
+description: Standalone Eloquent visit tracking for any model that needs popularity metrics.
+summary:
+  - Visits replaces the abandoned package dependency with local Laravel and Eloquent code.
+  - It records visits through a polymorphic relationship, so posts, products, pages, or any other model can opt in with the same trait.
+  - It keeps the package-inspired fluent API while avoiding external dependencies, service providers, presenters, or version-locked Illuminate packages.
+variations:
+  - mode: record
+    title: Record visitors
+    description: Creates one visit per model, visitor identity, and time interval.
+    behaviors:
+      - Uses IP, session id, authenticated user, or external UUID as the visitor identity.
+      - Hashes visitor identity values with the app key before storing them.
+      - Stores optional JSON data without requiring a project-specific schema.
+      - Prevents duplicate visits inside the same interval through a database unique index.
+  - mode: rank
+    title: Rank content
+    description: Adds query scopes that can order visitable models by popularity.
+    behaviors:
+      - Loads total visits into the visit_count_total attribute.
+      - Supports all-time, today, last days, this week, last week, this month, last month, this year, last year, and custom date ranges.
+      - Keeps the result as a normal Eloquent builder so it can be combined with local filters.
+configuration:
+  - name: CanBeVisited
+    type: interface
+    default: required
+    description: Marker contract that makes the model's visitable intent explicit.
+  - name: HasVisits
+    type: trait
+    default: required
+    description: Adds the visits relationship, the visit builder, the total accessor, and popularity scopes.
+  - name: PendingVisit
+    type: class
+    default: local
+    description: Fluent recorder returned by visit(), responsible for visitor identity, interval, and persistence.
+  - name: visits table
+    type: migration
+    default: included
+    description: Stores polymorphic model identity, visitor type, hashed visitor key, interval, metadata, and timestamps.
+  - name: visitor_hash
+    type: string
+    default: HMAC SHA-256
+    description: Stores a non-reversible hash instead of raw IP, session id, user class/id, or UUID values.
+implementation:
+  - title: Make a model visitable
+    code: |
+      use App\Visits\Contracts\CanBeVisited;
+      use App\Visits\Traits\HasVisits;
+
+      class Post extends Model implements CanBeVisited
+      {
+          use HasVisits;
+      }
+  - title: Record a visit
+    code: |
+      $post->visit()->withIp()->dailyInterval();
+      $post->visit()->withSession()->hourlyInterval();
+      $post->visit()->withUser()->dailyInterval();
+      $post->visit()->withUuid($visitorUuid)->monthlyInterval();
+      $post->visit()->withData(['source' => 'homepage'])->dailyInterval();
+  - title: Rank by popularity
+    code: |
+      Post::query()
+          ->popularThisMonth()
+          ->limit(10)
+          ->get();
+
+      Post::query()
+          ->withTotalVisitCount()
+          ->orderByDesc('visit_count_total')
+          ->paginate();
+methods:
+  - name: visit()
+    returns: PendingVisit
+    description: Starts the fluent recorder for the current model instance.
+    example: |
+      $post->visit()->withIp()->dailyInterval();
+  - name: withTotalVisitCount()
+    returns: Builder
+    description: Adds the visit_count_total attribute without changing the current ordering.
+    example: |
+      Post::query()
+          ->withTotalVisitCount()
+          ->get();
+  - name: popularAllTime()
+    returns: Builder
+    description: Orders models by their total number of visits.
+    example: |
+      Post::query()->popularAllTime()->get();
+  - name: popularToday()
+    returns: Builder
+    description: Orders models by visits recorded between the start and end of the current day.
+    example: |
+      Post::query()->popularToday()->limit(10)->get();
+  - name: popularThisWeek()
+    returns: Builder
+    description: Orders models by visits recorded during the current week.
+    example: |
+      Post::query()->popularThisWeek()->get();
+  - name: popularLastWeek()
+    returns: Builder
+    description: Orders models by visits recorded during the previous calendar week.
+    example: |
+      Post::query()->popularLastWeek()->get();
+  - name: popularThisMonth()
+    returns: Builder
+    description: Orders models by visits recorded during the current month.
+    example: |
+      Post::query()->popularThisMonth()->get();
+  - name: popularLastMonth()
+    returns: Builder
+    description: Orders models by visits recorded during the previous calendar month.
+    example: |
+      Post::query()->popularLastMonth()->get();
+  - name: popularThisYear()
+    returns: Builder
+    description: Orders models by visits recorded during the current year.
+    example: |
+      Post::query()->popularThisYear()->get();
+  - name: popularLastYear()
+    returns: Builder
+    description: Orders models by visits recorded during the previous calendar year.
+    example: |
+      Post::query()->popularLastYear()->get();
+  - name: popularLastDays()
+    returns: Builder
+    description: Orders models by visits recorded in the last number of days.
+    example: |
+      Post::query()->popularLastDays(7)->get();
+  - name: popularBetween()
+    returns: Builder
+    description: Orders models by visits recorded inside a custom date range.
+    example: |
+      Post::query()
+          ->popularBetween(now()->subDays(30), now())
+          ->get();
+improvements:
+  - Removed the exported factory coupling because fake visit data belongs to tests or local seeders, not to the standalone module.
+  - Kept the laravisit-inspired fluent API while removing external package dependencies.
+  - Added missing previous-period scopes for last week, last month, and last year.
+  - Kept UUID-based visitors as a lightweight extension for cookie or client generated visitor identifiers.
+notes:
+  - Visits depends on Laravel, Eloquent, migrations, and Carbon only through the application itself.
+  - The user foreign key assumes the default users table. If an app does not use that table, adjust the migration before running it.
+  - The module records unique visits per interval; it is not a raw event stream for every page refresh.

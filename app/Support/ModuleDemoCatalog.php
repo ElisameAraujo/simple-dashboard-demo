@@ -10,6 +10,11 @@ class ModuleDemoCatalog
             'icon' => 'fa-regular fa-images',
             'status' => 'ready',
         ],
+        'visits' => [
+            'component' => null,
+            'icon' => 'fa-solid fa-chart-line',
+            'status' => 'ready',
+        ],
     ];
 
     public static function all(): array
@@ -45,6 +50,7 @@ class ModuleDemoCatalog
             'variations' => $documentation['variations'] ?? [],
             'configuration' => $documentation['configuration'] ?? [],
             'implementation' => $documentation['implementation'] ?? [],
+            'methods' => $documentation['methods'] ?? [],
             'improvements' => $documentation['improvements'] ?? [],
             'notes' => $documentation['notes'] ?? [],
             'url' => route('modules.show', $slug),

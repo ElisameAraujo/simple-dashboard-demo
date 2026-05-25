@@ -1,0 +1,145 @@
+name: Visits
+description: Registro standalone de visitas com Eloquent para qualquer model que precise de métricas de popularidade.
+summary:
+  - Visits substitui a dependência abandonada por código local baseado apenas em Laravel e Eloquent.
+  - Ele registra visitas por relacionamento polimórfico, então posts, produtos, páginas ou qualquer outro model podem usar a mesma trait.
+  - Ele mantém a API fluente inspirada no pacote original, mas sem dependências externas, service providers, presenters ou pacotes Illuminate travados por versão.
+variations:
+  - mode: record
+    title: Registrar visitantes
+    description: Cria uma visita por model, identidade do visitante e intervalo de tempo.
+    behaviors:
+      - Usa IP, session id, usuário autenticado ou UUID externo como identidade do visitante.
+      - Gera hash dos valores de identidade com a app key antes de salvar.
+      - Salva dados extras em JSON sem exigir schema específico do projeto.
+      - Evita visitas duplicadas no mesmo intervalo por meio de um índice único no banco.
+  - mode: rank
+    title: Ordenar conteúdo
+    description: Adiciona query scopes que ordenam models visitáveis por popularidade.
+    behaviors:
+      - Carrega o total de visitas no atributo visit_count_total.
+      - Suporta todos os períodos, hoje, últimos dias, esta semana, semana passada, este mês, mês passado, este ano, ano passado e intervalos customizados.
+      - Mantém o resultado como um Eloquent builder normal, permitindo combinar com filtros locais.
+configuration:
+  - name: CanBeVisited
+    type: interface
+    default: required
+    description: Contrato marcador que deixa explícita a intenção do model ser visitável.
+  - name: HasVisits
+    type: trait
+    default: required
+    description: Adiciona relacionamento de visitas, builder de registro, accessor de total e scopes de popularidade.
+  - name: PendingVisit
+    type: class
+    default: local
+    description: Registrador fluente retornado por visit(), responsável por identidade do visitante, intervalo e persistência.
+  - name: visits table
+    type: migration
+    default: included
+    description: Armazena identidade polimórfica do model, tipo de visitante, chave de visitante com hash, intervalo, metadados e timestamps.
+  - name: visitor_hash
+    type: string
+    default: HMAC SHA-256
+    description: Armazena um hash não reversível em vez de IP, session id, classe/id de usuário ou UUID em texto puro.
+implementation:
+  - title: Tornar um model visitável
+    code: |
+      use App\Visits\Contracts\CanBeVisited;
+      use App\Visits\Traits\HasVisits;
+
+      class Post extends Model implements CanBeVisited
+      {
+          use HasVisits;
+      }
+  - title: Registrar uma visita
+    code: |
+      $post->visit()->withIp()->dailyInterval();
+      $post->visit()->withSession()->hourlyInterval();
+      $post->visit()->withUser()->dailyInterval();
+      $post->visit()->withUuid($visitorUuid)->monthlyInterval();
+      $post->visit()->withData(['source' => 'homepage'])->dailyInterval();
+  - title: Ordenar por popularidade
+    code: |
+      Post::query()
+          ->popularThisMonth()
+          ->limit(10)
+          ->get();
+
+      Post::query()
+          ->withTotalVisitCount()
+          ->orderByDesc('visit_count_total')
+          ->paginate();
+methods:
+  - name: visit()
+    returns: PendingVisit
+    description: Inicia o registrador fluente para a instância atual do model.
+    example: |
+      $post->visit()->withIp()->dailyInterval();
+  - name: withTotalVisitCount()
+    returns: Builder
+    description: Adiciona o atributo visit_count_total sem alterar a ordenação atual.
+    example: |
+      Post::query()
+          ->withTotalVisitCount()
+          ->get();
+  - name: popularAllTime()
+    returns: Builder
+    description: Ordena os models pelo total geral de visitas.
+    example: |
+      Post::query()->popularAllTime()->get();
+  - name: popularToday()
+    returns: Builder
+    description: Ordena os models por visitas registradas entre o início e o fim do dia atual.
+    example: |
+      Post::query()->popularToday()->limit(10)->get();
+  - name: popularThisWeek()
+    returns: Builder
+    description: Ordena os models por visitas registradas durante a semana atual.
+    example: |
+      Post::query()->popularThisWeek()->get();
+  - name: popularLastWeek()
+    returns: Builder
+    description: Ordena os models por visitas registradas durante a semana anterior do calendário.
+    example: |
+      Post::query()->popularLastWeek()->get();
+  - name: popularThisMonth()
+    returns: Builder
+    description: Ordena os models por visitas registradas durante o mês atual.
+    example: |
+      Post::query()->popularThisMonth()->get();
+  - name: popularLastMonth()
+    returns: Builder
+    description: Ordena os models por visitas registradas durante o mês anterior do calendário.
+    example: |
+      Post::query()->popularLastMonth()->get();
+  - name: popularThisYear()
+    returns: Builder
+    description: Ordena os models por visitas registradas durante o ano atual.
+    example: |
+      Post::query()->popularThisYear()->get();
+  - name: popularLastYear()
+    returns: Builder
+    description: Ordena os models por visitas registradas durante o ano anterior do calendário.
+    example: |
+      Post::query()->popularLastYear()->get();
+  - name: popularLastDays()
+    returns: Builder
+    description: Ordena os models por visitas registradas na quantidade informada de últimos dias.
+    example: |
+      Post::query()->popularLastDays(7)->get();
+  - name: popularBetween()
+    returns: Builder
+    description: Ordena os models por visitas registradas dentro de um intervalo customizado de datas.
+    example: |
+      Post::query()
+          ->popularBetween(now()->subDays(30), now())
+          ->get();
+improvements:
+  - O acoplamento com a factory exportada foi removido porque dados fake de visitas pertencem aos testes ou seeders locais, não ao módulo standalone.
+  - A API fluente inspirada no laravisit foi mantida sem trazer dependências externas de pacote.
+  - Foram adicionados scopes de períodos anteriores para semana passada, mês passado e ano passado.
+  - Visitantes por UUID foram mantidos como extensão leve para identificadores gerados por cookie ou cliente.
+notes:
+  - Visits depende apenas de Laravel, Eloquent, migrations e Carbon através da própria aplicação.
+  - A foreign key de usuário assume a tabela users padrão. Se um app não usa essa tabela, ajuste a migration antes de rodá-la.
+  - O módulo registra visitas únicas por intervalo; ele não é uma stream bruta de eventos para cada refresh de página.

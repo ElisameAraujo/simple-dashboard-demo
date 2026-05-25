@@ -73,25 +73,27 @@
                 <div class="demo-docs-variation-grid">
                     @foreach ($module['variations'] as $variation)
                         <article class="demo-docs-variation-card">
-                            <div class="demo-docs-variation-preview">
-                                @if ($variation['mode'] === 'edit')
-                                    <livewire:global.image-preview
-                                        mode="edit"
-                                        name="demo_edit_image"
-                                        size="col-span-12"
-                                        :existing="true"
-                                        path="avatars/default-avatar.jpg"
-                                        disk="public"
-                                        placeholder="img/placeholders/avatars/default-avatar.jpg"
-                                        :show-save-button="false" />
-                                @else
-                                    <livewire:global.image-preview
-                                        mode="create"
-                                        name="demo_create_image"
-                                        size="col-span-12"
-                                        :show-save-button="false" />
-                                @endif
-                            </div>
+                            @if ($module['slug'] === 'image-preview')
+                                <div class="demo-docs-variation-preview">
+                                    @if ($variation['mode'] === 'edit')
+                                        <livewire:global.image-preview
+                                            mode="edit"
+                                            name="demo_edit_image"
+                                            size="col-span-12"
+                                            :existing="true"
+                                            path="avatars/default-avatar.jpg"
+                                            disk="public"
+                                            placeholder="img/placeholders/avatars/default-avatar.jpg"
+                                            :show-save-button="false" />
+                                    @else
+                                        <livewire:global.image-preview
+                                            mode="create"
+                                            name="demo_create_image"
+                                            size="col-span-12"
+                                            :show-save-button="false" />
+                                    @endif
+                                </div>
+                            @endif
 
                             <div class="demo-docs-variation-copy">
                                 <h3>{{ $variation['title'] }}</h3>
@@ -128,6 +130,37 @@
                     @endforeach
                 </div>
             </article>
+
+            @if ($module['methods'] !== [])
+                <article class="demo-docs-panel demo-docs-panel-wide">
+                    <div class="dashboard-panel-header">
+                        <div>
+                            <h2>{{ __('pages/modules.sections.methods.title') }}</h2>
+                            <p>{{ __('pages/modules.sections.methods.description') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="demo-docs-config-list">
+                        @foreach ($module['methods'] as $method)
+                            <div>
+                                <dt>
+                                    <code>{{ $method['name'] }}</code>
+                                    <small>{{ $method['returns'] }}</small>
+                                </dt>
+                                <dd>{{ $method['description'] }}</dd>
+
+                                @if (filled($method['example'] ?? null))
+                                    <div class="mockup-code w-full mt-3">
+                                        @foreach (preg_split('/\R/', rtrim($method['example'])) as $line)
+                                            <pre data-prefix="{{ $loop->iteration }}"><code>{{ $line }}</code></pre>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </article>
+            @endif
 
             <article class="demo-docs-panel">
                 <div class="dashboard-panel-header">

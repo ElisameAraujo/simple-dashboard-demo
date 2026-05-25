@@ -19,16 +19,20 @@ return [
             'description' => 'O que este módulo adiciona a um painel administrativo.',
         ],
         'variations' => [
-            'title' => 'Variações',
-            'description' => 'Os dois estados normais que este módulo precisa resolver.',
+            'title' => 'Fluxos',
+            'description' => 'Os principais comportamentos que este módulo precisa resolver.',
         ],
         'implementation' => [
             'title' => 'Implementação',
-            'description' => 'Formatos de uso que podem ser reaproveitados em formulários reais e componentes Livewire pai.',
+            'description' => 'Formatos de uso que podem ser reaproveitados em projetos reais.',
         ],
         'configuration' => [
             'title' => 'Configuração',
-            'description' => 'Entradas aceitas pelo componente e como cada uma altera o comportamento.',
+            'description' => 'Peças públicas aceitas pelo módulo e como cada uma altera o comportamento.',
+        ],
+        'methods' => [
+            'title' => 'Métodos',
+            'description' => 'Chamadas públicas que vale conhecer antes de usar o módulo em um projeto real.',
         ],
         'improvements' => [
             'title' => 'Ajustes',
