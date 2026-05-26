@@ -3,5 +3,7 @@
     <div class="close-b">
         <button><i class="fa-solid fa-xmark"></i></button>
     </div>
-    @include('components.admin.menu-structure')
+    <div class="side-menu-mobile-content">
+        @include('components.admin.menu-structure')
+    </div>
 </div>

@@ -114,7 +114,7 @@ body.no-scroll {
 
     /** Side Menu **/
     nav.side-menu {
-        @apply max-h-[77vh] mt-4 overflow-auto;
+        @apply mt-4 overflow-auto;
     }
 
     nav.side-menu .menu-section {
@@ -177,44 +177,76 @@ body.no-scroll {
         @apply bg-secondary text-white;
     }
 
-    /** Action Buttons **/
-    .actions-buttons {
-        @apply grid-cols-3 gap-2 mt-4 max-xl:grid xl:hidden border-b border-b-gray-200 pb-3;
+    /** Mobile Actions **/
+    .mobile-actions {
+        @apply grid grid-cols-2 gap-2 mt-4 xl:hidden border-b border-b-gray-200 pb-3;
     }
 
-    .actions-buttons .button-item,
-    .actions-buttons .language-switcher .button {
-        @apply border border-gray-200 py-3 px-4 rounded-md transition-default shadow flex flex-row items-center justify-center gap-2;
+    .mobile-actions > *,
+    .mobile-actions .maintenance-header-status-mobile {
+        min-width: 0;
     }
 
-    .actions-buttons label {
-        @apply border-gray-200 border rounded-md py-2 px-4 transition-default shadow flex-row items-start;
+    .mobile-actions .maintenance-header-status-mobile {
+        display: contents;
     }
 
-    .actions-buttons .button-item:hover,
-    .actions-buttons .language-switcher .button:hover,
-    .actions-buttons label:hover {
+    .mobile-action-shell {
+        display: contents;
+    }
+
+    .mobile-action-wide,
+    .mobile-action-button-wide {
+        @apply col-span-2;
+    }
+
+    .mobile-action-button,
+    .mobile-actions .maintenance-header-status .actions {
+        @apply relative flex h-12 w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-base-100 px-4 py-0 font-semibold shadow transition-default;
+    }
+
+    .mobile-actions label.mobile-action-button.swap {
+        @apply grid place-items-center gap-0;
+    }
+
+    .mobile-actions label.mobile-action-button.swap > div {
+        @apply col-start-1 row-start-1 flex items-center justify-center;
+    }
+
+    .mobile-action-button:hover,
+    .mobile-actions .maintenance-header-status .actions:hover,
+    .mobile-action-button-active {
         @apply bg-gray-100 cursor-pointer;
     }
 
-    .actions-buttons .language-switcher .language-label-full {
-        @apply hidden;
+    .mobile-action-button span:not(.notifications-ui-count) {
+        @apply text-sm font-semibold;
     }
 
-    .actions-buttons .language-switcher .language-label-short {
-        @apply inline text-sm font-semibold;
+    .mobile-actions .project-status,
+    .mobile-actions-panel {
+        @apply col-span-2 w-full;
     }
 
-    .actions-buttons .language-switcher ul li a.active {
+    .mobile-actions .project-status {
+        @apply justify-center;
+    }
+
+    .mobile-actions-panel {
+        @apply overflow-hidden rounded-md border border-gray-200 bg-base-100 shadow-sm;
+    }
+
+    .mobile-actions-list {
+        @apply flex flex-col gap-1 p-2;
+    }
+
+    .mobile-actions-list a {
+        @apply block rounded-md px-3 py-2 font-medium transition-default;
+    }
+
+    .mobile-actions-list a:hover,
+    .mobile-actions-list a.active {
         @apply bg-primary text-white;
-    }
-
-    &.side-menu-mobile .actions-buttons .language-switcher ul.dropdown-content {
-        width: min(23rem, calc(100vw - 2rem));
-    }
-
-    .actions-buttons .indicator {
-        @apply w-full;
     }
 }
 
@@ -238,7 +270,11 @@ body.no-scroll {
    MOBILE
    =========================== */
 .side-menu-mobile {
-    @apply fixed left-0 top-0 max-w-100 h-full z-50 transform overflow-hidden shadow-lg transition-transform duration-300 ease-in-out -translate-x-full rounded-none;
+    @apply fixed left-0 top-0 flex max-w-100 h-full z-50 transform flex-col overflow-hidden shadow-lg transition-transform duration-300 ease-in-out -translate-x-full rounded-none;
+}
+
+.side-menu-mobile-content {
+    @apply flex-1 overflow-y-auto overflow-x-hidden pr-1;
 }
 
 .side-menu-mobile .profile ul {
@@ -248,7 +284,7 @@ body.no-scroll {
     @apply translate-x-0;
 }
 .side-menu-mobile .close-b {
-    @apply w-full flex justify-end pb-3;
+    @apply w-full flex shrink-0 justify-end pb-3;
 }
 .side-menu-mobile .close-b button {
     @apply btn rounded-full w-8 h-8 transition-default shadow;
@@ -257,5 +293,5 @@ body.no-scroll {
     @apply bg-primary text-white;
 }
 .side-menu-mobile nav.side-menu {
-    @apply max-h-[75vh];
+    @apply overflow-visible;
 }

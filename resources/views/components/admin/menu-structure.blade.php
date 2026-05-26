@@ -42,19 +42,18 @@
     <kbd class="kbd kbd-sm px-2">Ctrl+K</kbd>
 </button>
 
-<div class="actions-buttons">
-    @include('components.admin.language-switcher', [
-        'class' => 'language-switcher-mobile-menu',
-        'alignment' => 'dropdown-start',
-    ])
+<div class="mobile-actions" x-data="{ activePanel: null }">
+    <livewire:admin.configs.maintenance-header-status variant="mobile" modal-id="mobile_maintenance_toggle" />
 
-    <label class="swap tooltip" data-tip="{{ __('ui.switch_theme') }}">
+    @include('components.admin.mobile-language-action')
+
+    <label class="mobile-action-button swap" aria-label="{{ __('ui.switch_theme') }}">
         <input type="checkbox" data-toggle-theme="dark,light" data-act-class="ACTIVECLASS" />
         <div class="swap-on"><i class="fa-regular fa-sun"></i></div>
         <div class="swap-off"><i class="fa-regular fa-moon"></i></div>
     </label>
 
-    <livewire:global.notifications-ui variant="header" />
+    <livewire:global.notifications-ui variant="mobile" />
 </div>
 
 <nav class="side-menu">

@@ -1,7 +1,8 @@
 @php
     $currentLocale = app()->getLocale();
     $currentLabel = config('app.supported_locales')[$currentLocale] ?? $currentLocale;
-    $currentShortLabel = strtoupper(explode('_', $currentLocale)[0]);
+    $localeParts = explode('_', $currentLocale);
+    $currentShortLabel = strtoupper($localeParts[1] ?? $localeParts[0]);
     $alignment = $alignment ?? 'dropdown-end';
 @endphp
 

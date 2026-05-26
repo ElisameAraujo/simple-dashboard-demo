@@ -74,15 +74,19 @@
 }
 
 .header .language-switcher .button {
-    @apply flex items-center gap-2;
+    @apply flex h-12.5 min-w-12 items-center justify-center gap-2 px-4 py-0;
 }
 
 .header .language-switcher .button span {
     @apply text-sm font-semibold;
 }
 
-.header .language-switcher .language-label-short {
+.header .language-switcher .language-label-full {
     @apply hidden;
+}
+
+.header .language-switcher .language-label-short {
+    @apply inline;
 }
 
 .header .language-switcher ul li a.active {

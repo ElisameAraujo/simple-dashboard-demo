@@ -1,5 +1,7 @@
 @if ($variant === 'header')
     @include('livewire.global.partials.notifications-ui-header')
+@elseif ($variant === 'mobile')
+    @include('livewire.global.partials.notifications-ui-mobile')
 @else
 <div class="notifications-ui-demo">
     <div class="notifications-ui-shell {{ $scenario === 'empty' ? 'notifications-ui-shell-empty' : '' }}">

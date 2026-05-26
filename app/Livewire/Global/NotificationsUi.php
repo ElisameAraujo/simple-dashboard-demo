@@ -3,6 +3,8 @@
 namespace App\Livewire\Global;
 
 use App\Support\NotificationsUiDemoData;
+use App\Models\Configs\MaintenanceSetting;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class NotificationsUi extends Component
@@ -86,6 +88,12 @@ class NotificationsUi extends Component
         ));
     }
 
+    #[On('maintenance-settings-updated')]
+    public function refreshMaintenanceLayout(): void
+    {
+        // The render data reads the latest maintenance shortcut state.
+    }
+
     public function unreadCount(): int
     {
         return count(array_filter($this->notifications, fn (array $notification): bool => $this->isUnread($notification)));
@@ -118,6 +126,7 @@ class NotificationsUi extends Component
             'dropdownNotifications' => $this->dropdownNotifications(),
             'modalNotifications' => $this->modalNotifications(),
             'unreadCount' => $this->unreadCount(),
+            'maintenanceShortcutEnabled' => MaintenanceSetting::current()->show_header_shortcut ?? false,
         ]);
     }
 
