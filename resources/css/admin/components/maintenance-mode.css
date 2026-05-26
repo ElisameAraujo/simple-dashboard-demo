@@ -1,5 +1,5 @@
 /** Maintenance Mode demo module **/
-.maintenance-header-status .project-status {
+.maintenance-header-status-header .project-status {
     @apply hidden xl:flex;
 }
 

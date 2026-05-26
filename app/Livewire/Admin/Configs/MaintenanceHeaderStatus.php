@@ -23,8 +23,15 @@ class MaintenanceHeaderStatus extends Component
 
     public bool $shouldPollOnlineAlert = false;
 
-    public function mount(): void
+    public string $variant = 'header';
+
+    public string $modalId = 'header_maintenance_toggle';
+
+    public function mount(string $variant = 'header', string $modalId = 'header_maintenance_toggle'): void
     {
+        $this->variant = $variant;
+        $this->modalId = $modalId;
+
         $this->refreshSettings();
     }
 
@@ -78,7 +85,7 @@ class MaintenanceHeaderStatus extends Component
     protected function modalIdForAction($action)
     {
         return match ($action) {
-            'enable', 'disable' => 'header_maintenance_toggle',
+            'enable', 'disable' => $this->modalId,
             default => null,
         };
     }

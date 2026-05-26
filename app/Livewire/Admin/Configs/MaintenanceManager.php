@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Configs;
 
 use App\Livewire\Traits\WithAnimatedModals;
+use App\Livewire\Global\NotificationsUi;
 use App\Models\Configs\MaintenanceSetting;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -36,6 +37,7 @@ class MaintenanceManager extends Component
         $this->persistSettings();
 
         $this->dispatch('maintenance-settings-updated')->to(MaintenanceHeaderStatus::class);
+        $this->dispatch('maintenance-settings-updated')->to(NotificationsUi::class);
 
         session()->flash('updated', __('components/maintenance-mode.flash.updated'));
     }

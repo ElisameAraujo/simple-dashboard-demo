@@ -87,6 +87,36 @@ class MaintenanceModeTest extends TestCase
             ->assertSee(__('components/maintenance-mode.actions.disable_shortcut'));
     }
 
+    public function test_mobile_header_status_respects_the_maintenance_shortcut_setting(): void
+    {
+        MaintenanceSetting::current()->update([
+            'maintenance_enabled' => false,
+            'show_header_shortcut' => false,
+        ]);
+
+        MaintenanceSetting::refreshCurrent();
+
+        Livewire::test(MaintenanceHeaderStatus::class, [
+            'variant' => 'mobile',
+            'modalId' => 'mobile_maintenance_toggle',
+        ])
+            ->assertDontSee(__('components/maintenance-mode.actions.enable_shortcut'));
+
+        MaintenanceSetting::current()->update([
+            'show_header_shortcut' => true,
+        ]);
+
+        MaintenanceSetting::refreshCurrent();
+
+        Livewire::test(MaintenanceHeaderStatus::class, [
+            'variant' => 'mobile',
+            'modalId' => 'mobile_maintenance_toggle',
+        ])
+            ->assertSee(__('components/maintenance-mode.actions.enable_shortcut'))
+            ->call('openModal', 'enable')
+            ->assertSeeHtml('id="mobile_maintenance_toggle"');
+    }
+
     public function test_online_alert_respects_configured_duration(): void
     {
         MaintenanceSetting::current()->update([
