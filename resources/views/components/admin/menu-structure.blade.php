@@ -101,9 +101,23 @@
                 </a>
             </li>
         @endforeach
+        <h2 class="menu-section">{{ __('ui.settings') }}</h2>
+        <li>
+            <a class="menu-item {{ request()->routeIs('configs.maintenance') ? 'active' : '' }}"
+                href="{{ route('configs.maintenance') }}">
+                <i class="fa-solid fa-wrench"></i>
+                {{ __('ui.maintenance') }}
+            </a>
+        </li>
+        <li>
+            <a class="menu-item {{ request()->routeIs('web.preview') ? 'active' : '' }}"
+                href="{{ route('web.preview') }}" target="_blank">
+                <i class="fa-solid fa-globe"></i>
+                {{ __('ui.site_preview') }}
+            </a>
+        </li>
         <h2 class="menu-section">{{ __('ui.account') }}</h2>
-        <li data-submenu-id="account-settings"
-            class="{{ request()->routeIs('account.*') ? 'open' : '' }}">
+        <li data-submenu-id="account-settings" class="{{ request()->routeIs('account.*') ? 'open' : '' }}">
             <a href="#" class="has-submenu">
                 <span>
                     <i class="fa-solid fa-user-gear"></i>
@@ -129,9 +143,10 @@
 
         <h2 class="menu-section">{{ __('ui.project') }}</h2>
         <li>
-            <a class="menu-item" href="{{ app()->getLocale() === 'pt_BR'
-                ? 'https://github.com/ElisameAraujo/simple-dashboard/blob/main/README.pt-br.md'
-                : 'https://github.com/ElisameAraujo/simple-dashboard' }}"
+            <a class="menu-item"
+                href="{{ app()->getLocale() === 'pt_BR'
+                    ? 'https://github.com/ElisameAraujo/simple-dashboard/blob/main/README.pt-br.md'
+                    : 'https://github.com/ElisameAraujo/simple-dashboard' }}"
                 target="_blank" rel="noopener noreferrer">
                 <i class="fa-brands fa-readme"></i>
                 {{ __('ui.readme') }}

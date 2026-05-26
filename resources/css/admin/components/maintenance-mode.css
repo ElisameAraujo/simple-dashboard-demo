@@ -1,0 +1,36 @@
+/** Maintenance Mode demo module **/
+.maintenance-header-status .project-status {
+    @apply hidden xl:flex;
+}
+
+.maintenance-header-status .actions {
+    @apply flex h-12.5 min-w-12 items-center justify-center border border-gray-200 px-4 py-0 rounded-md shadow transition-default;
+}
+
+.maintenance-header-status .actions:hover {
+    @apply bg-gray-100 cursor-pointer;
+}
+
+.project-status {
+    @apply flex w-fit items-center gap-2 rounded-md border px-3 py-2 text-xs font-semibold uppercase;
+}
+
+.project-status.down {
+    @apply border-error/30 bg-error/10 text-error;
+}
+
+.project-status.up {
+    @apply border-success/30 bg-success/10 text-success;
+}
+
+.modal-title {
+    @apply mb-3 text-xl font-bold uppercase;
+}
+
+.modal-title.error {
+    @apply text-error;
+}
+
+.modal-title.success {
+    @apply text-success;
+}

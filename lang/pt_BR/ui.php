@@ -18,6 +18,8 @@ return [
     'notifications' => 'Notificações',
     'switch_theme' => 'Modo Claro/Escuro',
     'settings' => 'Configurações',
+    'maintenance' => 'Manutenção',
+    'site_preview' => 'Exemplo do Site',
     'max_size' => 'Tamanho máximo:',
     'upload_file' => 'Enviar Arquivo',
     'save_changes' => 'Salvar Alterações',

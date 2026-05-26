@@ -1,0 +1,86 @@
+name: "Maintenance Mode"
+description: "Public access blocking controlled from the admin panel, inspired by the WordPress flow."
+summary:
+  - "Replaces artisan down when the goal is to block only anonymous visitors."
+  - "Authenticated admins keep access to the dashboard and public preview route."
+  - "The 503 message can be edited from the panel."
+  - "The admin header can show the active status and an optional enable/disable shortcut."
+variations:
+  - mode: "public"
+    title: "Anonymous visitor"
+    description: "When maintenance is active, protected public routes return 503."
+    behaviors:
+      - "The demo example route is /site-preview."
+      - "The middleware aborts with 503 before the public page renders."
+      - "The errors/503.blade.php view uses the message saved in the panel."
+  - mode: "admin"
+    title: "Authenticated admin"
+    description: "Logged-in users keep browsing to validate changes."
+    behaviors:
+      - "The middleware allows requests with an authenticated user."
+      - "The admin panel stays available."
+      - "The public route can be used as a preview during maintenance."
+  - mode: "header"
+    title: "Header status"
+    description: "The panel can show maintenance state and shortcut controls in the header."
+    behaviors:
+      - "In Maintenance appears while the public block is active."
+      - "Site Online can appear for a configured duration after disabling maintenance."
+      - "The shortcut uses a simple DaisyUI confirmation modal."
+configuration:
+  - name: "maintenance_enabled"
+    type: "boolean"
+    default: "false"
+    description: "Turns public blocking on or off."
+  - name: "maintenance_message"
+    type: "string|null"
+    default: "null"
+    description: "Custom message displayed on the 503 page."
+  - name: "show_header_shortcut"
+    type: "boolean"
+    default: "false"
+    description: "Defines whether the header shows the quick enable/disable button."
+  - name: "show_online_alert"
+    type: "boolean"
+    default: "true"
+    description: "Controls whether the Site Online badge appears after maintenance is disabled."
+  - name: "online_alert_duration_seconds"
+    type: "integer"
+    default: "30"
+    description: "Site Online badge duration. Use 0 to keep it visible while the alert is enabled."
+implementation:
+  - title: "Apply the middleware to public routes"
+    code: |
+      Route::middleware('site.available')->group(function () {
+          Route::view('site-preview', 'web.site-preview')->name('web.preview');
+      });
+  - title: "Add header status"
+    code: |
+      <livewire:admin.configs.maintenance-header-status />
+  - title: "Render the management screen"
+    code: |
+      @livewire('admin.configs.maintenance-manager')
+methods:
+  - name: "MaintenanceSetting::current()"
+    returns: "MaintenanceSetting"
+    description: "Returns the current settings using persistent cache."
+    example: |
+      $settings = MaintenanceSetting::current();
+  - name: "MaintenanceSetting::refreshCurrent()"
+    returns: "MaintenanceSetting"
+    description: "Clears the cache and reloads the current settings."
+    example: |
+      MaintenanceSetting::refreshCurrent();
+  - name: "shouldShowOnlineAlert()"
+    returns: "bool"
+    description: "Indicates whether the Site Online badge should appear in the header."
+    example: |
+      MaintenanceSetting::current()->shouldShowOnlineAlert();
+improvements:
+  - "The demo uses a real public route to prove the middleware behavior."
+  - "The confirmation modal uses DaisyUI because the flow is only Yes/No and does not need validation."
+  - "wire-elements/modal remains reserved for modals with forms and Livewire validation."
+  - "Texts were extracted to translation files."
+notes:
+  - "Do not apply site.available to login, auth, or admin dashboard routes."
+  - "The module does not use Laravel's native artisan down mode, so the admin panel remains available."

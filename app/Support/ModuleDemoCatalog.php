@@ -20,6 +20,11 @@ class ModuleDemoCatalog
             'icon' => 'fa-regular fa-bell',
             'status' => 'ready',
         ],
+        'maintenance-mode' => [
+            'component' => null,
+            'icon' => 'fa-solid fa-screwdriver-wrench',
+            'status' => 'ready',
+        ],
     ];
 
     public static function all(): array

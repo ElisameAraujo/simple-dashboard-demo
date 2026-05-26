@@ -1,4 +1,5 @@
 import { themeChange } from 'theme-change';
+import { daisyUIModalAnimations } from './daisyUIModalAnimations';
 import { toggleSubmenu } from './submenu';
 import { toggleMenu } from './mobile-menu';
 
@@ -26,3 +27,4 @@ themeChange()
  */
 toggleSubmenu();
 toggleMenu();
+daisyUIModalAnimations();

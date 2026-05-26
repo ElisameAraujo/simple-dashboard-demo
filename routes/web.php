@@ -12,6 +12,7 @@ Route::get('locale/{locale}', [LocaleController::class, 'switch'])
  ********************************************************/
 
 RouteHelper::importRoutesFromFolder('demo', 'dashboard');
+RouteHelper::importRoutesFromFolder('demo', 'configs');
 RouteHelper::importRoutesFromFolder('demo', 'helpers');
 RouteHelper::importRoutesFromFolder('demo', 'modules');
 RouteHelper::importRoutesFromFolder('demo', 'profile');
@@ -19,3 +20,6 @@ RouteHelper::importRoutesFromFolder('demo', 'profile');
 /********************************************************
 | Web                                                   |
  ********************************************************/
+Route::middleware('site.available')->group(function () {
+    Route::view('site-preview', 'web.site-preview')->name('web.preview');
+});

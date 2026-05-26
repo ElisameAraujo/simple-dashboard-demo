@@ -18,6 +18,8 @@ return [
     'notifications' => 'Notifications',
     'switch_theme' => 'Light/Dark Mode',
     'settings' => 'Settings',
+    'maintenance' => 'Maintenance',
+    'site_preview' => 'Site Example',
     'max_size' => 'Max file size:',
     'upload_file' => 'Upload File',
     'save_changes' => 'Save Changes',

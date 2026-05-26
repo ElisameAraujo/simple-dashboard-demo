@@ -8,6 +8,8 @@
     @yield('page-header')
 
     <div class="header-buttons">
+        <livewire:admin.configs.maintenance-header-status />
+
         @include('components.admin.language-switcher')
 
         <label class="swap tooltip" data-tip="{{ __('ui.switch_theme') }}">

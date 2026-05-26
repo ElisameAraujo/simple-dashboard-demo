@@ -1,0 +1,86 @@
+name: "Modo de Manutenção"
+description: "Bloqueio público controlado pelo painel, inspirado no fluxo do WordPress."
+summary:
+  - "Substitui o uso de artisan down quando o objetivo é bloquear apenas visitantes anônimos."
+  - "Administradores autenticados continuam acessando o painel e a rota pública de prévia."
+  - "A mensagem exibida na página 503 pode ser ajustada pelo painel."
+  - "O header administrativo pode mostrar o status ativo e um atalho opcional de ativar/desativar."
+variations:
+  - mode: "public"
+    title: "Visitante anônimo"
+    description: "Quando a manutenção está ativa, rotas públicas protegidas retornam 503."
+    behaviors:
+      - "A rota de exemplo da demo é /site-preview."
+      - "O middleware aborta com 503 antes da página pública renderizar."
+      - "A view errors/503.blade.php usa a mensagem salva no painel."
+  - mode: "admin"
+    title: "Administrador autenticado"
+    description: "Usuários logados continuam navegando para validar alterações."
+    behaviors:
+      - "O middleware libera requisições com usuário autenticado."
+      - "O painel permanece acessível."
+      - "A rota pública pode ser usada como prévia durante a manutenção."
+  - mode: "header"
+    title: "Status no header"
+    description: "O painel pode exibir estado e atalho de manutenção no cabeçalho."
+    behaviors:
+      - "Em Manutenção aparece enquanto o bloqueio está ativo."
+      - "Site Online pode aparecer por tempo configurável após desativar."
+      - "O atalho usa modal DaisyUI de confirmação simples."
+configuration:
+  - name: "maintenance_enabled"
+    type: "boolean"
+    default: "false"
+    description: "Liga ou desliga o bloqueio público."
+  - name: "maintenance_message"
+    type: "string|null"
+    default: "null"
+    description: "Mensagem customizada exibida na página 503."
+  - name: "show_header_shortcut"
+    type: "boolean"
+    default: "false"
+    description: "Define se o header mostra o botão rápido de ativar/desativar."
+  - name: "show_online_alert"
+    type: "boolean"
+    default: "true"
+    description: "Controla se o badge Site Online aparece depois que a manutenção é desativada."
+  - name: "online_alert_duration_seconds"
+    type: "integer"
+    default: "30"
+    description: "Tempo do badge Site Online. Use 0 para manter visível enquanto o alerta estiver habilitado."
+implementation:
+  - title: "Aplicar o middleware em rotas públicas"
+    code: |
+      Route::middleware('site.available')->group(function () {
+          Route::view('site-preview', 'web.site-preview')->name('web.preview');
+      });
+  - title: "Adicionar status no header"
+    code: |
+      <livewire:admin.configs.maintenance-header-status />
+  - title: "Renderizar a tela de gerenciamento"
+    code: |
+      @livewire('admin.configs.maintenance-manager')
+methods:
+  - name: "MaintenanceSetting::current()"
+    returns: "MaintenanceSetting"
+    description: "Retorna a configuração atual usando cache persistente."
+    example: |
+      $settings = MaintenanceSetting::current();
+  - name: "MaintenanceSetting::refreshCurrent()"
+    returns: "MaintenanceSetting"
+    description: "Limpa o cache e recarrega a configuração atual."
+    example: |
+      MaintenanceSetting::refreshCurrent();
+  - name: "shouldShowOnlineAlert()"
+    returns: "bool"
+    description: "Indica se o badge Site Online deve aparecer no header."
+    example: |
+      MaintenanceSetting::current()->shouldShowOnlineAlert();
+improvements:
+  - "A demo usa uma rota pública real para provar o comportamento do middleware."
+  - "O modal de confirmação é DaisyUI, porque o fluxo é apenas Sim/Não e não precisa de validação."
+  - "wire-elements/modal fica reservado para modais com formulário e validação Livewire."
+  - "Textos foram extraídos para arquivos de tradução."
+notes:
+  - "Não aplique site.available em rotas de login, auth ou painel administrativo."
+  - "O módulo não usa o modo nativo artisan down, então o painel continua disponível."

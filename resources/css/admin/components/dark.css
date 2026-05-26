@@ -212,3 +212,13 @@
 [data-theme="dark"] .notifications-ui-icon {
     @apply bg-base-300;
 }
+
+/** Maintenance Mode **/
+[data-theme="dark"] .maintenance-header-status .actions,
+[data-theme="dark"] .project-status {
+    @apply border-gray-600;
+}
+
+[data-theme="dark"] .maintenance-header-status .actions:hover {
+    @apply bg-gray-500 cursor-pointer;
+}
