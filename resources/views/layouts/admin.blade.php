@@ -23,7 +23,7 @@
             </div>
         </main>
     </div>
-    @livewire('livewire-ui-spotlight')
+    @livewire('admin.search.search-spotlight')
     @livewire('wire-elements-modal')
 
     @livewireScripts

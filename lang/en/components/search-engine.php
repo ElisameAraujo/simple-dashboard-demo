@@ -1,0 +1,63 @@
+<?php
+
+return [
+    'spotlight' => [
+        'placeholder' => 'Search the dashboard...',
+        'close' => 'Close search',
+        'suggestions' => 'Suggestions',
+        'results' => 'Results',
+        'group_filters' => 'Search group filters',
+        'all_groups' => 'All',
+        'minimum_chars' => 'Type at least :count characters.',
+        'count' => '{0} No items|{1} :count item|[2,*] :count items',
+        'empty' => 'No results found.',
+    ],
+    'admin' => [
+        'dashboard' => [
+            'summary' => 'Overview of the demo dashboard.',
+            'keywords' => ['start', 'home', 'panel', 'dashboard', 'admin'],
+        ],
+        'helpers' => [
+            'title' => 'Helpers Summary',
+            'summary' => 'Documentation and examples for the dashboard global helpers.',
+            'keywords' => ['helpers', 'functions', 'utilities', 'documentation', 'core'],
+        ],
+        'modules' => [
+            'title' => 'Modules Summary',
+            'summary' => 'Extra modules available in the admin flow.',
+            'keywords' => ['modules', 'extras', 'components', 'demo'],
+        ],
+        'image-preview' => [
+            'summary' => 'Image preview for create and edit flows.',
+            'keywords' => ['image', 'preview', 'upload', 'create', 'edit'],
+        ],
+        'visits' => [
+            'summary' => 'Standalone visit tracking and popularity metrics.',
+            'keywords' => ['visits', 'popularity', 'views', 'metrics', 'ranking'],
+        ],
+        'notifications-ui' => [
+            'summary' => 'Visual interface for admin notifications.',
+            'keywords' => ['notifications', 'alerts', 'bell', 'dropdown', 'modal'],
+        ],
+        'maintenance-mode' => [
+            'summary' => 'Control the public availability of the site.',
+            'keywords' => ['maintenance', 'site offline', '503', 'wordpress', 'site online'],
+        ],
+        'site-preview' => [
+            'summary' => 'Public example route protected by maintenance mode.',
+            'keywords' => ['site', 'preview', 'web', 'public', 'maintenance'],
+        ],
+        'profile' => [
+            'summary' => 'Manage the basic account information.',
+            'keywords' => ['profile', 'account', 'user', 'email', 'avatar'],
+        ],
+        'account-notifications' => [
+            'summary' => 'Account notification preferences.',
+            'keywords' => ['notifications', 'preferences', 'account', 'alerts'],
+        ],
+        'security' => [
+            'summary' => 'Account security settings.',
+            'keywords' => ['security', 'password', 'login', 'fingerprint', 'account'],
+        ],
+    ],
+];
