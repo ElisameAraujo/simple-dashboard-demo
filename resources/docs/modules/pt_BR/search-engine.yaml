@@ -1,0 +1,253 @@
+name: Search Engine
+description: Motor de busca configurável para Spotlight administrativo, fontes estáticas e models Eloquent.
+sections:
+  - id: overview
+    title: Visão geral
+    description: O módulo centraliza fontes de busca e devolve uma coleção pronta para a interface decidir como exibir.
+    items:
+      - id: overview-purpose
+        title: Propósito
+        description: Search Engine não tenta impor uma tela final; ele resolve configuração, valida as fontes e entrega resultados ordenados por relevância.
+        bullets:
+          - Funciona como base para o Spotlight do painel administrativo.
+          - Aceita itens estáticos para menus, configurações e páginas internas.
+          - Aceita models Eloquent para posts, produtos, páginas ou qualquer outro conteúdo pesquisável.
+          - Mantém a configuração declarativa para evitar closures dentro de config/search.php.
+      - id: overview-flow
+        title: Fluxo atual
+        description: A demo usa o escopo admin para misturar páginas internas, módulos e registros fake de posts/produtos.
+        bullets:
+          - O usuário abre o Spotlight com Ctrl+K ou Cmd+K.
+          - A busca consulta as fontes configuradas em config/search.php.
+          - Os resultados retornam como SearchResult, com grupo, badge, imagem, URL e actions opcionais.
+          - A UI pode filtrar por grupos gerados sob demanda.
+  - id: architecture
+    title: Arquitetura
+    description: As responsabilidades são separadas para a busca não virar uma camada de CRUD.
+    items:
+      - id: architecture-engine
+        title: SearchEngine e SearchScope
+        description: SearchEngine abre um escopo e SearchScope valida a configuração completa antes de executar a busca.
+        bullets:
+          - A validação acontece antes de qualquer resultado ser devolvido.
+          - Chaves quebradas como admin.models.demo_products param a execução com uma exception clara.
+          - O escopo controla min_chars, limit, groups, statics, models e actions.
+        code: |
+          $results = app(SearchEngine::class)
+              ->scope('admin')
+              ->search('midias', group: 'products');
+      - id: architecture-result
+        title: SearchResult
+        description: Cada resultado é um DTO simples para a UI consumir sem saber se a origem foi estática ou Eloquent.
+        bullets:
+          - source indica statics ou models.
+          - group e groupLabel alimentam filtros do Spotlight.
+          - clickAction e actions só aparecem quando configurados para models.
+          - metadata guarda informações extras como model, id e source_key.
+  - id: configuration
+    title: Configuração base
+    description: config/search.php é a fonte única de definição do módulo.
+    items:
+      - id: configuration-defaults
+        title: Defaults
+        description: Defaults definem limites e pesos globais reutilizados pelas fontes.
+        bullets:
+          - min_chars controla o mínimo de caracteres para pesquisar.
+          - limit controla a quantidade final de resultados.
+          - static_field_weights define relevância de title, keywords, group, badge e summary.
+          - model_field_weight é usado quando fields_weight não é informado.
+        code: |
+          'defaults' => [
+              'min_chars' => 2,
+              'limit' => 12,
+              'model_field_weight' => 50,
+          ],
+      - id: configuration-groups
+        title: Groups
+        description: Groups organizam resultados por tipo e alimentam os filtros visuais do Spotlight.
+        bullets:
+          - group é o identificador interno estável.
+          - label_key permite tradução.
+          - icon e order controlam aparência e ordenação.
+        code: |
+          'groups' => [
+              'products' => [
+                  'label_key' => 'components/search-engine.groups.products',
+                  'icon' => 'fa-solid fa-bag-shopping',
+                  'order' => 70,
+              ],
+          ],
+  - id: static-sources
+    title: Fontes estáticas
+    description: Statics representam páginas internas, menus, configurações e destinos que não vêm de models.
+    items:
+      - id: static-items
+        title: Itens estáticos
+        description: Cada item define texto, grupo, destino e palavras-chave para descoberta rápida.
+        bullets:
+          - Use title ou title_key.
+          - Use summary ou summary_key.
+          - route usa rotas nomeadas do Laravel.
+          - keywords ou keywords_key ajudam a encontrar o item por termos alternativos.
+        code: |
+          'maintenance-mode' => [
+              'title_key' => 'ui.maintenance',
+              'summary_key' => 'components/search-engine.admin.maintenance-mode.summary',
+              'group' => 'settings',
+              'badge_key' => 'ui.settings',
+              'icon' => 'fa-solid fa-wrench',
+              'route' => 'configs.maintenance',
+              'keywords_key' => 'components/search-engine.admin.maintenance-mode.keywords',
+              'weight' => 100,
+          ],
+      - id: static-use-cases
+        title: Casos de uso
+        description: Statics são ideais para qualquer coisa que já existe no painel, mas não precisa consultar banco.
+        bullets:
+          - Dashboard, Perfil, Segurança e Notificações.
+          - Configurações internas como Manutenção.
+          - Páginas de documentação da demo.
+          - Atalhos para módulos extras.
+  - id: model-sources
+    title: Fontes Eloquent
+    description: Models deixam o Spotlight encontrar registros reais sem escrever uma busca por tabela.
+    items:
+      - id: model-fields
+        title: Campos pesquisáveis
+        description: A configuração separa os campos usados na consulta, os campos selecionados e os pesos de relevância.
+        bullets:
+          - searchable_fields define onde o termo será procurado.
+          - select_fields define o que a query deve carregar para montar o resultado.
+          - fields_weight usa campo => peso e precisa apontar apenas para searchable_fields.
+          - Se fields_weight for omitido, todos os searchable_fields recebem o mesmo peso.
+        code: |
+          'demo_products' => [
+              'model' => SearchProduct::class,
+              'group' => 'products',
+              'title_field' => 'name',
+              'summary_field' => 'description',
+              'image_field' => 'image',
+              'select_fields' => ['id', 'name', 'slug', 'description', 'image', 'status'],
+              'searchable_fields' => ['name', 'description'],
+              'fields_weight' => [
+                  'name' => 100,
+                  'description' => 35,
+              ],
+          ],
+      - id: model-constraints
+        title: Constraints
+        description: Constraints filtram os registros antes de montar os resultados.
+        bullets:
+          - Use constraints para retornar apenas itens publicados, ativos ou visíveis.
+          - Operadores aceitos incluem =, !=, like, in, null e not_null.
+          - Campos inválidos interrompem a execução antes da busca.
+        code: |
+          'constraints' => [
+              ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+              ['field' => 'published_at', 'operator' => 'not_null'],
+          ],
+  - id: actions
+    title: Actions de models
+    description: Actions ficam separadas dos models para a busca não misturar fonte de dados com comportamento de UI.
+    items:
+      - id: actions-contract
+        title: Contrato
+        description: A chave actions referencia o mesmo nome da fonte model e define clique principal e botões secundários.
+        bullets:
+          - click aceita edit, visit ou null.
+          - show controla se os botões secundários aparecem.
+          - A action usada pelo clique não é renderizada como botão.
+          - Não existe fallback automático quando uma action de clique não está visível.
+        code: |
+          'actions' => [
+              'demo_products' => [
+                  'click' => 'edit',
+                  'show' => true,
+                  'items' => [
+                      'edit' => [
+                          'label_key' => 'ui.edit',
+                          'icon' => 'fa-regular fa-pen-to-square',
+                          'route' => [
+                              'name' => 'search.demo.products.edit',
+                              'parameters' => ['product' => 'id'],
+                          ],
+                      ],
+                  ],
+              ],
+          ],
+      - id: actions-visit
+        title: Visitar item público
+        description: visible_when decide se a action visit deve aparecer para cada registro.
+        bullets:
+          - A regra é declarativa e usa a mesma linguagem de constraints.
+          - Se o item não passar na regra, o botão não aparece.
+          - Isso permite buscar registros admin e ainda esconder o acesso público quando necessário.
+        code: |
+          'visit' => [
+              'label_key' => 'ui.visit',
+              'icon' => 'fa-solid fa-arrow-up-right-from-square',
+              'route' => [
+                  'name' => 'search.demo.products.show',
+                  'parameters' => ['product' => 'slug'],
+              ],
+              'visible_when' => [
+                  ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                  ['field' => 'published_at', 'operator' => 'not_null'],
+              ],
+          ],
+  - id: spotlight
+    title: Spotlight administrativo
+    description: A UI do Spotlight é apenas uma consumidora dos resultados do Search Engine.
+    items:
+      - id: spotlight-groups
+        title: Filtros por grupo
+        description: Os grupos aparecem apenas depois que a pesquisa começa e são calculados com base nos resultados encontrados.
+        bullets:
+          - Tudo remove o filtro ativo.
+          - Cada grupo mostra contador de resultados.
+          - Os botões quebram linha em vez de usar scroll horizontal.
+      - id: spotlight-model-actions
+        title: Cards com actions
+        description: Resultados de models podem virar atalhos rápidos no painel.
+        bullets:
+          - Com click edit, clicar no card abre a tela de edição.
+          - O botão visit fica disponível quando visible_when permite.
+          - Resultados estáticos continuam como links simples.
+  - id: validation
+    title: Validação e testes
+    description: Configuração incorreta deve falhar cedo para evitar resultados silenciosamente errados.
+    items:
+      - id: validation-rules
+        title: Falhas intencionais
+        description: O módulo lança InvalidSearchConfigurationException quando encontra uma montagem inválida.
+        bullets:
+          - Rotas inexistentes param a execução.
+          - Groups inexistentes param a execução.
+          - Fields inexistentes na tabela param a execução.
+          - fields_weight apontando para campos não pesquisáveis para a execução.
+          - actions apontando para models inexistentes ou rotas quebradas param a execução.
+      - id: validation-tests
+        title: Cobertura atual
+        description: A demo cobre busca estática, busca Eloquent, grupos, actions, visible_when e renderização do Spotlight.
+        bullets:
+          - SearchEngineTest valida o contrato principal.
+          - TranslationTest valida chaves de tradução.
+          - O seeder cria posts/produtos publicados e rascunhos para testar constraints.
+  - id: next-steps
+    title: Próximos passos
+    description: O escopo Livewire e a busca web serão tratados depois da documentação atual.
+    items:
+      - id: next-web
+        title: Escopo web
+        description: A busca web deve ter página de resultados e dropdown embutido como exemplo de consumo público.
+        bullets:
+          - A UI web deve continuar consumindo coleção pronta.
+          - O usuário decide como apresentar cards, imagens e paginação.
+          - A demo pode usar os mesmos posts/produtos fake para provar o fluxo.
+      - id: next-livewire
+        title: Escopo Livewire
+        description: O escopo Livewire será uma camada específica para tabelas que precisam de busca reutilizável.
+        bullets:
+          - ProductTable e PostTable são bons exemplos para validar a ideia.
+          - A implementação deve evitar repetir a lógica de busca em cada tabela.
+          - Esta etapa fica separada porque é mais acoplada ao desenho de cada tabela.

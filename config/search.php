@@ -288,7 +288,7 @@ return [
                     ],
                 ],
                 'demo_products' => [
-                    'click' => 'visit',
+                    'click' => 'edit',
                     'show' => true,
                     'items' => [
                         'edit' => [

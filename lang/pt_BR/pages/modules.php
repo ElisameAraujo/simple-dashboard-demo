@@ -38,5 +38,8 @@ return [
             'title' => 'Ajustes',
             'description' => 'Mudanças feitas antes de tratar este item como um extra reutilizável.',
         ],
+        'documentation' => [
+            'title' => 'Menu',
+        ],
     ],
 ];

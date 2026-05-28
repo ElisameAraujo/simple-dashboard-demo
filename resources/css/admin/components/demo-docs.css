@@ -33,6 +33,7 @@
 
 .demo-docs-grid,
 .demo-docs-detail-grid,
+.demo-docs-layout,
 .demo-docs-variation-grid,
 .demo-docs-code-grid,
 .demo-docs-method-grid {
@@ -198,4 +199,73 @@
 
 .demo-docs-variation-copy ul {
     @apply grid list-disc gap-1 pl-4;
+}
+
+.demo-docs-layout {
+    @apply items-start;
+}
+
+.demo-docs-nav {
+    @apply col-span-12 rounded-lg border border-gray-200 bg-base-100 p-3 lg:sticky lg:top-24 lg:col-span-3 max-h-0 lg:max-h-screen overflow-hidden lg:overflow-auto;
+}
+
+.demo-docs-nav strong {
+    @apply mb-2 block text-xs font-bold uppercase text-gray-500;
+}
+
+.demo-docs-nav nav {
+    @apply flex flex-col gap-1;
+}
+
+.demo-docs-nav a {
+    @apply rounded-md px-3 py-2 text-sm font-semibold transition-default;
+}
+
+.demo-docs-nav a:hover {
+    @apply bg-primary text-white;
+}
+
+.demo-docs-nav div {
+    @apply mb-2 ml-3 flex flex-col border-l border-gray-200 pl-2;
+}
+
+.demo-docs-nav div a {
+    @apply py-1.5 text-xs font-medium text-gray-500;
+}
+
+.demo-docs-section-list {
+    @apply col-span-12 grid gap-4 lg:col-span-9;
+}
+
+.demo-docs-section {
+    @apply scroll-mt-24;
+}
+
+.demo-docs-topic-list {
+    @apply grid gap-3;
+}
+
+.demo-docs-topic {
+    @apply scroll-mt-24 rounded-md border border-gray-200 bg-base-200 p-3;
+}
+
+.demo-docs-topic-copy {
+    @apply flex flex-col gap-1;
+}
+
+.demo-docs-topic-copy h3 {
+    @apply font-bold;
+}
+
+.demo-docs-topic-copy p,
+.demo-docs-topic li {
+    @apply text-sm leading-6 text-gray-500;
+}
+
+.demo-docs-topic ul {
+    @apply mt-3 grid list-disc gap-1 pl-4;
+}
+
+.demo-docs-topic .mockup-code {
+    @apply mt-3 rounded-md text-xs;
 }

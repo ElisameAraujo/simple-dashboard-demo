@@ -45,7 +45,69 @@
             </a>
         </div>
 
-        <div class="demo-docs-detail-grid">
+        @if ($module['sections'] !== [])
+            <div class="demo-docs-layout">
+                <aside class="demo-docs-nav" aria-label="{{ $module['name'] }}">
+                    <strong>{{ __('pages/modules.sections.documentation.title') }}</strong>
+                    <nav>
+                        @foreach ($module['sections'] as $section)
+                            <a href="#{{ $section['id'] }}">{{ $section['title'] }}</a>
+
+                            @if (($section['items'] ?? []) !== [])
+                                <div>
+                                    @foreach ($section['items'] as $item)
+                                        <a href="#{{ $item['id'] }}">{{ $item['title'] }}</a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        @endforeach
+                    </nav>
+                </aside>
+
+                <div class="demo-docs-section-list">
+                    @foreach ($module['sections'] as $section)
+                        <article class="demo-docs-panel demo-docs-panel-wide demo-docs-section" id="{{ $section['id'] }}">
+                            <div class="dashboard-panel-header">
+                                <div>
+                                    <h2>{{ $section['title'] }}</h2>
+                                    <p>{{ $section['description'] }}</p>
+                                </div>
+                            </div>
+
+                            @if (($section['items'] ?? []) !== [])
+                                <div class="demo-docs-topic-list">
+                                    @foreach ($section['items'] as $item)
+                                        <section class="demo-docs-topic" id="{{ $item['id'] }}">
+                                            <div class="demo-docs-topic-copy">
+                                                <h3>{{ $item['title'] }}</h3>
+                                                <p>{{ $item['description'] }}</p>
+                                            </div>
+
+                                            @if (($item['bullets'] ?? []) !== [])
+                                                <ul>
+                                                    @foreach ($item['bullets'] as $bullet)
+                                                        <li>{{ $bullet }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+
+                                            @if (filled($item['code'] ?? null))
+                                                <div class="mockup-code w-full">
+                                                    @foreach (preg_split('/\R/', rtrim($item['code'])) as $line)
+                                                        <pre data-prefix="{{ $loop->iteration }}"><code>{{ $line }}</code></pre>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </section>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <div class="demo-docs-detail-grid">
             <article class="demo-docs-panel demo-docs-panel-wide">
                 <div class="dashboard-panel-header">
                     <div>
@@ -206,6 +268,7 @@
                     @endforeach
                 </div>
             </article>
-        </div>
+            </div>
+        @endif
     </section>
 @endsection

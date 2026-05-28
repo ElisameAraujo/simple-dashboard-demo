@@ -25,12 +25,17 @@ class ModuleDemoCatalog
             'icon' => 'fa-solid fa-screwdriver-wrench',
             'status' => 'ready',
         ],
+        'search-engine' => [
+            'component' => null,
+            'icon' => 'fa-solid fa-magnifying-glass',
+            'status' => 'ready',
+        ],
     ];
 
     public static function all(): array
     {
         return collect(self::MODULES)
-            ->map(fn(array $definition, string $slug) => self::build($slug, $definition))
+            ->map(fn (array $definition, string $slug) => self::build($slug, $definition))
             ->values()
             ->all();
     }
@@ -63,6 +68,7 @@ class ModuleDemoCatalog
             'methods' => $documentation['methods'] ?? [],
             'improvements' => $documentation['improvements'] ?? [],
             'notes' => $documentation['notes'] ?? [],
+            'sections' => $documentation['sections'] ?? [],
             'url' => route('modules.show', $slug),
         ];
     }

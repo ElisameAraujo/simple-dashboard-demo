@@ -1,0 +1,253 @@
+name: Search Engine
+description: Configurable search engine for the admin Spotlight, static sources, and Eloquent models.
+sections:
+  - id: overview
+    title: Overview
+    description: The module centralizes search sources and returns a ready collection so the interface can decide how to render it.
+    items:
+      - id: overview-purpose
+        title: Purpose
+        description: Search Engine does not force a final screen; it resolves configuration, validates sources, and returns results ordered by relevance.
+        bullets:
+          - Works as the foundation for the admin panel Spotlight.
+          - Accepts static items for menus, settings, and internal pages.
+          - Accepts Eloquent models for posts, products, pages, or any other searchable content.
+          - Keeps configuration declarative to avoid closures inside config/search.php.
+      - id: overview-flow
+        title: Current flow
+        description: The demo uses the admin scope to mix internal pages, modules, and fake post/product records.
+        bullets:
+          - The user opens Spotlight with Ctrl+K or Cmd+K.
+          - Search reads the sources configured in config/search.php.
+          - Results return as SearchResult objects with group, badge, image, URL, and optional actions.
+          - The UI can filter by groups generated on demand.
+  - id: architecture
+    title: Architecture
+    description: Responsibilities stay separated so search does not become a CRUD layer.
+    items:
+      - id: architecture-engine
+        title: SearchEngine and SearchScope
+        description: SearchEngine opens a scope and SearchScope validates the complete configuration before running the search.
+        bullets:
+          - Validation happens before any result is returned.
+          - Broken keys such as admin.models.demo_products stop execution with a clear exception.
+          - The scope controls min_chars, limit, groups, statics, models, and actions.
+        code: |
+          $results = app(SearchEngine::class)
+              ->scope('admin')
+              ->search('media', group: 'products');
+      - id: architecture-result
+        title: SearchResult
+        description: Each result is a simple DTO the UI can consume without knowing whether it came from a static source or Eloquent.
+        bullets:
+          - source indicates statics or models.
+          - group and groupLabel feed Spotlight filters.
+          - clickAction and actions appear only when configured for models.
+          - metadata keeps extra information such as model, id, and source_key.
+  - id: configuration
+    title: Base configuration
+    description: config/search.php is the single definition source for the module.
+    items:
+      - id: configuration-defaults
+        title: Defaults
+        description: Defaults define reusable global limits and weights.
+        bullets:
+          - min_chars controls the minimum characters required to search.
+          - limit controls the final number of results.
+          - static_field_weights defines relevance for title, keywords, group, badge, and summary.
+          - model_field_weight is used when fields_weight is not provided.
+        code: |
+          'defaults' => [
+              'min_chars' => 2,
+              'limit' => 12,
+              'model_field_weight' => 50,
+          ],
+      - id: configuration-groups
+        title: Groups
+        description: Groups organize results by type and feed the visual filters in Spotlight.
+        bullets:
+          - group is the stable internal identifier.
+          - label_key enables translation.
+          - icon and order control appearance and ordering.
+        code: |
+          'groups' => [
+              'products' => [
+                  'label_key' => 'components/search-engine.groups.products',
+                  'icon' => 'fa-solid fa-bag-shopping',
+                  'order' => 70,
+              ],
+          ],
+  - id: static-sources
+    title: Static sources
+    description: Statics represent internal pages, menus, settings, and destinations that do not come from models.
+    items:
+      - id: static-items
+        title: Static items
+        description: Each item defines text, group, destination, and keywords for quick discovery.
+        bullets:
+          - Use title or title_key.
+          - Use summary or summary_key.
+          - route uses Laravel named routes.
+          - keywords or keywords_key help find the item through alternate terms.
+        code: |
+          'maintenance-mode' => [
+              'title_key' => 'ui.maintenance',
+              'summary_key' => 'components/search-engine.admin.maintenance-mode.summary',
+              'group' => 'settings',
+              'badge_key' => 'ui.settings',
+              'icon' => 'fa-solid fa-wrench',
+              'route' => 'configs.maintenance',
+              'keywords_key' => 'components/search-engine.admin.maintenance-mode.keywords',
+              'weight' => 100,
+          ],
+      - id: static-use-cases
+        title: Use cases
+        description: Statics are ideal for anything that already exists in the panel but does not need a database query.
+        bullets:
+          - Dashboard, Profile, Security, and Notifications.
+          - Internal settings such as Maintenance.
+          - Demo documentation pages.
+          - Shortcuts to extra modules.
+  - id: model-sources
+    title: Eloquent sources
+    description: Models let Spotlight find real records without writing one custom search per table.
+    items:
+      - id: model-fields
+        title: Searchable fields
+        description: Configuration separates fields used by the query, fields selected by the query, and relevance weights.
+        bullets:
+          - searchable_fields defines where the term will be searched.
+          - select_fields defines what the query must load to build the result.
+          - fields_weight uses field => weight and must point only to searchable_fields.
+          - If fields_weight is omitted, all searchable_fields receive the same weight.
+        code: |
+          'demo_products' => [
+              'model' => SearchProduct::class,
+              'group' => 'products',
+              'title_field' => 'name',
+              'summary_field' => 'description',
+              'image_field' => 'image',
+              'select_fields' => ['id', 'name', 'slug', 'description', 'image', 'status'],
+              'searchable_fields' => ['name', 'description'],
+              'fields_weight' => [
+                  'name' => 100,
+                  'description' => 35,
+              ],
+          ],
+      - id: model-constraints
+        title: Constraints
+        description: Constraints filter records before results are built.
+        bullets:
+          - Use constraints to return only published, active, or visible items.
+          - Supported operators include =, !=, like, in, null, and not_null.
+          - Invalid fields stop execution before the search runs.
+        code: |
+          'constraints' => [
+              ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+              ['field' => 'published_at', 'operator' => 'not_null'],
+          ],
+  - id: actions
+    title: Model actions
+    description: Actions live separately from models so search does not mix data source setup with UI behavior.
+    items:
+      - id: actions-contract
+        title: Contract
+        description: The actions key references the same model source name and defines the main click and secondary buttons.
+        bullets:
+          - click accepts edit, visit, or null.
+          - show controls whether secondary buttons appear.
+          - The action used by the click is not rendered as a button.
+          - There is no automatic fallback when a click action is not visible.
+        code: |
+          'actions' => [
+              'demo_products' => [
+                  'click' => 'edit',
+                  'show' => true,
+                  'items' => [
+                      'edit' => [
+                          'label_key' => 'ui.edit',
+                          'icon' => 'fa-regular fa-pen-to-square',
+                          'route' => [
+                              'name' => 'search.demo.products.edit',
+                              'parameters' => ['product' => 'id'],
+                          ],
+                      ],
+                  ],
+              ],
+          ],
+      - id: actions-visit
+        title: Visit public item
+        description: visible_when decides whether the visit action should appear for each record.
+        bullets:
+          - The rule is declarative and uses the same language as constraints.
+          - If the item does not pass the rule, the button does not appear.
+          - This allows admin searches to include records while hiding public access when needed.
+        code: |
+          'visit' => [
+              'label_key' => 'ui.visit',
+              'icon' => 'fa-solid fa-arrow-up-right-from-square',
+              'route' => [
+                  'name' => 'search.demo.products.show',
+                  'parameters' => ['product' => 'slug'],
+              ],
+              'visible_when' => [
+                  ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                  ['field' => 'published_at', 'operator' => 'not_null'],
+              ],
+          ],
+  - id: spotlight
+    title: Admin Spotlight
+    description: The Spotlight UI is only a consumer of Search Engine results.
+    items:
+      - id: spotlight-groups
+        title: Group filters
+        description: Groups appear only after a search starts and are calculated from the results found.
+        bullets:
+          - All removes the active filter.
+          - Each group shows a result count.
+          - Buttons wrap to new lines instead of using horizontal scrolling.
+      - id: spotlight-model-actions
+        title: Cards with actions
+        description: Model results can become quick admin shortcuts.
+        bullets:
+          - With click edit, clicking the card opens the edit screen.
+          - The visit button appears when visible_when allows it.
+          - Static results remain simple links.
+  - id: validation
+    title: Validation and tests
+    description: Invalid configuration should fail early to avoid silently wrong results.
+    items:
+      - id: validation-rules
+        title: Intentional failures
+        description: The module throws InvalidSearchConfigurationException when it finds an invalid setup.
+        bullets:
+          - Missing routes stop execution.
+          - Missing groups stop execution.
+          - Missing table fields stop execution.
+          - fields_weight pointing to non-searchable fields stops execution.
+          - actions pointing to missing models or broken routes stop execution.
+      - id: validation-tests
+        title: Current coverage
+        description: The demo covers static search, Eloquent search, groups, actions, visible_when, and Spotlight rendering.
+        bullets:
+          - SearchEngineTest validates the main contract.
+          - TranslationTest validates translation keys.
+          - The seeder creates published and draft posts/products to test constraints.
+  - id: next-steps
+    title: Next steps
+    description: The Livewire scope and web search will be handled after the current documentation.
+    items:
+      - id: next-web
+        title: Web scope
+        description: Web search should have a results page and embedded dropdown as a public consumption example.
+        bullets:
+          - The web UI should keep consuming a ready collection.
+          - The user decides how to present cards, images, and pagination.
+          - The demo can use the same fake posts/products to prove the flow.
+      - id: next-livewire
+        title: Livewire scope
+        description: The Livewire scope will be a specific layer for tables that need reusable search.
+        bullets:
+          - ProductTable and PostTable are good examples to validate the idea.
+          - The implementation should avoid repeating search logic in each table.
+          - This step stays separate because it is more coupled to each table design.

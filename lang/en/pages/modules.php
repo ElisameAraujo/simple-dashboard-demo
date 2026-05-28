@@ -38,5 +38,8 @@ return [
             'title' => 'Refinements',
             'description' => 'Changes made before treating this as a reusable extra.',
         ],
+        'documentation' => [
+            'title' => 'Menu',
+        ],
     ],
 ];

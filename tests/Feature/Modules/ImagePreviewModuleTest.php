@@ -4,6 +4,7 @@ namespace Tests\Feature\Modules;
 
 use App\Livewire\Global\ImagePreview;
 use App\Support\ModuleDemoCatalog;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Livewire\Livewire;
 use Symfony\Component\Yaml\Yaml;
@@ -11,6 +12,8 @@ use Tests\TestCase;
 
 class ImagePreviewModuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_modules_index_and_image_preview_page_are_available(): void
     {
         app()->setLocale('en');
@@ -73,5 +76,4 @@ class ImagePreviewModuleTest extends TestCase
             ->assertDontSee('Remover imagem')
             ->assertDontSee('Salvar imagem');
     }
-
 }

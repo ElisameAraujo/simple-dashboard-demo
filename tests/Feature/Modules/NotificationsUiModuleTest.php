@@ -5,6 +5,7 @@ namespace Tests\Feature\Modules;
 use App\Livewire\Global\NotificationsUi;
 use App\Livewire\Global\NotificationsUiModal;
 use App\Support\ModuleDemoCatalog;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Livewire\Livewire;
 use Symfony\Component\Yaml\Yaml;
@@ -12,6 +13,8 @@ use Tests\TestCase;
 
 class NotificationsUiModuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_modules_index_and_notifications_ui_page_are_available(): void
     {
         app()->setLocale('en');
