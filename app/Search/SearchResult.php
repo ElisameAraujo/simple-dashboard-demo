@@ -11,7 +11,7 @@ class SearchResult
         public readonly string $type,
         public readonly string $title,
         public readonly ?string $summary,
-        public readonly string $url,
+        public readonly ?string $url,
         public readonly ?string $route = null,
         public readonly ?string $icon = null,
         public readonly ?string $image = null,
@@ -20,6 +20,8 @@ class SearchResult
         public readonly ?string $groupLabel = null,
         public readonly ?string $groupIcon = null,
         public readonly int $groupOrder = 100,
+        public readonly ?string $clickAction = null,
+        public readonly array $actions = [],
         public readonly int $score = 0,
         public readonly array $metadata = [],
     ) {}
@@ -42,6 +44,8 @@ class SearchResult
             'group_label' => $this->groupLabel,
             'group_icon' => $this->groupIcon,
             'group_order' => $this->groupOrder,
+            'click_action' => $this->clickAction,
+            'actions' => $this->actions,
             'score' => $this->score,
             'metadata' => $this->metadata,
         ];

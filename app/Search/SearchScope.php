@@ -27,6 +27,11 @@ class SearchScope
         'not_null',
     ];
 
+    private const ACTION_CLICK_VALUES = [
+        'edit',
+        'visit',
+    ];
+
     public function __construct(
         private readonly string $scope,
         private readonly ?array $config,
@@ -149,10 +154,6 @@ class SearchScope
                 throw InvalidSearchConfigurationException::invalidGroup($fullKey, $definition['group']);
             }
 
-            if (! isset($definition['route']) && ! isset($definition['url'])) {
-                throw InvalidSearchConfigurationException::missingModelDestination($fullKey);
-            }
-
             if (isset($definition['route']) && ! Route::has($definition['route'])) {
                 throw InvalidSearchConfigurationException::invalidRoute($fullKey, $definition['route']);
             }
@@ -193,6 +194,67 @@ class SearchScope
 
             foreach (($definition['constraints'] ?? []) as $constraint) {
                 $this->validateConstraint($fullKey, $constraint);
+            }
+        }
+
+        foreach ($this->actionDefinitions() as $modelKey => $definition) {
+            $fullKey = $this->actionKey($modelKey);
+
+            if (! isset($this->modelDefinitions()[$modelKey])) {
+                throw InvalidSearchConfigurationException::invalidActionModel($fullKey);
+            }
+
+            if (! isset($definition['items']) || ! is_array($definition['items']) || $definition['items'] === []) {
+                throw InvalidSearchConfigurationException::invalidActionItems($fullKey);
+            }
+
+            if (isset($definition['click']) && $definition['click'] !== null) {
+                if (
+                    ! is_string($definition['click'])
+                    || ! in_array($definition['click'], self::ACTION_CLICK_VALUES, true)
+                    || ! isset($definition['items'][$definition['click']])
+                ) {
+                    throw InvalidSearchConfigurationException::invalidActionClick($fullKey, (string) $definition['click']);
+                }
+            }
+
+            $modelDefinition = $this->modelDefinitions()[$modelKey];
+            $modelClass = $modelDefinition['model'];
+            $model = new $modelClass;
+            $table = $model->getTable();
+
+            foreach ($definition['items'] as $action => $actionDefinition) {
+                $actionKey = "{$fullKey}.items.{$action}";
+
+                if (! isset($actionDefinition['label']) && ! isset($actionDefinition['label_key'])) {
+                    throw InvalidSearchConfigurationException::missingActionLabel($actionKey);
+                }
+
+                if (
+                    ! isset($actionDefinition['route']['name'])
+                    || ! isset($actionDefinition['route']['parameters'])
+                    || ! is_array($actionDefinition['route']['parameters'])
+                ) {
+                    throw InvalidSearchConfigurationException::invalidActionRoute($actionKey);
+                }
+
+                if (! Route::has($actionDefinition['route']['name'])) {
+                    throw InvalidSearchConfigurationException::invalidRoute($actionKey, $actionDefinition['route']['name']);
+                }
+
+                foreach ($actionDefinition['route']['parameters'] as $field) {
+                    if (! Schema::hasColumn($table, $field)) {
+                        throw InvalidSearchConfigurationException::unknownModelField($actionKey, $field, $table);
+                    }
+                }
+
+                foreach (($actionDefinition['visible_when'] ?? []) as $constraint) {
+                    $this->validateConstraint($actionKey, $constraint);
+
+                    if (! Schema::hasColumn($table, $constraint['field'])) {
+                        throw InvalidSearchConfigurationException::unknownModelField($actionKey, $constraint['field'], $table);
+                    }
+                }
             }
         }
     }
@@ -304,6 +366,8 @@ class SearchScope
         $groupDefinition = $this->groupDefinitions()[$group];
         $groupLabel = $this->groupLabel($groupDefinition);
         $badge = $this->modelText($item, $definition, 'badge');
+        $clickAction = $this->clickAction($key, $item);
+        $actions = $this->visibleActions($key, $item, $clickAction);
 
         return new SearchResult(
             key: $this->modelKey($key).".{$item->getKey()}",
@@ -312,7 +376,9 @@ class SearchScope
             type: $definition['type'] ?? 'model',
             title: (string) $item->getAttribute($definition['title_field']),
             summary: $this->modelText($item, $definition, 'summary'),
-            url: $this->modelUrl($definition, $item),
+            url: $clickAction !== null
+                ? $clickAction['url']
+                : $this->modelUrl($definition, $item),
             route: $definition['route'] ?? null,
             icon: $definition['icon'] ?? null,
             image: $this->modelText($item, $definition, 'image'),
@@ -321,6 +387,8 @@ class SearchScope
             groupLabel: $groupLabel,
             groupIcon: $groupDefinition['icon'] ?? null,
             groupOrder: (int) ($groupDefinition['order'] ?? 100),
+            clickAction: $clickAction['key'] ?? null,
+            actions: $actions,
             score: $this->scoreModel($term, $definition, $item),
             metadata: [
                 'model' => $definition['model'],
@@ -474,6 +542,11 @@ class SearchScope
         return $this->config['models'] ?? [];
     }
 
+    private function actionDefinitions(): array
+    {
+        return $this->config['actions'] ?? [];
+    }
+
     private function staticFieldWeights(): array
     {
         return config('search.defaults.static_field_weights', []);
@@ -510,6 +583,11 @@ class SearchScope
         return "{$this->scope}.models.{$key}";
     }
 
+    private function actionKey(string $key): string
+    {
+        return "{$this->scope}.actions.{$key}";
+    }
+
     private function groupKey(string $key): string
     {
         return "{$this->scope}.groups.{$key}";
@@ -539,10 +617,14 @@ class SearchScope
             : null;
     }
 
-    private function modelUrl(array $definition, Model $item): string
+    private function modelUrl(array $definition, Model $item): ?string
     {
         if (isset($definition['url'])) {
             return (string) $definition['url'];
+        }
+
+        if (! isset($definition['route'])) {
+            return null;
         }
 
         $parameters = $definition['route_parameters'] ?? [];
@@ -577,6 +659,7 @@ class SearchScope
             ->merge(array_values($definition['route_fields'] ?? []))
             ->merge(collect($definition['constraints'] ?? [])->pluck('field'))
             ->merge(array_keys($definition['order_by'] ?? []))
+            ->merge($this->actionFieldsForModelDefinition($definition))
             ->filter(fn (mixed $field): bool => is_string($field) && $field !== '')
             ->unique()
             ->values()
@@ -617,5 +700,107 @@ class SearchScope
             'not_like' => $query->where($field, 'not like', $constraint['value']),
             default => $query->where($field, $operator, $constraint['value']),
         };
+    }
+
+    private function clickAction(string $modelKey, Model $item): ?array
+    {
+        $definition = $this->actionDefinitions()[$modelKey] ?? null;
+        $click = $definition['click'] ?? null;
+
+        if ($definition === null || $click === null) {
+            return null;
+        }
+
+        $action = $definition['items'][$click] ?? null;
+
+        if ($action === null || ! $this->actionIsVisible($action, $item)) {
+            return null;
+        }
+
+        return $this->resolvedAction($click, $action, $item);
+    }
+
+    private function visibleActions(string $modelKey, Model $item, ?array $clickAction = null): array
+    {
+        $definition = $this->actionDefinitions()[$modelKey] ?? null;
+
+        if ($definition === null || ! (bool) ($definition['show'] ?? false)) {
+            return [];
+        }
+
+        return collect($definition['items'])
+            ->reject(fn (array $action, string $key): bool => $clickAction !== null && $key === $clickAction['key'])
+            ->filter(fn (array $action): bool => $this->actionIsVisible($action, $item))
+            ->map(fn (array $action, string $key): array => $this->resolvedAction($key, $action, $item))
+            ->values()
+            ->all();
+    }
+
+    private function resolvedAction(string $key, array $definition, Model $item): array
+    {
+        return [
+            'key' => $key,
+            'label' => $this->text($definition, 'label'),
+            'icon' => $definition['icon'] ?? null,
+            'url' => $this->actionUrl($definition, $item),
+        ];
+    }
+
+    private function actionUrl(array $definition, Model $item): string
+    {
+        $parameters = collect($definition['route']['parameters'])
+            ->mapWithKeys(fn (string $field, string $parameter): array => [$parameter => $item->getAttribute($field)])
+            ->all();
+
+        return route($definition['route']['name'], $parameters);
+    }
+
+    private function actionIsVisible(array $definition, Model $item): bool
+    {
+        foreach (($definition['visible_when'] ?? []) as $constraint) {
+            if (! $this->modelMatchesConstraint($item, $constraint)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function modelMatchesConstraint(Model $item, array $constraint): bool
+    {
+        $value = $item->getAttribute($constraint['field']);
+        $operator = strtolower((string) $constraint['operator']);
+
+        return match ($operator) {
+            '=' => $value == $constraint['value'],
+            '!=', '<>' => $value != $constraint['value'],
+            '>' => $value > $constraint['value'],
+            '>=' => $value >= $constraint['value'],
+            '<' => $value < $constraint['value'],
+            '<=' => $value <= $constraint['value'],
+            'like' => str_contains($this->normalize((string) $value), $this->normalize((string) $constraint['value'])),
+            'not_like' => ! str_contains($this->normalize((string) $value), $this->normalize((string) $constraint['value'])),
+            'in' => in_array($value, $constraint['value'], true),
+            'not_in' => ! in_array($value, $constraint['value'], true),
+            'null' => $value === null,
+            'not_null' => $value !== null,
+            default => false,
+        };
+    }
+
+    private function actionFieldsForModelDefinition(array $definition): array
+    {
+        $modelKey = array_search($definition, $this->modelDefinitions(), true);
+
+        if (! is_string($modelKey) || ! isset($this->actionDefinitions()[$modelKey])) {
+            return [];
+        }
+
+        return collect($this->actionDefinitions()[$modelKey]['items'] ?? [])
+            ->flatMap(fn (array $action): array => [
+                ...array_values($action['route']['parameters'] ?? []),
+                ...collect($action['visible_when'] ?? [])->pluck('field')->all(),
+            ])
+            ->all();
     }
 }

@@ -20,6 +20,20 @@ return [
         'post' => 'Post',
         'product' => 'Produto',
     ],
+    'demo_edit' => [
+        'note' => 'Esta página é uma rota demonstrativa. Em um projeto real, ela seria substituída pela tela de edição do model encontrado no Spotlight.',
+        'back' => 'Voltar ao módulo',
+        'posts' => [
+            'type' => 'Post demo',
+            'title' => 'Edição demo de post',
+            'description' => 'Destino usado para validar a action de edição dos resultados de posts.',
+        ],
+        'products' => [
+            'type' => 'Produto demo',
+            'title' => 'Edição demo de produto',
+            'description' => 'Destino usado para validar a action de edição dos resultados de produtos.',
+        ],
+    ],
     'admin' => [
         'dashboard' => [
             'summary' => 'Visão geral do painel demo.',

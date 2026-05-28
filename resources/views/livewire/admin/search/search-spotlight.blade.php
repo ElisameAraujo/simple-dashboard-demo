@@ -94,7 +94,16 @@
 
             <div class="admin-search-results">
                 @forelse ($results as $result)
-                    <a href="{{ $result->url }}" class="admin-search-result" wire:key="{{ $result->key }}">
+                    <div
+                        class="admin-search-result {{ $result->url ? 'admin-search-result-clickable' : '' }}"
+                        wire:key="{{ $result->key }}"
+                        @if ($result->url)
+                            role="link"
+                            tabindex="0"
+                            x-on:click="window.location.href = @js($result->url)"
+                            x-on:keydown.enter="window.location.href = @js($result->url)"
+                        @endif
+                    >
                         <span class="admin-search-icon">
                             @if ($result->image)
                                 <img src="{{ $result->image }}" alt="">
@@ -118,10 +127,28 @@
                             @endif
                         </span>
 
-                        @if ($result->group)
-                            <span class="admin-search-group">{{ $result->groupLabel }}</span>
-                        @endif
-                    </a>
+                        <span class="admin-search-side">
+                            @if ($result->group)
+                                <span class="admin-search-group">{{ $result->groupLabel }}</span>
+                            @endif
+
+                            @if ($result->actions !== [])
+                                <span class="admin-search-actions">
+                                    @foreach ($result->actions as $action)
+                                        <a href="{{ $action['url'] }}" class="admin-search-action"
+                                            title="{{ $action['label'] }}" aria-label="{{ $action['label'] }}"
+                                            x-on:click.stop>
+                                            @if ($action['icon'])
+                                                <i class="{{ $action['icon'] }}"></i>
+                                            @else
+                                                <span>{{ $action['label'] }}</span>
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                </span>
+                            @endif
+                        </span>
+                    </div>
                 @empty
                     <div class="admin-search-empty">
                         <i class="fa-regular fa-face-meh"></i>

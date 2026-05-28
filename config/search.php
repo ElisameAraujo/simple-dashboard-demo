@@ -186,8 +186,6 @@ return [
                     'image_field' => 'cover_image',
                     'badge_key' => 'components/search-engine.badges.post',
                     'icon' => 'fa-regular fa-newspaper',
-                    'route' => 'modules.show',
-                    'route_parameters' => ['module' => 'search-engine'],
                     'select_fields' => [
                         'id',
                         'title',
@@ -228,8 +226,6 @@ return [
                     'image_field' => 'image',
                     'badge_key' => 'components/search-engine.badges.product',
                     'icon' => 'fa-solid fa-bag-shopping',
-                    'route' => 'modules.show',
-                    'route_parameters' => ['module' => 'search-engine'],
                     'select_fields' => [
                         'id',
                         'name',
@@ -257,6 +253,69 @@ return [
                     ],
                     'candidate_limit' => 40,
                     'weight' => 80,
+                ],
+            ],
+
+            'actions' => [
+                'demo_posts' => [
+                    'click' => 'edit',
+                    'show' => true,
+                    'items' => [
+                        'edit' => [
+                            'label_key' => 'ui.edit',
+                            'icon' => 'fa-regular fa-pen-to-square',
+                            'route' => [
+                                'name' => 'search.demo.posts.edit',
+                                'parameters' => [
+                                    'post' => 'id',
+                                ],
+                            ],
+                        ],
+                        'visit' => [
+                            'label_key' => 'ui.visit',
+                            'icon' => 'fa-solid fa-arrow-up-right-from-square',
+                            'route' => [
+                                'name' => 'search.demo.posts.show',
+                                'parameters' => [
+                                    'post' => 'slug',
+                                ],
+                            ],
+                            'visible_when' => [
+                                ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                                ['field' => 'published_at', 'operator' => 'not_null'],
+                            ],
+                        ],
+                    ],
+                ],
+                'demo_products' => [
+                    'click' => 'visit',
+                    'show' => true,
+                    'items' => [
+                        'edit' => [
+                            'label_key' => 'ui.edit',
+                            'icon' => 'fa-regular fa-pen-to-square',
+                            'route' => [
+                                'name' => 'search.demo.products.edit',
+                                'parameters' => [
+                                    'product' => 'id',
+                                ],
+                            ],
+                        ],
+                        'visit' => [
+                            'label_key' => 'ui.visit',
+                            'icon' => 'fa-solid fa-arrow-up-right-from-square',
+                            'route' => [
+                                'name' => 'search.demo.products.show',
+                                'parameters' => [
+                                    'product' => 'slug',
+                                ],
+                            ],
+                            'visible_when' => [
+                                ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                                ['field' => 'published_at', 'operator' => 'not_null'],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],

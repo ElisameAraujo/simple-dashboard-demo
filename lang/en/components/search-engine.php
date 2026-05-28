@@ -20,6 +20,20 @@ return [
         'post' => 'Post',
         'product' => 'Product',
     ],
+    'demo_edit' => [
+        'note' => 'This page is a demonstration route. In a real project, it would be replaced by the edit screen for the model found in Spotlight.',
+        'back' => 'Back to module',
+        'posts' => [
+            'type' => 'Demo post',
+            'title' => 'Demo post edit',
+            'description' => 'Destination used to validate the edit action for post results.',
+        ],
+        'products' => [
+            'type' => 'Demo product',
+            'title' => 'Demo product edit',
+            'description' => 'Destination used to validate the edit action for product results.',
+        ],
+    ],
     'admin' => [
         'dashboard' => [
             'summary' => 'Overview of the demo dashboard.',

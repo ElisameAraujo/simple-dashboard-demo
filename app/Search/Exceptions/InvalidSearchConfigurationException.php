@@ -105,4 +105,29 @@ class InvalidSearchConfigurationException extends RuntimeException
     {
         return new self("Invalid search configuration [{$key}]. Model constraints must define [field], [operator] and a valid [value] when the operator needs one.");
     }
+
+    public static function invalidActionModel(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Search actions must reference an existing model source.");
+    }
+
+    public static function invalidActionClick(string $key, string $action): self
+    {
+        return new self("Invalid search configuration [{$key}]. The click action [{$action}] must exist in [items].");
+    }
+
+    public static function invalidActionItems(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Search actions must define a non-empty [items] array.");
+    }
+
+    public static function missingActionLabel(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Search actions must define [label] or [label_key].");
+    }
+
+    public static function invalidActionRoute(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Search action routes must define [route.name] and a [route.parameters] array.");
+    }
 }

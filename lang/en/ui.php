@@ -23,6 +23,8 @@ return [
     'max_size' => 'Max file size:',
     'upload_file' => 'Upload File',
     'save_changes' => 'Save Changes',
+    'edit' => 'Edit',
+    'visit' => 'Visit',
     'update' => 'Update',
     'save' => 'Save',
     'delete' => 'Delete',

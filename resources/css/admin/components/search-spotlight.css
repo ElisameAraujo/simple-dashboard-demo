@@ -74,7 +74,12 @@
     @apply grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-md p-3 transition-default;
 }
 
-.admin-search-result:hover {
+.admin-search-result-clickable {
+    @apply cursor-pointer;
+}
+
+.admin-search-result:hover,
+.admin-search-result:focus-visible {
     @apply bg-primary text-white;
 }
 
@@ -86,7 +91,8 @@
     @apply h-full w-full object-cover;
 }
 
-.admin-search-result:hover .admin-search-icon {
+.admin-search-result:hover .admin-search-icon,
+.admin-search-result:focus-visible .admin-search-icon {
     @apply bg-white text-primary;
 }
 
@@ -106,7 +112,8 @@
     @apply rounded bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-white;
 }
 
-.admin-search-result:hover .admin-search-title-row small {
+.admin-search-result:hover .admin-search-title-row small,
+.admin-search-result:focus-visible .admin-search-title-row small {
     @apply bg-white text-primary;
 }
 
@@ -114,16 +121,35 @@
     @apply line-clamp-1 text-xs text-gray-500;
 }
 
-.admin-search-result:hover .admin-search-content > span:last-child {
+.admin-search-result:hover .admin-search-content > span:last-child,
+.admin-search-result:focus-visible .admin-search-content > span:last-child {
     @apply text-white/80;
+}
+
+.admin-search-side {
+    @apply flex h-full flex-col items-end justify-between gap-2;
 }
 
 .admin-search-group {
     @apply hidden text-xs font-semibold uppercase text-gray-400 sm:block;
 }
 
-.admin-search-result:hover .admin-search-group {
+.admin-search-result:hover .admin-search-group,
+.admin-search-result:focus-visible .admin-search-group {
     @apply text-white/80;
+}
+
+.admin-search-actions {
+    @apply flex items-center justify-end gap-1;
+}
+
+.admin-search-action {
+    @apply flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-base-100 text-xs text-gray-500 shadow-sm transition-default;
+}
+
+.admin-search-action:hover,
+.admin-search-action:focus-visible {
+    @apply border-white bg-white text-primary;
 }
 
 .admin-search-empty {

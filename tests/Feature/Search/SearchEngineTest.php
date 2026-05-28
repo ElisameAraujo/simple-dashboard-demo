@@ -85,7 +85,7 @@ class SearchEngineTest extends TestCase
     {
         app()->setLocale('pt_BR');
 
-        SearchPost::factory()->create([
+        $post = SearchPost::factory()->create([
             'title' => 'Editor visual para posts com imagens',
             'excerpt' => 'Conteudo publicado para validar a pesquisa em models.',
             'body' => 'O Spotlight encontra posts publicados pelo titulo, resumo e corpo.',
@@ -104,7 +104,12 @@ class SearchEngineTest extends TestCase
         $this->assertNotEmpty($results);
         $this->assertTrue($results->contains(fn ($result) => $result->source === 'models' && $result->group === 'posts'));
         $this->assertFalse($results->contains(fn ($result) => $result->title === 'Editor visual em rascunho'));
-        $this->assertSame(__('components/search-engine.badges.post'), $results->firstWhere('group', 'posts')->badge);
+        $result = $results->firstWhere('group', 'posts');
+        $this->assertSame(__('components/search-engine.badges.post'), $result->badge);
+        $this->assertSame('edit', $result->clickAction);
+        $this->assertSame(route('search.demo.posts.edit', ['post' => $post->id]), $result->url);
+        $this->assertTrue(collect($result->actions)->contains(fn (array $action) => $action['key'] === 'visit'));
+        $this->assertFalse(collect($result->actions)->contains(fn (array $action) => $action['key'] === 'edit'));
     }
 
     public function test_admin_scope_can_constrain_model_search_by_group(): void
@@ -130,6 +135,25 @@ class SearchEngineTest extends TestCase
         $this->assertFalse($results->contains(fn ($result) => $result->title === 'Midias para posts do blog'));
     }
 
+    public function test_product_model_click_action_points_to_edit_and_visit_stays_as_secondary_action(): void
+    {
+        $product = SearchProduct::factory()->create([
+            'name' => 'Kit de midias para loja',
+            'description' => 'Produto publicado para validar actions.',
+        ]);
+
+        $result = app(SearchEngine::class)
+            ->scope('admin')
+            ->search('midias loja', group: 'products')
+            ->firstWhere('title', 'Kit de midias para loja');
+
+        $this->assertNotNull($result);
+        $this->assertSame('edit', $result->clickAction);
+        $this->assertSame(route('search.demo.products.edit', ['product' => $product->id]), $result->url);
+        $this->assertTrue(collect($result->actions)->contains(fn (array $action) => $action['key'] === 'visit'));
+        $this->assertFalse(collect($result->actions)->contains(fn (array $action) => $action['key'] === 'edit'));
+    }
+
     public function test_model_field_weights_prioritize_stronger_fields(): void
     {
         SearchPost::factory()->create([
@@ -149,6 +173,72 @@ class SearchEngineTest extends TestCase
             ->search('checklist');
 
         $this->assertSame('Checklist editorial completo', $results->first()->title);
+    }
+
+    public function test_model_action_visibility_respects_visible_when_rules(): void
+    {
+        Config::set('search.scopes.admin.models.demo_posts.constraints', []);
+
+        SearchPost::factory()->draft()->create([
+            'title' => 'Rascunho pesquisavel para validar actions',
+            'excerpt' => 'Este registro aparece na busca, mas nao pode ser visitado.',
+            'body' => 'Actions com visible_when nao devem renderizar visita para rascunhos.',
+        ]);
+
+        $result = app(SearchEngine::class)
+            ->scope('admin')
+            ->search('rascunho pesquisavel')
+            ->firstWhere('group', 'posts');
+
+        $this->assertNotNull($result);
+        $this->assertSame('edit', $result->clickAction);
+        $this->assertSame([], $result->actions);
+    }
+
+    public function test_model_actions_can_be_hidden_without_disabling_click_action(): void
+    {
+        Config::set('search.scopes.admin.actions.demo_posts.show', false);
+
+        SearchPost::factory()->create([
+            'title' => 'Post com actions escondidas',
+            'excerpt' => 'O clique continua ativo mesmo sem botoes.',
+            'body' => 'A busca deve manter o atalho principal de edicao.',
+        ]);
+
+        $result = app(SearchEngine::class)
+            ->scope('admin')
+            ->search('actions escondidas')
+            ->firstWhere('group', 'posts');
+
+        $this->assertNotNull($result);
+        $this->assertSame('edit', $result->clickAction);
+        $this->assertSame([], $result->actions);
+    }
+
+    public function test_demo_edit_action_routes_render_edit_destinations(): void
+    {
+        $this->get(route('search.demo.posts.edit', ['post' => 10]))
+            ->assertOk()
+            ->assertSee(__('components/search-engine.demo_edit.posts.title'))
+            ->assertSee('ID: 10');
+
+        $this->get(route('search.demo.products.edit', ['product' => 20]))
+            ->assertOk()
+            ->assertSee(__('components/search-engine.demo_edit.products.title'))
+            ->assertSee('ID: 20');
+    }
+
+    public function test_invalid_model_action_configuration_stops_execution(): void
+    {
+        Config::set('search.scopes.admin.actions.demo_posts.click', 'publish');
+
+        $this->expectException(InvalidSearchConfigurationException::class);
+        $this->expectExceptionMessage('admin.actions.demo_posts');
+        $this->expectExceptionMessage('publish');
+
+        app(SearchEngine::class)
+            ->scope('admin')
+            ->search('anything');
     }
 
     public function test_invalid_model_field_weight_stops_execution(): void
