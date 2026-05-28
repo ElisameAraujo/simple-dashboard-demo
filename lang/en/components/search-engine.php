@@ -12,6 +12,14 @@ return [
         'count' => '{0} No items|{1} :count item|[2,*] :count items',
         'empty' => 'No results found.',
     ],
+    'groups' => [
+        'posts' => 'Posts',
+        'products' => 'Products',
+    ],
+    'badges' => [
+        'post' => 'Post',
+        'product' => 'Product',
+    ],
     'admin' => [
         'dashboard' => [
             'summary' => 'Overview of the demo dashboard.',

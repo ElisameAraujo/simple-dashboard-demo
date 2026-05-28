@@ -12,6 +12,14 @@ return [
         'count' => '{0} Nenhum item|{1} :count item|[2,*] :count itens',
         'empty' => 'Nenhum resultado encontrado.',
     ],
+    'groups' => [
+        'posts' => 'Posts',
+        'products' => 'Produtos',
+    ],
+    'badges' => [
+        'post' => 'Post',
+        'product' => 'Produto',
+    ],
     'admin' => [
         'dashboard' => [
             'summary' => 'Visão geral do painel demo.',

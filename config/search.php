@@ -1,9 +1,13 @@
 <?php
 
+use App\Models\Demo\SearchPost;
+use App\Models\Demo\SearchProduct;
+
 return [
     'defaults' => [
         'min_chars' => 2,
         'limit' => 12,
+        'model_field_weight' => 50,
         'static_field_weights' => [
             'title' => 100,
             'keywords' => 80,
@@ -43,6 +47,16 @@ return [
                     'label_key' => 'ui.account',
                     'icon' => 'fa-solid fa-user',
                     'order' => 50,
+                ],
+                'posts' => [
+                    'label_key' => 'components/search-engine.groups.posts',
+                    'icon' => 'fa-regular fa-newspaper',
+                    'order' => 60,
+                ],
+                'products' => [
+                    'label_key' => 'components/search-engine.groups.products',
+                    'icon' => 'fa-solid fa-bag-shopping',
+                    'order' => 70,
                 ],
             ],
 
@@ -159,6 +173,90 @@ return [
                     'route' => 'account.security',
                     'keywords_key' => 'components/search-engine.admin.security.keywords',
                     'weight' => 75,
+                ],
+            ],
+
+            'models' => [
+                'demo_posts' => [
+                    'model' => SearchPost::class,
+                    'group' => 'posts',
+                    'type' => 'post',
+                    'title_field' => 'title',
+                    'summary_field' => 'excerpt',
+                    'image_field' => 'cover_image',
+                    'badge_key' => 'components/search-engine.badges.post',
+                    'icon' => 'fa-regular fa-newspaper',
+                    'route' => 'modules.show',
+                    'route_parameters' => ['module' => 'search-engine'],
+                    'select_fields' => [
+                        'id',
+                        'title',
+                        'slug',
+                        'excerpt',
+                        'cover_image',
+                        'status',
+                        'published_at',
+                    ],
+                    'searchable_fields' => [
+                        'title',
+                        'subtitle',
+                        'excerpt',
+                        'body',
+                    ],
+                    'fields_weight' => [
+                        'title' => 100,
+                        'subtitle' => 70,
+                        'excerpt' => 45,
+                        'body' => 20,
+                    ],
+                    'constraints' => [
+                        ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                        ['field' => 'published_at', 'operator' => 'not_null'],
+                    ],
+                    'order_by' => [
+                        'published_at' => 'desc',
+                    ],
+                    'candidate_limit' => 40,
+                    'weight' => 80,
+                ],
+                'demo_products' => [
+                    'model' => SearchProduct::class,
+                    'group' => 'products',
+                    'type' => 'product',
+                    'title_field' => 'name',
+                    'summary_field' => 'description',
+                    'image_field' => 'image',
+                    'badge_key' => 'components/search-engine.badges.product',
+                    'icon' => 'fa-solid fa-bag-shopping',
+                    'route' => 'modules.show',
+                    'route_parameters' => ['module' => 'search-engine'],
+                    'select_fields' => [
+                        'id',
+                        'name',
+                        'slug',
+                        'description',
+                        'image',
+                        'price',
+                        'status',
+                        'published_at',
+                    ],
+                    'searchable_fields' => [
+                        'name',
+                        'description',
+                    ],
+                    'fields_weight' => [
+                        'name' => 100,
+                        'description' => 35,
+                    ],
+                    'constraints' => [
+                        ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                        ['field' => 'published_at', 'operator' => 'not_null'],
+                    ],
+                    'order_by' => [
+                        'published_at' => 'desc',
+                    ],
+                    'candidate_limit' => 40,
+                    'weight' => 80,
                 ],
             ],
         ],

@@ -96,7 +96,9 @@
                 @forelse ($results as $result)
                     <a href="{{ $result->url }}" class="admin-search-result" wire:key="{{ $result->key }}">
                         <span class="admin-search-icon">
-                            @if ($result->icon)
+                            @if ($result->image)
+                                <img src="{{ $result->image }}" alt="">
+                            @elseif ($result->icon)
                                 <i class="{{ $result->icon }}"></i>
                             @else
                                 <i class="fa-solid fa-arrow-right"></i>

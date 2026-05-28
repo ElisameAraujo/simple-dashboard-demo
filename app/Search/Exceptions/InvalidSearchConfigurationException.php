@@ -55,4 +55,54 @@ class InvalidSearchConfigurationException extends RuntimeException
     {
         return new self("Invalid search configuration [{$key}]. The [weight] value must be a positive number.");
     }
+
+    public static function missingModelClass(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Model search items must define [model].");
+    }
+
+    public static function invalidModelClass(string $key, string $model): self
+    {
+        return new self("Invalid search configuration [{$key}]. The model [{$model}] must be an Eloquent model class.");
+    }
+
+    public static function missingModelTable(string $key, string $table): self
+    {
+        return new self("Invalid search configuration [{$key}]. The table [{$table}] does not exist.");
+    }
+
+    public static function missingModelGroup(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Model search items must define [group].");
+    }
+
+    public static function missingModelDestination(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Model search items must define [route] or [url].");
+    }
+
+    public static function missingModelField(string $key, string $field): self
+    {
+        return new self("Invalid search configuration [{$key}]. Model search items must define [{$field}].");
+    }
+
+    public static function invalidModelFields(string $key, string $field): self
+    {
+        return new self("Invalid search configuration [{$key}]. The [{$field}] value must be a non-empty array.");
+    }
+
+    public static function unknownModelField(string $key, string $field, string $table): self
+    {
+        return new self("Invalid search configuration [{$key}]. The field [{$field}] does not exist on table [{$table}].");
+    }
+
+    public static function invalidFieldWeight(string $key, string $field): self
+    {
+        return new self("Invalid search configuration [{$key}]. The field weight [{$field}] must point to a searchable field and use a positive number.");
+    }
+
+    public static function invalidConstraint(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. Model constraints must define [field], [operator] and a valid [value] when the operator needs one.");
+    }
 }

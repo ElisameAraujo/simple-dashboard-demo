@@ -79,7 +79,11 @@
 }
 
 .admin-search-icon {
-    @apply flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary;
+    @apply flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-primary/10 text-primary;
+}
+
+.admin-search-icon img {
+    @apply h-full w-full object-cover;
 }
 
 .admin-search-result:hover .admin-search-icon {
