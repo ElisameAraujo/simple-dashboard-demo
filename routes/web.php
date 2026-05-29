@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\LocaleController;
 use App\Helpers\RouteHelper;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\Web\SearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('locale/{locale}', [LocaleController::class, 'switch'])
@@ -22,4 +23,5 @@ RouteHelper::importRoutesFromFolder('demo', 'profile');
  ********************************************************/
 Route::middleware('site.available')->group(function () {
     Route::view('site-preview', 'web.site-preview')->name('web.preview');
+    Route::get('site-preview/search', SearchController::class)->name('web.search');
 });

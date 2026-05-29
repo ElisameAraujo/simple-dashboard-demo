@@ -236,3 +236,31 @@
 [data-theme="dark"] .maintenance-header-status .actions:hover {
     @apply bg-gray-500 cursor-pointer;
 }
+
+/** Web Search **/
+[data-theme="dark"] .web-preview-navbar-shell,
+[data-theme="dark"] .web-search-dropdown,
+[data-theme="dark"] .web-search-header,
+[data-theme="dark"] .web-search-form,
+[data-theme="dark"] .web-search-footer,
+[data-theme="dark"] .web-search-input-wrap,
+[data-theme="dark"] .web-search-result,
+[data-theme="dark"] .web-search-page-header,
+[data-theme="dark"] .web-search-page-summary,
+[data-theme="dark"] .web-search-empty-page {
+    @apply border-gray-600;
+}
+
+[data-theme="dark"] .web-search-form label,
+[data-theme="dark"] .web-search-results-title,
+[data-theme="dark"] .web-search-result p,
+[data-theme="dark"] .web-search-result-meta,
+[data-theme="dark"] .web-search-empty,
+[data-theme="dark"] .web-search-page-header p,
+[data-theme="dark"] .web-search-page-summary {
+    @apply text-gray-400;
+}
+
+[data-theme="dark"] .web-search-header button:hover {
+    @apply bg-gray-700;
+}

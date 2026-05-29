@@ -5,6 +5,7 @@ namespace Tests\Feature\Search;
 use App\Livewire\Admin\Search\DemoPostsTable;
 use App\Livewire\Admin\Search\DemoProductsTable;
 use App\Livewire\Admin\Search\SearchSpotlight;
+use App\Livewire\Web\Search\SearchDropdown;
 use App\Models\Demo\SearchPost;
 use App\Models\Demo\SearchProduct;
 use App\Search\Exceptions\InvalidSearchConfigurationException;
@@ -409,5 +410,52 @@ class SearchEngineTest extends TestCase
             ->set('search', 'editor visual')
             ->assertSee('Editor visual em rascunho')
             ->assertDontSee('Editor visual publicado');
+    }
+
+    public function test_web_scope_returns_only_public_results_with_public_urls(): void
+    {
+        $post = SearchPost::factory()->create([
+            'title' => 'Guia publico de imagens',
+            'excerpt' => 'Conteudo publicado para busca web.',
+            'body' => 'Busca publica encontra posts publicados.',
+            'slug' => 'guia-publico-de-imagens',
+        ]);
+
+        SearchPost::factory()->draft()->create([
+            'title' => 'Guia publico em rascunho',
+            'excerpt' => 'Este registro nao aparece no site.',
+            'body' => 'Busca publica deve respeitar constraints.',
+        ]);
+
+        $results = app(SearchEngine::class)
+            ->scope('web')
+            ->search('guia publico');
+
+        $this->assertNotEmpty($results);
+        $this->assertTrue($results->contains(fn ($result) => $result->title === 'Guia publico de imagens'));
+        $this->assertFalse($results->contains(fn ($result) => $result->title === 'Guia publico em rascunho'));
+        $this->assertSame(route('search.demo.posts.show', ['post' => $post->slug]), $results->firstWhere('title', 'Guia publico de imagens')->url);
+    }
+
+    public function test_web_search_page_and_dropdown_consume_web_scope(): void
+    {
+        app()->setLocale('pt_BR');
+
+        SearchProduct::factory()->create([
+            'name' => 'Kit de pesquisa web',
+            'description' => 'Produto publicado para validar a pagina de resultados.',
+        ]);
+
+        $this->get(route('web.search', ['q' => 'pesquisa web']))
+            ->assertOk()
+            ->assertSee(__('components/search-engine.web.page_title'))
+            ->assertSee('Kit de pesquisa web');
+
+        Livewire::test(SearchDropdown::class)
+            ->call('toggle')
+            ->set('term', 'pesquisa web')
+            ->assertSet('isOpen', true)
+            ->assertSee('Kit de pesquisa web')
+            ->assertSee(__('components/search-engine.web.all_results'));
     }
 }

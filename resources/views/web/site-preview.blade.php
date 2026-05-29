@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
+@extends('layouts.web')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('components/maintenance-mode.preview.title') }}</title>
-    @include('components.global.theme-loader')
-    @vite(['resources/css/admin/admin.css', 'resources/js/admin/admin.js'])
-</head>
+@section('titulo', __('components/maintenance-mode.preview.title'))
 
-<body class="min-h-screen bg-base-100 text-base-content">
-    <main class="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-6 px-6 py-12">
+@section('conteudo')
+    <section class="web-preview-home">
         <span class="dashboard-kicker">{{ __('components/maintenance-mode.preview.kicker') }}</span>
         <div class="flex flex-col gap-3">
             <h1 class="font-unbounded text-4xl font-bold uppercase">
@@ -31,7 +24,5 @@
             <i class="fa-solid fa-arrow-left"></i>
             {{ __('components/maintenance-mode.preview.back') }}
         </a>
-    </main>
-</body>
-
-</html>
+    </section>
+@endsection

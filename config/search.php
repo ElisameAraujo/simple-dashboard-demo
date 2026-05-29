@@ -319,6 +319,113 @@ return [
                 ],
             ],
         ],
+        'web' => [
+            'min_chars' => 2,
+            'limit' => 24,
+
+            'groups' => [
+                'posts' => [
+                    'label_key' => 'components/search-engine.groups.posts',
+                    'icon' => 'fa-regular fa-newspaper',
+                    'order' => 10,
+                ],
+                'products' => [
+                    'label_key' => 'components/search-engine.groups.products',
+                    'icon' => 'fa-solid fa-bag-shopping',
+                    'order' => 20,
+                ],
+            ],
+
+            'models' => [
+                'posts' => [
+                    'model' => SearchPost::class,
+                    'group' => 'posts',
+                    'type' => 'post',
+                    'title_field' => 'title',
+                    'summary_field' => 'excerpt',
+                    'image_field' => 'cover_image',
+                    'badge_key' => 'components/search-engine.badges.post',
+                    'icon' => 'fa-regular fa-newspaper',
+                    'route' => 'search.demo.posts.show',
+                    'route_fields' => [
+                        'post' => 'slug',
+                    ],
+                    'select_fields' => [
+                        'id',
+                        'title',
+                        'slug',
+                        'excerpt',
+                        'cover_image',
+                        'status',
+                        'published_at',
+                    ],
+                    'searchable_fields' => [
+                        'title',
+                        'subtitle',
+                        'excerpt',
+                        'body',
+                    ],
+                    'fields_weight' => [
+                        'title' => 100,
+                        'subtitle' => 70,
+                        'excerpt' => 45,
+                        'body' => 20,
+                    ],
+                    'constraints' => [
+                        ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                        ['field' => 'published_at', 'operator' => 'not_null'],
+                    ],
+                    'order_by' => [
+                        'published_at' => 'desc',
+                    ],
+                    'suggestions' => true,
+                    'candidate_limit' => 40,
+                    'weight' => 80,
+                ],
+                'products' => [
+                    'model' => SearchProduct::class,
+                    'group' => 'products',
+                    'type' => 'product',
+                    'title_field' => 'name',
+                    'summary_field' => 'description',
+                    'image_field' => 'image',
+                    'badge_key' => 'components/search-engine.badges.product',
+                    'icon' => 'fa-solid fa-bag-shopping',
+                    'route' => 'search.demo.products.show',
+                    'route_fields' => [
+                        'product' => 'slug',
+                    ],
+                    'select_fields' => [
+                        'id',
+                        'name',
+                        'slug',
+                        'description',
+                        'image',
+                        'price',
+                        'status',
+                        'published_at',
+                    ],
+                    'searchable_fields' => [
+                        'name',
+                        'description',
+                    ],
+                    'fields_weight' => [
+                        'name' => 100,
+                        'description' => 35,
+                    ],
+                    'constraints' => [
+                        ['field' => 'status', 'operator' => '=', 'value' => 'published'],
+                        ['field' => 'published_at', 'operator' => 'not_null'],
+                    ],
+                    'order_by' => [
+                        'published_at' => 'desc',
+                    ],
+                    'suggestions' => true,
+                    'candidate_limit' => 40,
+                    'weight' => 80,
+                ],
+            ],
+        ],
     ],
 
     'livewire_tables' => [
