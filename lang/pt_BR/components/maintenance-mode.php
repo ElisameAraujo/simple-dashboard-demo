@@ -52,7 +52,7 @@ return [
     'preview' => [
         'title' => 'Prévia pública',
         'kicker' => 'Rota pública de teste',
-        'heading' => 'Site Preview',
+        'heading' => 'Site de Demonstração',
         'description' => 'Esta rota simula uma página pública protegida pelo middleware de manutenção.',
         'note' => 'Com o modo de manutenção ativo, visitantes anônimos recebem a página 503. Usuários autenticados continuam vendo esta página para validar ajustes.',
         'back' => 'Voltar ao painel',

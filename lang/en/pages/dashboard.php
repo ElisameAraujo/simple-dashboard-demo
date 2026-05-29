@@ -7,7 +7,7 @@ return [
         'description' => 'This screen centralizes the current panel status, the navigation paths already available, and a few reference links for continuing the implementation.',
     ],
     'actions' => [
-        'profile' => 'View profile',
+        'profile' => 'GitHub Profile',
     ],
     'summary' => [
         'stack' => [

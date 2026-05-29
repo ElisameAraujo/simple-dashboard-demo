@@ -7,7 +7,7 @@ return [
         'description' => 'Esta tela centraliza o estado atual do painel, os caminhos já disponíveis para navegação e alguns links de referência para continuar a implementação.',
     ],
     'actions' => [
-        'profile' => 'Ver perfil',
+        'profile' => 'Perfil do GitHub',
     ],
     'summary' => [
         'stack' => [
