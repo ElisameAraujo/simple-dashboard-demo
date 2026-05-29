@@ -95,7 +95,8 @@
 /** Profile Options **/
 [data-theme="dark"] .profile-options .option,
 [data-theme="dark"] .profile-options .option-notification,
-[data-theme="dark"] .profile-options .action p {
+[data-theme="dark"] .profile-options .action p,
+[data-theme="dark"] .profile-options .action label {
     @apply text-gray-400;
 }
 
@@ -178,7 +179,6 @@
 [data-theme="dark"] .demo-docs-method-card > p,
 [data-theme="dark"] .demo-docs-method-grid h4,
 [data-theme="dark"] .demo-docs-params p,
-[data-theme="dark"] .demo-docs-params dt small,
 [data-theme="dark"] .demo-docs-params dd,
 [data-theme="dark"] .demo-docs-explanation-list p,
 [data-theme="dark"] .demo-docs-card-copy small,
@@ -194,7 +194,34 @@
 }
 
 [data-theme="dark"] .demo-docs-card-icon {
-    @apply bg-base-300;
+    @apply text-white;
+}
+
+[data-theme="dark"] .demo-docs-card-badge {
+    @apply bg-gray-700 text-gray-300;
+}
+
+[data-theme="dark"] .mockup-code {
+    @apply text-gray-300;
+}
+
+[data-theme="dark"] .demo-docs-params dt small,
+[data-theme="dark"] .demo-docs-config-list small {
+    @apply bg-gray-700 text-gray-300;
+}
+
+[data-theme="dark"] .demo-docs-method-card-header span {
+    @apply bg-gray-700 text-white;
+}
+
+[data-theme="dark"] .demo-docs-detail-intro .demo-docs-button {
+    @apply btn-success;
+}
+
+[data-theme="dark"] .image-preview {
+    & .preview {
+        @apply border-gray-700;
+    }
 }
 
 /** Notifications UI **/
