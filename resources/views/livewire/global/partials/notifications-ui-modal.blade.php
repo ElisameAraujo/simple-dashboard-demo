@@ -17,18 +17,19 @@
 </header>
 
 <div class="notifications-ui-toolbar">
-    <div class="notifications-ui-filters" role="group" aria-label="{{ __('components/notifications-ui.filters.label') }}">
+    <div class="notifications-ui-filters" role="group"
+        aria-label="{{ __('components/notifications-ui.filters.label') }}">
         <button type="button" class="btn btn-sm {{ $filter === 'unread' ? 'btn-success' : 'btn-ghost' }}"
             wire:click="setFilter('unread')">
             {{ __('components/notifications-ui.filters.unread') }}
         </button>
-        <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-success' : 'btn-ghost' }}"
-            wire:click="setFilter('all')">
-            {{ __('components/notifications-ui.filters.all') }}
-        </button>
         <button type="button" class="btn btn-sm {{ $filter === 'read' ? 'btn-success' : 'btn-ghost' }}"
             wire:click="setFilter('read')">
             {{ __('components/notifications-ui.filters.read') }}
+        </button>
+        <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-success' : 'btn-ghost' }}"
+            wire:click="setFilter('all')">
+            {{ __('components/notifications-ui.filters.all') }}
         </button>
     </div>
 
@@ -44,9 +45,7 @@
 
 <div class="notifications-ui-modal-list">
     @forelse ($modalNotifications as $notification)
-        <x-admin.notifications-ui.item
-            :notification="$notification"
-            context="modal"
+        <x-admin.notifications-ui.item :notification="$notification" context="modal"
             wire:key="notifications-ui-modal-{{ $notification['id'] }}" />
     @empty
         <div class="notifications-ui-empty notifications-ui-empty-modal">

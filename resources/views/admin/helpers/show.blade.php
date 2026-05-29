@@ -39,7 +39,7 @@
                     <p>{{ $helper['description'] }}</p>
                 </div>
             </div>
-            <a class="btn btn-soft btn-primary" href="{{ route('helpers.index') }}">
+            <a class="demo-docs-button" href="{{ route('helpers.index') }}">
                 <i class="fa-solid fa-arrow-left"></i>
                 {{ __('pages/helpers.actions.back') }}
             </a>
@@ -94,9 +94,13 @@
                                                 <div>
                                                     <dt>
                                                         <code>{{ $parameter['name'] }}</code>
-                                                        <small>{{ $parameter['type'] }}</small>
                                                         @if ($parameter['default'] !== null)
-                                                            <small>= {{ $parameter['default'] }}</small>
+                                                            <small>
+                                                                {{ $parameter['type'] }} =
+                                                                {{ $parameter['default'] }}
+                                                            </small>
+                                                        @else
+                                                            <small>{{ $parameter['type'] }}</small>
                                                         @endif
                                                     </dt>
                                                     <dd>{{ $parameter['description'] }}</dd>
@@ -106,7 +110,7 @@
                                     @endif
                                 </div>
 
-                                <div>
+                                <div class="demo-docs-code-example">
                                     <h4>{{ __('pages/helpers.methods.example') }}</h4>
                                     <div class="mockup-code w-full">
                                         @foreach ($method['example']['usage'] as $line)

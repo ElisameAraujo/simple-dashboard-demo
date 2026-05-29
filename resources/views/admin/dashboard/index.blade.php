@@ -24,7 +24,7 @@
                 <p>{{ __('pages/dashboard.intro.description') }}</p>
             </div>
             <div class="dashboard-actions">
-                <a class="btn btn-primary" href="{{ route('account.my-profile') }}">
+                <a class="btn btn-primary" href="https://github.com/ElisameAraujo" target="_blank" rel="noopener noreferrer">
                     <i class="fa-solid fa-user"></i>
                     {{ __('pages/dashboard.actions.profile') }}
                 </a>

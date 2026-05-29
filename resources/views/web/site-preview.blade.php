@@ -14,15 +14,10 @@
             </p>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-base-100 p-4 shadow-sm">
-            <p class="text-sm text-gray-500">
+        <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-base-100 p-4 shadow-sm">
+            <p class="text-sm text-gray-500 dark:text-gray-300">
                 {{ __('components/maintenance-mode.preview.note') }}
             </p>
         </div>
-
-        <a class="btn btn-primary w-fit" href="{{ route('dashboard') }}">
-            <i class="fa-solid fa-arrow-left"></i>
-            {{ __('components/maintenance-mode.preview.back') }}
-        </a>
     </section>
 @endsection
