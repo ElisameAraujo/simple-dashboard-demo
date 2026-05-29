@@ -2,7 +2,7 @@ name: Search Engine
 description: Motor de busca configurável para Spotlight administrativo, fontes estáticas e models Eloquent.
 sections:
   - id: overview
-    title: Visão geral
+    title: Visão Geral
     description: O módulo centraliza fontes de busca e devolve uma coleção pronta para a interface decidir como exibir.
     items:
       - id: overview-purpose
@@ -45,7 +45,7 @@ sections:
           - clickAction e actions só aparecem quando configurados para models.
           - metadata guarda informações extras como model, id e source_key.
   - id: configuration
-    title: Configuração base
+    title: Configuração Base
     description: config/search.php é a fonte única de definição do módulo.
     items:
       - id: configuration-defaults
@@ -78,7 +78,7 @@ sections:
               ],
           ],
   - id: static-sources
-    title: Fontes estáticas
+    title: Fontes Estáticas
     description: Statics representam páginas internas, menus, configurações e destinos que não vêm de models.
     items:
       - id: static-items
@@ -109,7 +109,7 @@ sections:
           - Páginas de documentação da demo.
           - Atalhos para módulos extras.
   - id: model-sources
-    title: Fontes Eloquent
+    title: Models Eloquent
     description: Models deixam o Spotlight encontrar registros reais sem escrever uma busca por tabela.
     items:
       - id: model-fields
@@ -146,9 +146,27 @@ sections:
               ['field' => 'status', 'operator' => '=', 'value' => 'published'],
               ['field' => 'published_at', 'operator' => 'not_null'],
           ],
+  - id: spotlight
+    title: Spotlight
+    description: Permite uma pesquisa rápida para itens de menu e também itens de models de maneira rápida, através do atalho Ctrl+K/Cmd+K.
+    items:
+      - id: spotlight-groups
+        title: Filtros por grupo
+        description: Os grupos aparecem apenas depois que a pesquisa começa e são calculados com base nos resultados encontrados.
+        bullets:
+          - Tudo remove o filtro ativo.
+          - Cada grupo mostra contador de resultados.
+          - Os botões quebram linha em vez de usar scroll horizontal.
+      - id: spotlight-model-actions
+        title: Cards com actions
+        description: Resultados de models podem virar atalhos rápidos no painel.
+        bullets:
+          - Com click edit, clicar no card abre a tela de edição.
+          - O botão visit fica disponível quando visible_when permite.
+          - Resultados estáticos continuam como links simples.
   - id: actions
-    title: Actions de models
-    description: Actions ficam separadas dos models para a busca não misturar fonte de dados com comportamento de UI.
+    title: Ações no Spotlight
+    description: Ações permitem que usuário tenha um atalho rápido dentro do Spotlight para editar ou visitar um item que é apresentado durante a pesquisa.
     items:
       - id: actions-contract
         title: Contrato
@@ -195,24 +213,38 @@ sections:
                   ['field' => 'published_at', 'operator' => 'not_null'],
               ],
           ],
-  - id: spotlight
-    title: Spotlight administrativo
-    description: A UI do Spotlight é apenas uma consumidora dos resultados do Search Engine.
+  - id: web-search
+    title: Busca Web
+    description: O escopo web mostra como a mesma engine pode alimentar uma busca pública com dropdown e página de resultados.
     items:
-      - id: spotlight-groups
-        title: Filtros por grupo
-        description: Os grupos aparecem apenas depois que a pesquisa começa e são calculados com base nos resultados encontrados.
+      - id: web-scope
+        title: Escopo web
+        description: O escopo web usa models publicados e rotas públicas, sem actions de administração.
         bullets:
-          - Tudo remove o filtro ativo.
-          - Cada grupo mostra contador de resultados.
-          - Os botões quebram linha em vez de usar scroll horizontal.
-      - id: spotlight-model-actions
-        title: Cards com actions
-        description: Resultados de models podem virar atalhos rápidos no painel.
+          - O dropdown do menu consome sugestões e melhores resultados.
+          - A página de resultados usa a mesma coleção e aplica paginação.
+          - As constraints garantem que apenas registros publicados sejam exibidos.
+          - A UI é livre para renderizar cards, imagens e badges conforme o site precisar.
+        code: |
+          $results = app(SearchEngine::class)
+              ->scope('web')
+              ->search($term, 60);
+      - id: web-dropdown
+        title: Dropdown embutido
+        description: O exemplo segue a ideia validada no anaturezacura, mas usando o Search Engine da demo como fonte.
         bullets:
-          - Com click edit, clicar no card abre a tela de edição.
-          - O botão visit fica disponível quando visible_when permite.
-          - Resultados estáticos continuam como links simples.
+          - O componente Livewire abre e fecha o dropdown.
+          - wire:model.live atualiza o termo digitado.
+          - O link do rodapé leva para a página completa da pesquisa.
+          - A navbar usa o componente nativo navbar da DaisyUI.
+      - id: web-results-page
+        title: Página de resultados
+        description: A página completa demonstra como tratar sugestões, termo digitado, quantidade de resultados e paginação.
+        bullets:
+          - Termo vazio exibe sugestões.
+          - Termo preenchido retorna posts e produtos por relevância.
+          - A paginação acontece sobre a Collection retornada pela engine.
+          - O exemplo fica protegido pelo middleware de disponibilidade do site.
   - id: livewire-tables
     title: Tabelas Livewire
     description: O escopo Livewire aplica pesquisa textual em um Builder Eloquent já preparado pela tabela.
@@ -257,7 +289,7 @@ sections:
               ],
           ],
   - id: validation
-    title: Validação e testes
+    title: Validação e Testes
     description: Configuração incorreta deve falhar cedo para evitar resultados silenciosamente errados.
     items:
       - id: validation-rules
@@ -278,16 +310,16 @@ sections:
           - TranslationTest valida chaves de tradução.
           - O seeder cria posts/produtos publicados e rascunhos para testar constraints.
   - id: next-steps
-    title: Próximos passos
-    description: A busca web será tratada depois da base admin e Livewire.
+    title: Próximos Passos
+    description: Depois da base admin, web e Livewire, a próxima evolução é refinar recursos específicos.
     items:
       - id: next-web
-        title: Escopo web
-        description: A busca web deve ter página de resultados e dropdown embutido como exemplo de consumo público.
+        title: Evolução da busca web
+        description: A busca web já cobre dropdown e página de resultados, mas pode ganhar filtros públicos no futuro.
         bullets:
+          - Filtros por tipo podem ser adicionados sobre os grupos retornados.
+          - A paginação pode evoluir para query por model se o volume crescer.
           - A UI web deve continuar consumindo coleção pronta.
-          - O usuário decide como apresentar cards, imagens e paginação.
-          - A demo pode usar os mesmos posts/produtos fake para provar o fluxo.
       - id: next-livewire
         title: Evolução do Livewire
         description: O escopo Livewire já cobre a busca reutilizável, mas pode ganhar opções novas conforme surgirem tabelas mais exigentes.

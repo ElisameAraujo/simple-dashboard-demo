@@ -45,7 +45,7 @@ sections:
           - clickAction and actions appear only when configured for models.
           - metadata keeps extra information such as model, id, and source_key.
   - id: configuration
-    title: Base configuration
+    title: Base Configuration
     description: config/search.php is the single definition source for the module.
     items:
       - id: configuration-defaults
@@ -78,7 +78,7 @@ sections:
               ],
           ],
   - id: static-sources
-    title: Static sources
+    title: Static Sources
     description: Statics represent internal pages, menus, settings, and destinations that do not come from models.
     items:
       - id: static-items
@@ -109,7 +109,7 @@ sections:
           - Demo documentation pages.
           - Shortcuts to extra modules.
   - id: model-sources
-    title: Eloquent sources
+    title: Eloquent Models
     description: Models let Spotlight find real records without writing one custom search per table.
     items:
       - id: model-fields
@@ -146,9 +146,28 @@ sections:
               ['field' => 'status', 'operator' => '=', 'value' => 'published'],
               ['field' => 'published_at', 'operator' => 'not_null'],
           ],
+  
+  - id: spotlight
+    title: Spotlight
+    description: It allows for quick searching of menu items and model items using the shortcut Ctrl+K/Cmd+K.
+    items:
+      - id: spotlight-groups
+        title: Group filters
+        description: Groups appear only after a search starts and are calculated from the results found.
+        bullets:
+          - All removes the active filter.
+          - Each group shows a result count.
+          - Buttons wrap to new lines instead of using horizontal scrolling.
+      - id: spotlight-model-actions
+        title: Cards with actions
+        description: Model results can become quick admin shortcuts.
+        bullets:
+          - With click edit, clicking the card opens the edit screen.
+          - The visit button appears when visible_when allows it.
+          - Static results remain simple links.
   - id: actions
-    title: Model actions
-    description: Actions live separately from models so search does not mix data source setup with UI behavior.
+    title: Spotlight Actions
+    description: Actions allow users to have a quick shortcut within Spotlight to edit or visit an item that is displayed during a search.
     items:
       - id: actions-contract
         title: Contract
@@ -195,26 +214,40 @@ sections:
                   ['field' => 'published_at', 'operator' => 'not_null'],
               ],
           ],
-  - id: spotlight
-    title: Admin Spotlight
-    description: The Spotlight UI is only a consumer of Search Engine results.
+  - id: web-search
+    title: Web Search
+    description: The web scope shows how the same engine can feed a public search with a dropdown and a results page.
     items:
-      - id: spotlight-groups
-        title: Group filters
-        description: Groups appear only after a search starts and are calculated from the results found.
+      - id: web-scope
+        title: Web scope
+        description: The web scope uses published models and public routes, without admin actions.
         bullets:
-          - All removes the active filter.
-          - Each group shows a result count.
-          - Buttons wrap to new lines instead of using horizontal scrolling.
-      - id: spotlight-model-actions
-        title: Cards with actions
-        description: Model results can become quick admin shortcuts.
+          - The menu dropdown consumes suggestions and best results.
+          - The results page uses the same collection and applies pagination.
+          - Constraints ensure that only published records are displayed.
+          - The UI is free to render cards, images, and badges however the site needs.
+        code: |
+          $results = app(SearchEngine::class)
+              ->scope('web')
+              ->search($term, 60);
+      - id: web-dropdown
+        title: Embedded dropdown
+        description: The example follows the idea validated in anaturezacura, but uses the demo Search Engine as the source.
         bullets:
-          - With click edit, clicking the card opens the edit screen.
-          - The visit button appears when visible_when allows it.
-          - Static results remain simple links.
+          - The Livewire component opens and closes the dropdown.
+          - wire:model.live updates the typed term.
+          - The footer link opens the complete search page.
+          - The navbar uses the native DaisyUI navbar component.
+      - id: web-results-page
+        title: Results page
+        description: The complete page demonstrates how to handle suggestions, typed terms, result counts, and pagination.
+        bullets:
+          - Empty terms show suggestions.
+          - Filled terms return posts and products by relevance.
+          - Pagination happens over the Collection returned by the engine.
+          - The example is protected by the site availability middleware.
   - id: livewire-tables
-    title: Livewire tables
+    title: Livewire Tables
     description: The Livewire scope applies text search to an Eloquent Builder already prepared by the table.
     items:
       - id: livewire-contract
@@ -257,7 +290,7 @@ sections:
               ],
           ],
   - id: validation
-    title: Validation and tests
+    title: Validation and Tests
     description: Invalid configuration should fail early to avoid silently wrong results.
     items:
       - id: validation-rules
@@ -278,16 +311,16 @@ sections:
           - TranslationTest validates translation keys.
           - The seeder creates published and draft posts/products to test constraints.
   - id: next-steps
-    title: Next steps
-    description: Web search will be handled after the admin and Livewire foundation.
+    title: Next Steps
+    description: After the admin, web, and Livewire foundation, the next step is refining specific features.
     items:
       - id: next-web
-        title: Web scope
-        description: Web search should have a results page and embedded dropdown as a public consumption example.
+        title: Web search evolution
+        description: Web search already covers dropdown and results page, but can gain public filters later.
         bullets:
+          - Type filters can be added on top of returned groups.
+          - Pagination can evolve into per-model queries if volume grows.
           - The web UI should keep consuming a ready collection.
-          - The user decides how to present cards, images, and pagination.
-          - The demo can use the same fake posts/products to prove the flow.
       - id: next-livewire
         title: Livewire evolution
         description: The Livewire scope already covers reusable search, but it can gain new options when stricter tables appear.
