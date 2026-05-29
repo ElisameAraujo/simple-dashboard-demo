@@ -213,6 +213,49 @@ sections:
           - Com click edit, clicar no card abre a tela de edição.
           - O botão visit fica disponível quando visible_when permite.
           - Resultados estáticos continuam como links simples.
+  - id: livewire-tables
+    title: Tabelas Livewire
+    description: O escopo Livewire aplica pesquisa textual em um Builder Eloquent já preparado pela tabela.
+    items:
+      - id: livewire-contract
+        title: Contrato opt-in
+        description: A tabela continua responsável por filtros, ordenação, paginação e regras de negócio; o Search Engine só substitui a query manual de pesquisa.
+        bullets:
+          - A classe Livewire monta a query base com filtros e relações.
+          - livewireTable aplica a pesquisa configurada em config/search.php.
+          - O retorno continua sendo Builder, então a tabela decide entre paginate, get, count ou exportação.
+          - Tabelas sem campo de pesquisa não precisam usar esse escopo.
+        code: |
+          $query = SearchProduct::query()
+              ->when($this->status, fn ($query) => $query->where('status', $this->status));
+
+          return app(SearchEngine::class)
+              ->livewireTable('demo_products')
+              ->apply($query, $this->search)
+              ->paginate(10);
+      - id: livewire-configuration
+        title: Configuração
+        description: A configuração é parecida com models, mas não define grupo, DTO ou actions porque o retorno não é SearchResult.
+        bullets:
+          - model define a model pesquisável.
+          - searchable_fields define onde o termo digitado será procurado.
+          - fields_weight controla relevância por campo.
+          - term_mode all exige que todos os termos apareçam em algum campo.
+          - relevance_order adiciona uma ordenação por relevância que a tabela pode preservar ou substituir com reorder.
+        code: |
+          'livewire_tables' => [
+              'demo_products' => [
+                  'model' => SearchProduct::class,
+                  'searchable_fields' => ['name', 'description'],
+                  'fields_weight' => [
+                      'name' => 100,
+                      'description' => 35,
+                  ],
+                  'term_mode' => 'all',
+                  'match_mode' => 'partial',
+                  'relevance_order' => true,
+              ],
+          ],
   - id: validation
     title: Validação e testes
     description: Configuração incorreta deve falhar cedo para evitar resultados silenciosamente errados.
@@ -226,16 +269,17 @@ sections:
           - Fields inexistentes na tabela param a execução.
           - fields_weight apontando para campos não pesquisáveis para a execução.
           - actions apontando para models inexistentes ou rotas quebradas param a execução.
+          - livewire_tables com model, campos ou opções inválidas param a execução.
       - id: validation-tests
         title: Cobertura atual
-        description: A demo cobre busca estática, busca Eloquent, grupos, actions, visible_when e renderização do Spotlight.
+        description: A demo cobre busca estática, busca Eloquent, grupos, actions, visible_when, renderização do Spotlight e tabelas Livewire.
         bullets:
           - SearchEngineTest valida o contrato principal.
           - TranslationTest valida chaves de tradução.
           - O seeder cria posts/produtos publicados e rascunhos para testar constraints.
   - id: next-steps
     title: Próximos passos
-    description: O escopo Livewire e a busca web serão tratados depois da documentação atual.
+    description: A busca web será tratada depois da base admin e Livewire.
     items:
       - id: next-web
         title: Escopo web
@@ -245,9 +289,9 @@ sections:
           - O usuário decide como apresentar cards, imagens e paginação.
           - A demo pode usar os mesmos posts/produtos fake para provar o fluxo.
       - id: next-livewire
-        title: Escopo Livewire
-        description: O escopo Livewire será uma camada específica para tabelas que precisam de busca reutilizável.
+        title: Evolução do Livewire
+        description: O escopo Livewire já cobre a busca reutilizável, mas pode ganhar opções novas conforme surgirem tabelas mais exigentes.
         bullets:
-          - ProductTable e PostTable são bons exemplos para validar a ideia.
-          - A implementação deve evitar repetir a lógica de busca em cada tabela.
-          - Esta etapa fica separada porque é mais acoplada ao desenho de cada tabela.
+          - Fuzzy search pode ser habilitado com cuidado por driver de banco.
+          - Novos modos de match podem ser adicionados sem alterar as tabelas.
+          - A demo deve continuar mantendo a tabela dona da regra de negócio.

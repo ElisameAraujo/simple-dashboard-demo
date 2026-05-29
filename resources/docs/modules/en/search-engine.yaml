@@ -213,6 +213,49 @@ sections:
           - With click edit, clicking the card opens the edit screen.
           - The visit button appears when visible_when allows it.
           - Static results remain simple links.
+  - id: livewire-tables
+    title: Livewire tables
+    description: The Livewire scope applies text search to an Eloquent Builder already prepared by the table.
+    items:
+      - id: livewire-contract
+        title: Opt-in contract
+        description: The table remains responsible for filters, ordering, pagination, and business rules; Search Engine only replaces manual search query code.
+        bullets:
+          - The Livewire class builds the base query with filters and relationships.
+          - livewireTable applies the search configured in config/search.php.
+          - The return value remains a Builder, so the table chooses paginate, get, count, or export.
+          - Tables without a search field do not need to use this scope.
+        code: |
+          $query = SearchProduct::query()
+              ->when($this->status, fn ($query) => $query->where('status', $this->status));
+
+          return app(SearchEngine::class)
+              ->livewireTable('demo_products')
+              ->apply($query, $this->search)
+              ->paginate(10);
+      - id: livewire-configuration
+        title: Configuration
+        description: The configuration is close to models, but it does not define group, DTO, or actions because the return value is not a SearchResult.
+        bullets:
+          - model defines the searchable model.
+          - searchable_fields defines where the typed term will be searched.
+          - fields_weight controls field relevance.
+          - term_mode all requires every term to appear in some field.
+          - relevance_order adds relevance ordering that the table can preserve or replace with reorder.
+        code: |
+          'livewire_tables' => [
+              'demo_products' => [
+                  'model' => SearchProduct::class,
+                  'searchable_fields' => ['name', 'description'],
+                  'fields_weight' => [
+                      'name' => 100,
+                      'description' => 35,
+                  ],
+                  'term_mode' => 'all',
+                  'match_mode' => 'partial',
+                  'relevance_order' => true,
+              ],
+          ],
   - id: validation
     title: Validation and tests
     description: Invalid configuration should fail early to avoid silently wrong results.
@@ -226,16 +269,17 @@ sections:
           - Missing table fields stop execution.
           - fields_weight pointing to non-searchable fields stops execution.
           - actions pointing to missing models or broken routes stop execution.
+          - livewire_tables with invalid model, fields, or options stop execution.
       - id: validation-tests
         title: Current coverage
-        description: The demo covers static search, Eloquent search, groups, actions, visible_when, and Spotlight rendering.
+        description: The demo covers static search, Eloquent search, groups, actions, visible_when, Spotlight rendering, and Livewire tables.
         bullets:
           - SearchEngineTest validates the main contract.
           - TranslationTest validates translation keys.
           - The seeder creates published and draft posts/products to test constraints.
   - id: next-steps
     title: Next steps
-    description: The Livewire scope and web search will be handled after the current documentation.
+    description: Web search will be handled after the admin and Livewire foundation.
     items:
       - id: next-web
         title: Web scope
@@ -245,9 +289,9 @@ sections:
           - The user decides how to present cards, images, and pagination.
           - The demo can use the same fake posts/products to prove the flow.
       - id: next-livewire
-        title: Livewire scope
-        description: The Livewire scope will be a specific layer for tables that need reusable search.
+        title: Livewire evolution
+        description: The Livewire scope already covers reusable search, but it can gain new options when stricter tables appear.
         bullets:
-          - ProductTable and PostTable are good examples to validate the idea.
-          - The implementation should avoid repeating search logic in each table.
-          - This step stays separate because it is more coupled to each table design.
+          - Fuzzy search can be enabled carefully per database driver.
+          - New match modes can be added without changing tables.
+          - The demo should keep the table responsible for business rules.
