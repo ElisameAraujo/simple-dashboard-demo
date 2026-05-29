@@ -151,8 +151,6 @@
 [data-theme="dark"] .demo-docs-detail-intro,
 [data-theme="dark"] .demo-docs-panel,
 [data-theme="dark"] .demo-docs-card,
-[data-theme="dark"] .demo-docs-nav,
-[data-theme="dark"] .demo-docs-nav div,
 [data-theme="dark"] .demo-docs-topic,
 [data-theme="dark"] .demo-docs-method-card,
 [data-theme="dark"] .demo-docs-method-card-header,
@@ -175,8 +173,6 @@
 
 [data-theme="dark"] .demo-docs-intro p,
 [data-theme="dark"] .demo-docs-detail-title p,
-[data-theme="dark"] .demo-docs-nav strong,
-[data-theme="dark"] .demo-docs-nav div a,
 [data-theme="dark"] .demo-docs-topic-copy p,
 [data-theme="dark"] .demo-docs-topic li,
 [data-theme="dark"] .demo-docs-method-card > p,

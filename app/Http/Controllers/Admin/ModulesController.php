@@ -20,6 +20,22 @@ class ModulesController extends Controller
 
         abort_unless($module, 404);
 
-        return view('admin.modules.show', compact('module'));
+        $selectedSection = $module['sections'][0] ?? null;
+
+        return view('admin.modules.show', compact('module', 'selectedSection'));
+    }
+
+    public function showSearchEngineSection(string $section)
+    {
+        $module = ModuleDemoCatalog::find('search-engine');
+
+        abort_unless($module, 404);
+
+        $selectedSection = collect($module['sections'])
+            ->firstWhere('id', $section);
+
+        abort_unless($selectedSection, 404);
+
+        return view('admin.modules.show', compact('module', 'selectedSection'));
     }
 }

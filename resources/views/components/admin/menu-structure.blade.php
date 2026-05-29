@@ -92,13 +92,34 @@
             </a>
         </li>
         @foreach (\App\Support\ModuleDemoCatalog::all() as $menuModule)
-            <li>
-                <a class="menu-item {{ request()->routeIs('modules.show') && request()->route('module') === $menuModule['slug'] ? 'active' : '' }}"
-                    href="{{ $menuModule['url'] }}">
-                    <i class="{{ $menuModule['icon'] }}"></i>
-                    {{ $menuModule['name'] }}
-                </a>
-            </li>
+            @if ($menuModule['slug'] === 'search-engine' && $menuModule['documentation_pages'] !== [])
+                <li data-submenu-id="module-search-engine"
+                    class="{{ (request()->routeIs('modules.show') && request()->route('module') === 'search-engine') || request()->routeIs('modules.search-engine.section') ? 'open' : '' }}">
+                    <a href="#" class="has-submenu">
+                        <span>
+                            <i class="{{ $menuModule['icon'] }}"></i>
+                            {{ $menuModule['name'] }}
+                        </span>
+                        <i class="fa-solid fa-plus text-xs" id="submenu-icon"></i>
+                    </a>
+                    <ul>
+                        @foreach ($menuModule['documentation_pages'] as $page)
+                            <li>
+                                <a class="{{ (request()->routeIs('modules.show') && request()->route('module') === 'search-engine' && $loop->first) || (request()->routeIs('modules.search-engine.section') && request()->route('section') === $page['id']) ? 'active' : '' }}"
+                                    href="{{ $page['url'] }}">{{ $page['title'] }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+            @else
+                <li>
+                    <a class="menu-item {{ request()->routeIs('modules.show') && request()->route('module') === $menuModule['slug'] ? 'active' : '' }}"
+                        href="{{ $menuModule['url'] }}">
+                        <i class="{{ $menuModule['icon'] }}"></i>
+                        {{ $menuModule['name'] }}
+                    </a>
+                </li>
+            @endif
         @endforeach
         <h2 class="menu-section">{{ __('ui.settings') }}</h2>
         <li>

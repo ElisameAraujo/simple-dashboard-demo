@@ -11,6 +11,9 @@ Route::prefix('modules')->group(function () {
     Route::get('search-engine/demo/products/{product}/edit', [SearchDemoController::class, 'editProduct'])
         ->name('search.demo.products.edit');
 
+    Route::get('search-engine/{section}', [ModulesController::class, 'showSearchEngineSection'])
+        ->name('modules.search-engine.section');
+
     Route::get('', [ModulesController::class, 'index'])->name('modules.index');
     Route::get('{module}', [ModulesController::class, 'show'])->name('modules.show');
 });

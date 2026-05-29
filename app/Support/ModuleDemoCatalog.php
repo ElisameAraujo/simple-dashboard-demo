@@ -69,7 +69,22 @@ class ModuleDemoCatalog
             'improvements' => $documentation['improvements'] ?? [],
             'notes' => $documentation['notes'] ?? [],
             'sections' => $documentation['sections'] ?? [],
+            'documentation_pages' => self::documentationPages($slug, $documentation['sections'] ?? []),
             'url' => route('modules.show', $slug),
         ];
+    }
+
+    private static function documentationPages(string $slug, array $sections): array
+    {
+        return collect($sections)
+            ->map(fn (array $section, int $index): array => [
+                'id' => $section['id'],
+                'title' => $section['title'],
+                'url' => $index === 0
+                    ? route('modules.show', $slug)
+                    : route('modules.search-engine.section', $section['id']),
+            ])
+            ->values()
+            ->all();
     }
 }
