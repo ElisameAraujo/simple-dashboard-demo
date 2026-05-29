@@ -160,7 +160,16 @@
 [data-theme="dark"] .demo-docs-params dl > div,
 [data-theme="dark"] .demo-docs-explanation-list p,
 [data-theme="dark"] .demo-docs-config-list > div,
-[data-theme="dark"] .demo-docs-variation-card {
+[data-theme="dark"] .demo-docs-variation-card,
+[data-theme="dark"] .search-engine-table-panel,
+[data-theme="dark"] .search-engine-table-header,
+[data-theme="dark"] .search-engine-table-toolbar,
+[data-theme="dark"] .search-engine-table-toolbar input,
+[data-theme="dark"] .search-engine-table-toolbar select,
+[data-theme="dark"] .search-engine-table-toolbar button,
+[data-theme="dark"] .search-engine-table th,
+[data-theme="dark"] .search-engine-table td,
+[data-theme="dark"] .search-engine-table-pagination {
     @apply border-gray-600;
 }
 
@@ -179,7 +188,12 @@
 [data-theme="dark"] .demo-docs-card-copy small,
 [data-theme="dark"] .demo-docs-variation-copy p,
 [data-theme="dark"] .demo-docs-variation-copy li,
-[data-theme="dark"] .demo-docs-config-list dd {
+[data-theme="dark"] .demo-docs-config-list dd,
+[data-theme="dark"] .search-engine-table-header p,
+[data-theme="dark"] .search-engine-table-toolbar label span,
+[data-theme="dark"] .search-engine-table th,
+[data-theme="dark"] .search-engine-table-item small,
+[data-theme="dark"] .search-engine-table-empty {
     @apply text-gray-400;
 }
 

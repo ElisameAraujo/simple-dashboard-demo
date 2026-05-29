@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Search;
 
+use App\Livewire\Admin\Search\DemoPostsTable;
+use App\Livewire\Admin\Search\DemoProductsTable;
 use App\Livewire\Admin\Search\SearchSpotlight;
 use App\Models\Demo\SearchPost;
 use App\Models\Demo\SearchProduct;
@@ -327,5 +329,85 @@ class SearchEngineTest extends TestCase
             ->assertSet('activeGroup', 'account')
             ->assertSee(__('ui.notifications'))
             ->assertDontSee('Notifications UI');
+    }
+
+    public function test_livewire_table_scope_applies_search_to_existing_product_query(): void
+    {
+        SearchProduct::factory()->create([
+            'name' => 'Kit editorial para loja',
+            'description' => 'Produto publicado para validar pesquisa em tabela Livewire.',
+            'status' => 'published',
+        ]);
+
+        SearchProduct::factory()->draft()->create([
+            'name' => 'Kit editorial em rascunho',
+            'description' => 'Este item tem o termo, mas deve respeitar o filtro aplicado pela tabela.',
+        ]);
+
+        $query = SearchProduct::query()->where('status', 'published');
+
+        $products = app(SearchEngine::class)
+            ->livewireTable('demo_products')
+            ->apply($query, 'kit editorial')
+            ->get();
+
+        $this->assertCount(1, $products);
+        $this->assertSame('Kit editorial para loja', $products->first()->name);
+    }
+
+    public function test_livewire_table_invalid_configuration_stops_execution(): void
+    {
+        Config::set('search.livewire_tables.demo_products.fields_weight', [
+            'missing_field' => 100,
+        ]);
+
+        $this->expectException(InvalidSearchConfigurationException::class);
+        $this->expectExceptionMessage('livewire_tables.demo_products');
+        $this->expectExceptionMessage('missing_field');
+
+        app(SearchEngine::class)
+            ->livewireTable('demo_products')
+            ->apply(SearchProduct::query(), 'anything')
+            ->get();
+    }
+
+    public function test_livewire_product_table_uses_search_engine_scope(): void
+    {
+        SearchProduct::factory()->create([
+            'name' => 'Painel pesquisavel para administradores',
+            'description' => 'Registro publicado para tabela de produtos.',
+        ]);
+
+        SearchProduct::factory()->create([
+            'name' => 'Produto comum sem termo',
+            'description' => 'Registro que nao deve aparecer.',
+        ]);
+
+        Livewire::test(DemoProductsTable::class)
+            ->set('search', 'painel pesquisavel')
+            ->assertSee('Painel pesquisavel para administradores')
+            ->assertDontSee('Produto comum sem termo');
+    }
+
+    public function test_livewire_post_table_keeps_filters_around_search(): void
+    {
+        SearchPost::factory()->create([
+            'title' => 'Editor visual publicado',
+            'excerpt' => 'Registro publicado para tabela de posts.',
+            'body' => 'Conteudo pesquisavel.',
+            'status' => 'published',
+        ]);
+
+        SearchPost::factory()->draft()->create([
+            'title' => 'Editor visual em rascunho',
+            'excerpt' => 'Registro em rascunho para tabela de posts.',
+            'body' => 'Conteudo pesquisavel.',
+        ]);
+
+        Livewire::test(DemoPostsTable::class)
+            ->set('status', 'draft')
+            ->set('search', 'editor visual')
+            ->assertSee('Editor visual em rascunho')
+            ->assertDontSee('Editor visual publicado');
     }
 }

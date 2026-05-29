@@ -45,6 +45,22 @@
             </a>
         </div>
 
+        @if ($module['slug'] === 'search-engine')
+            <article class="demo-docs-panel demo-docs-panel-wide">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <h2>{{ __('components/search-engine.livewire.demo_title') }}</h2>
+                        <p>{{ __('components/search-engine.livewire.demo_description') }}</p>
+                    </div>
+                </div>
+
+                <div class="search-engine-livewire-demo">
+                    <livewire:admin.search.demo-products-table />
+                    <livewire:admin.search.demo-posts-table />
+                </div>
+            </article>
+        @endif
+
         @if ($module['sections'] !== [])
             <div class="demo-docs-layout">
                 <aside class="demo-docs-nav" aria-label="{{ $module['name'] }}">

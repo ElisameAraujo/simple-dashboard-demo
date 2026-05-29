@@ -269,3 +269,118 @@
 .demo-docs-topic .mockup-code {
     @apply mt-3 rounded-md text-xs;
 }
+
+.search-engine-livewire-demo {
+    @apply grid grid-cols-1 gap-4 xl:grid-cols-2;
+}
+
+.search-engine-table-panel {
+    @apply min-w-0 rounded-lg border border-gray-200 bg-base-100;
+}
+
+.search-engine-table-header {
+    @apply flex flex-col justify-between gap-3 border-b border-gray-200 p-4 lg:flex-row lg:items-start;
+}
+
+.search-engine-table-header h3 {
+    @apply text-lg font-bold;
+}
+
+.search-engine-table-header p {
+    @apply mt-1 text-sm leading-6 text-gray-500;
+}
+
+.search-engine-table-header > span {
+    @apply inline-flex w-fit rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold uppercase text-primary;
+}
+
+.search-engine-table-toolbar {
+    @apply grid grid-cols-1 gap-3 border-b border-gray-200 p-4 sm:grid-cols-2 xl:grid-cols-4;
+}
+
+.search-engine-table-toolbar label {
+    @apply flex min-w-0 flex-col gap-1;
+}
+
+.search-engine-table-toolbar label span {
+    @apply text-xs font-bold uppercase text-gray-500;
+}
+
+.search-engine-table-toolbar input,
+.search-engine-table-toolbar select {
+    @apply h-11 w-full rounded-md border border-gray-200 bg-base-100 px-3 text-sm outline-none transition-default;
+}
+
+.search-engine-table-toolbar input:focus,
+.search-engine-table-toolbar select:focus {
+    @apply border-primary ring-4 ring-primary/20;
+}
+
+.search-engine-table-toolbar button {
+    @apply flex h-11 items-center justify-center gap-2 self-end rounded-md border border-gray-200 bg-base-100 px-3 text-sm font-semibold transition-default hover:border-primary hover:bg-primary hover:text-white;
+}
+
+.search-engine-table-scroll {
+    @apply overflow-x-auto;
+}
+
+.search-engine-table {
+    @apply w-full min-w-[680px] text-left text-sm;
+}
+
+.search-engine-table th {
+    @apply border-b border-gray-200 bg-base-200 px-4 py-3 text-xs font-bold uppercase text-gray-500;
+}
+
+.search-engine-table td {
+    @apply border-b border-gray-200 px-4 py-3 align-middle;
+}
+
+.search-engine-table tbody tr:last-child td {
+    @apply border-b-0;
+}
+
+.search-engine-table-item {
+    @apply flex min-w-0 items-center gap-3;
+}
+
+.search-engine-table-item img,
+.search-engine-table-item > span {
+    @apply h-12 w-12 shrink-0 rounded-md object-cover;
+}
+
+.search-engine-table-item > span {
+    @apply flex items-center justify-center bg-primary/10 text-primary;
+}
+
+.search-engine-table-item div {
+    @apply flex min-w-0 flex-col;
+}
+
+.search-engine-table-item strong {
+    @apply truncate font-semibold;
+}
+
+.search-engine-table-item small {
+    @apply line-clamp-2 text-xs leading-5 text-gray-500;
+}
+
+.search-engine-status {
+    @apply inline-flex rounded-md px-2 py-1 text-xs font-semibold uppercase;
+}
+
+.search-engine-status-published {
+    @apply bg-emerald-100 text-emerald-700;
+}
+
+.search-engine-status-draft {
+    @apply bg-amber-100 text-amber-700;
+}
+
+.search-engine-table-empty {
+    @apply text-center text-sm text-gray-500;
+}
+
+.search-engine-table-pagination {
+    @apply border-t border-gray-200 p-4;
+}

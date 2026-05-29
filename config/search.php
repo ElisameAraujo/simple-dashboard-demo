@@ -320,4 +320,41 @@ return [
             ],
         ],
     ],
+
+    'livewire_tables' => [
+        'demo_posts' => [
+            'model' => SearchPost::class,
+            'min_chars' => 2,
+            'searchable_fields' => [
+                'title',
+                'subtitle',
+                'excerpt',
+                'body',
+            ],
+            'fields_weight' => [
+                'title' => 100,
+                'subtitle' => 65,
+                'excerpt' => 40,
+                'body' => 20,
+            ],
+            'term_mode' => 'all',
+            'match_mode' => 'partial',
+            'relevance_order' => true,
+        ],
+        'demo_products' => [
+            'model' => SearchProduct::class,
+            'min_chars' => 2,
+            'searchable_fields' => [
+                'name',
+                'description',
+            ],
+            'fields_weight' => [
+                'name' => 100,
+                'description' => 35,
+            ],
+            'term_mode' => 'all',
+            'match_mode' => 'partial',
+            'relevance_order' => true,
+        ],
+    ],
 ];

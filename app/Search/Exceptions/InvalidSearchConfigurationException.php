@@ -130,4 +130,19 @@ class InvalidSearchConfigurationException extends RuntimeException
     {
         return new self("Invalid search configuration [{$key}]. Search action routes must define [route.name] and a [route.parameters] array.");
     }
+
+    public static function missingLivewireTable(string $key): self
+    {
+        return new self("Invalid search configuration [{$key}]. The Livewire table search definition does not exist in config/search.php.");
+    }
+
+    public static function invalidLivewireTableBuilder(string $key, string $model): self
+    {
+        return new self("Invalid search configuration [{$key}]. The received query builder uses model [{$model}], which does not match the configured model.");
+    }
+
+    public static function invalidLivewireTableOption(string $key, string $option): self
+    {
+        return new self("Invalid search configuration [{$key}]. The [{$option}] option is invalid.");
+    }
 }

@@ -26,7 +26,7 @@ class SearchEngineModuleTest extends TestCase
             ->assertSee('Static sources')
             ->assertSee('Eloquent sources')
             ->assertSee('Model actions')
-            ->assertSee('Livewire scope');
+            ->assertSee('Livewire tables');
     }
 
     public function test_module_catalog_uses_search_engine_yaml_documentation(): void
@@ -40,7 +40,8 @@ class SearchEngineModuleTest extends TestCase
         $this->assertSame('Pronto', $module['status_label']);
         $this->assertSame('Visão geral', $module['sections'][0]['title']);
         $this->assertSame('Actions de models', $module['sections'][5]['title']);
-        $this->assertSame('Escopo Livewire', $module['sections'][8]['items'][1]['title']);
+        $this->assertSame('Tabelas Livewire', $module['sections'][7]['title']);
+        $this->assertSame('Evolução do Livewire', $module['sections'][9]['items'][1]['title']);
     }
 
     public function test_search_engine_yaml_documentation_is_translated_with_matching_keys(): void
