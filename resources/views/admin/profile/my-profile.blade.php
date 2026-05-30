@@ -38,7 +38,7 @@
                     <div class="action">
                         <div class="avatar-upload">
                             <div class="profile-image">
-                                <img src="{{ asset('img/placeholders/default-avatar.jpg') }}" alt="">
+                                <img src="{{ asset('img/placeholders/avatars/default-avatar.jpg') }}" alt="">
                             </div>
                             <div class="image-upload">
                                 <button class="btn btn-sm btn-primary w-fit">
