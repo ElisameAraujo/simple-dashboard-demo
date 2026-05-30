@@ -263,7 +263,7 @@ body.no-scroll {
 }
 
 .app aside nav.side-menu {
-    @apply max-h-[79vh];
+    @apply max-h-[77vh];
 }
 
 /* ===========================
