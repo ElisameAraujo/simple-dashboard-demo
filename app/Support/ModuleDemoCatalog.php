@@ -63,7 +63,7 @@ class ModuleDemoCatalog
             'description' => $documentation['description'] ?? '',
             'summary' => $documentation['summary'] ?? [],
             'variations' => $documentation['variations'] ?? [],
-            'configuration' => $documentation['configuration'] ?? [],
+            'configuration' => self::configurationFor($documentation['configuration'] ?? []),
             'implementation' => $documentation['implementation'] ?? [],
             'methods' => $documentation['methods'] ?? [],
             'improvements' => $documentation['improvements'] ?? [],
@@ -86,5 +86,31 @@ class ModuleDemoCatalog
             ])
             ->values()
             ->all();
+    }
+
+    private static function configurationFor(array $configuration): array
+    {
+        return collect($configuration)
+            ->map(function (array $item): array {
+                if (array_key_exists('default', $item)) {
+                    $item['default'] = self::displayValue($item['default']);
+                }
+
+                return $item;
+            })
+            ->values()
+            ->all();
+    }
+
+    private static function displayValue(mixed $value): string
+    {
+        $displayValue = match (true) {
+            is_bool($value) => $value ? 'true' : 'false',
+            $value === null => 'null',
+            is_scalar($value) => (string) $value,
+            default => json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+        };
+
+        return is_string($displayValue) ? $displayValue : '';
     }
 }

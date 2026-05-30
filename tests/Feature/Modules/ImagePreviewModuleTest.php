@@ -27,7 +27,9 @@ class ImagePreviewModuleTest extends TestCase
             ->assertOk()
             ->assertSee('ImagePreview')
             ->assertSee('Create mode')
-            ->assertSee('Edit mode');
+            ->assertSee('Edit mode')
+            ->assertSeeInOrder(['existing', 'bool', 'false'])
+            ->assertSeeInOrder(['path', 'string|null', 'null']);
     }
 
     public function test_module_catalog_uses_yaml_documentation(): void
@@ -41,6 +43,8 @@ class ImagePreviewModuleTest extends TestCase
         $this->assertSame('Pronto', $module['status_label']);
         $this->assertSame('Modo create', $module['variations'][0]['title']);
         $this->assertSame('mode', $module['configuration'][0]['name']);
+        $this->assertSame('false', collect($module['configuration'])->firstWhere('name', 'existing')['default']);
+        $this->assertSame('null', collect($module['configuration'])->firstWhere('name', 'path')['default']);
     }
 
     public function test_module_yaml_documentation_is_translated_with_matching_keys(): void
