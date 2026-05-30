@@ -1,4 +1,4 @@
-<dialog class="modal" id="{{ $modalId ?? 'maintenance_toggle' }}">
+<dialog class="modal maintenance-toggle-modal" id="{{ $modalId ?? 'maintenance_toggle' }}">
     <div class="modal-box">
         @if ($modalAction === 'enable')
             <h3 class="modal-title error">{{ __('components/maintenance-mode.modal.enable_title') }}</h3>

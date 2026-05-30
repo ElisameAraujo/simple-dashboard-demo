@@ -34,3 +34,17 @@
 .modal-title.success {
     @apply text-success;
 }
+
+.maintenance-toggle-modal .modal-backdrop,
+.maintenance-toggle-modal .modal-backdrop:hover {
+    background-color: transparent !important;
+}
+
+.maintenance-toggle-modal .modal-backdrop button,
+.maintenance-toggle-modal .modal-backdrop button:hover {
+    background-color: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
