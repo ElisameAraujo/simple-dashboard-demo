@@ -27,7 +27,12 @@ class ModulesController extends Controller
 
     public function showSearchEngineSection(string $section)
     {
-        $module = ModuleDemoCatalog::find('search-engine');
+        return $this->showSection('search-engine', $section);
+    }
+
+    public function showSection(string $module, string $section)
+    {
+        $module = ModuleDemoCatalog::find($module);
 
         abort_unless($module, 404);
 

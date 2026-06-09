@@ -30,6 +30,11 @@ class ModuleDemoCatalog
             'icon' => 'fa-solid fa-magnifying-glass',
             'status' => 'ready',
         ],
+        'rich-text-media' => [
+            'component' => null,
+            'icon' => 'fa-solid fa-photo-film',
+            'status' => 'ready',
+        ],
     ];
 
     public static function all(): array
@@ -82,10 +87,19 @@ class ModuleDemoCatalog
                 'title' => $section['title'],
                 'url' => $index === 0
                     ? route('modules.show', $slug)
-                    : route('modules.search-engine.section', $section['id']),
+                    : self::sectionUrl($slug, $section['id']),
             ])
             ->values()
             ->all();
+    }
+
+    private static function sectionUrl(string $slug, string $section): string
+    {
+        if ($slug === 'search-engine') {
+            return route('modules.search-engine.section', $section);
+        }
+
+        return route('modules.section', [$slug, $section]);
     }
 
     private static function configurationFor(array $configuration): array

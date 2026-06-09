@@ -124,6 +124,10 @@ return [
             'summary' => 'Visual interface for admin notifications.',
             'keywords' => ['notifications', 'alerts', 'bell', 'dropdown', 'modal'],
         ],
+        'rich-text-media' => [
+            'summary' => 'Upload and synchronization for images embedded in rich content.',
+            'keywords' => ['editor', 'wysiwyg', 'tinymce', 'ckeditor', 'quill', 'froala', 'tiptap', 'lexical', 'images'],
+        ],
         'maintenance-mode' => [
             'summary' => 'Control the public availability of the site.',
             'keywords' => ['maintenance', 'site offline', '503', 'wordpress', 'site online'],

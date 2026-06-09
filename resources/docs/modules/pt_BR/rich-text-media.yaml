@@ -1,0 +1,350 @@
+name: Rich Text Media
+description: Camada genérica para imagens embutidas em editores WYSIWYG e campos de conteúdo rico.
+sections:
+  - id: overview
+    title: Visão Geral
+    description: O módulo resolve upload, commit e limpeza de imagens dentro de HTML sem escolher um editor específico.
+    items:
+      - id: overview-purpose
+        title: Propósito
+        description: Rich Text Media substitui a antiga ideia de um módulo TinyMCE fechado por um fluxo reutilizável para qualquer editor que consiga interceptar upload de imagens.
+        bullets:
+          - Mantém o editor como uma escolha do projeto, não do painel.
+          - Entrega um endpoint único para upload de imagens.
+          - Suporta criação com chave temporária antes do registro existir.
+          - Suporta edição com owner já existente.
+          - Sincroniza a pasta final para remover imagens que saíram do HTML.
+      - id: overview-boundaries
+        title: O que ele não tenta fazer
+        description: O módulo não renderiza um editor final na tela e não instala TinyMCE, Froala, Quill, CKEditor, Tiptap ou Lexical.
+        bullets:
+          - A UI do editor continua sob responsabilidade do projeto.
+          - Cada editor precisa de um pequeno adapter JavaScript.
+          - Toolbar, plugins, tema e licença pertencem ao editor escolhido.
+          - O core só precisa receber arquivo, disk, modo e chave de destino.
+  - id: architecture
+    title: Arquitetura
+    description: A camada PHP fica estável enquanto cada editor implementa apenas o adapter necessário.
+    items:
+      - id: architecture-manager
+        title: RichTextMediaManager
+        description: Serviço responsável por armazenar imagens, mover temporários para o owner e remover órfãs.
+        bullets:
+          - uploadTemporaryImage salva em temp/{temporaryKey}.
+          - uploadOwnerImage salva direto em {ownerKey}.
+          - commitTemporaryImages move arquivos temporários e reescreve os src do HTML.
+          - syncOwnerImages remove arquivos que não estão mais referenciados no HTML.
+        code: |
+          $html = app(RichTextMediaManager::class)->commitTemporaryImages(
+              disk: 'posts',
+              temporaryKey: $this->temporaryUploadKey,
+              ownerKey: $post->id,
+              html: $data['content'],
+          );
+      - id: architecture-contract
+        title: Contrato de adapter
+        description: Qualquer editor pode usar o módulo se conseguir enviar a imagem e inserir a URL retornada no conteúdo.
+        bullets:
+          - Envie file, disk, mode e a chave do modo atual.
+          - Use mode temporary em create.
+          - Use mode owner em edit.
+          - Insira response.url ou response.location no editor.
+        code: |
+          const formData = new FormData()
+          formData.append('file', file)
+          formData.append('disk', 'posts')
+          formData.append('mode', ownerKey ? 'owner' : 'temporary')
+          formData.append(ownerKey ? 'owner_key' : 'temporary_key', ownerKey ?? temporaryKey)
+  - id: endpoint
+    title: Endpoint de Upload
+    description: O controller valida imagem, disk, modo e chave antes de devolver a URL pública.
+    items:
+      - id: endpoint-route
+        title: Rota
+        description: A demo registra uma rota genérica para qualquer adapter de editor enviar imagens.
+        bullets:
+          - A resposta inclui url, location e path.
+          - location existe para manter compatibilidade com editores como TinyMCE.
+          - path pode ser usado para auditoria, logs ou depuração.
+          - Em um projeto real, proteja a rota com middleware administrativo.
+        code: |
+          Route::post('admin/rich-text-media/uploads', [RichTextMediaUploadController::class, 'store'])
+              ->name('admin.rich-text-media.uploads.store');
+      - id: endpoint-response
+        title: Resposta esperada
+        description: O adapter escolhe a chave que o editor espera e ignora o resto.
+        bullets:
+          - TinyMCE costuma esperar location.
+          - CKEditor, Quill, Froala e Tiptap podem usar url diretamente.
+          - path representa o caminho relativo salvo no disk.
+        code: |
+          {
+              "url": "/storage/posts/15/image-20260609120000.jpg",
+              "location": "/storage/posts/15/image-20260609120000.jpg",
+              "path": "15/image-20260609120000.jpg"
+          }
+  - id: lifecycle
+    title: Ciclo de Vida
+    description: O fluxo resolve a diferença entre criar um registro novo e editar um registro existente.
+    items:
+      - id: lifecycle-create
+        title: Create com temporários
+        description: Use uma chave temporária quando o post, produto ou página ainda não existe.
+        bullets:
+          - Gere uma UUID no mount do componente.
+          - Envie mode temporary no adapter.
+          - Salve o model.
+          - Rode commitTemporaryImages para mover as imagens para a pasta definitiva.
+        code: |
+          $post = Post::create(['content' => $this->content]);
+
+          $content = app(RichTextMediaManager::class)->commitTemporaryImages(
+              disk: 'posts',
+              temporaryKey: $this->temporaryUploadKey,
+              ownerKey: $post->id,
+              html: $this->content,
+          );
+
+          $post->update(['content' => $content]);
+      - id: lifecycle-edit
+        title: Edit com owner
+        description: Use owner quando o registro já existe e a imagem pode ir direto para a pasta final.
+        bullets:
+          - Envie mode owner no adapter.
+          - Use owner_key com id, slug ou outra chave estável.
+          - Depois de salvar o HTML, rode syncOwnerImages.
+          - Imagens removidas do conteúdo também saem do disk.
+        code: |
+          $post->update(['content' => $this->content]);
+
+          app(RichTextMediaManager::class)->syncOwnerImages(
+              disk: 'posts',
+              ownerKey: $post->id,
+              html: $post->content,
+          );
+  - id: autosave
+    title: Autosave
+    description: Autosave é útil, mas deve ser tratado como camada opcional do editor ou do componente Livewire.
+    items:
+      - id: autosave-contract
+        title: Eventos genéricos
+        description: O antigo fluxo do TinyMCE pode ser reaproveitado se os eventos deixarem de citar o editor pelo nome.
+        bullets:
+          - rich-text-saving indica que o conteúdo está sendo persistido.
+          - rich-text-saved indica persistência concluída.
+          - rich-text-failed indica falha de validação, upload ou rede.
+          - syncVersion evita que uma resposta antiga sobrescreva um estado novo.
+        code: |
+          field.dispatchEvent(new CustomEvent('rich-text-saving', {
+              bubbles: true,
+              detail: { fieldName, syncVersion },
+          }));
+      - id: autosave-livewire
+        title: Livewire
+        description: Em Livewire, o adapter pode chamar um método do componente ou atualizar uma propriedade.
+        bullets:
+          - Chame um método quando precisa validar e salvar imediatamente.
+          - Use set quando o componente pai já controla o submit.
+          - Faça upload das imagens antes de enviar o HTML.
+          - Sincronize owner images depois que o model salvar.
+        code: |
+          const component = window.Livewire.find(root.getAttribute('wire:id'))
+          await component.call('saveRichTextContent', editorHtml, syncVersion)
+  - id: tinymce
+    title: TinyMCE
+    description: TinyMCE é o caso original do módulo e continua sendo uma integração excelente quando o projeto escolhe esse editor.
+    items:
+      - id: tinymce-handler
+        title: images_upload_handler
+        description: Use o endpoint genérico e resolva a promise com response.location.
+        bullets:
+          - TinyMCE Community funciona com license_key gpl.
+          - O upload handler recebe blobInfo e progress.
+          - A resposta location encaixa diretamente no contrato do TinyMCE.
+          - Theme sync e CSS .tox-* continuam sendo específicos do TinyMCE.
+        code: |
+          images_upload_handler: (blobInfo, progress) => uploadRichTextImage({
+              file: blobInfo.blob(),
+              filename: blobInfo.filename(),
+              disk: 'posts',
+              mode,
+              key,
+          }).then((response) => response.location)
+      - id: tinymce-fit
+        title: Quando usar
+        description: TinyMCE é uma boa escolha quando você quer um editor maduro, com iframe, plugins clássicos e comportamento WYSIWYG completo.
+        bullets:
+          - Bom para posts de blog e páginas institucionais.
+          - Bom quando a equipe já conhece toolbars clássicas.
+          - Exige cuidado com iframe, tema e menus auxiliares.
+          - Vale documentar muito bem no projeto final.
+  - id: ckeditor
+    title: CKEditor
+    description: CKEditor usa um upload adapter próprio, então a integração fica em uma classe JavaScript pequena.
+    items:
+      - id: ckeditor-adapter
+        title: UploadAdapter
+        description: O adapter implementa upload e devolve default com a URL pública.
+        bullets:
+          - O loader entrega o arquivo de forma assíncrona.
+          - A resposta esperada usa default.
+          - O endpoint PHP continua o mesmo.
+          - Abort pode cancelar a requisição se o usuário remover a imagem.
+        code: |
+          class RichTextUploadAdapter {
+              constructor(loader) {
+                  this.loader = loader
+              }
+
+              async upload() {
+                  const file = await this.loader.file
+                  const response = await uploadRichTextImage({ file, disk: 'posts', mode, key })
+
+                  return { default: response.url }
+              }
+          }
+      - id: ckeditor-fit
+        title: Quando usar
+        description: CKEditor encaixa bem quando o projeto quer um editor estruturado, com ecossistema forte e integração robusta.
+        bullets:
+          - Bom para conteúdos editoriais mais formais.
+          - Tem builds e plugins diferentes por necessidade.
+          - Algumas features avançadas dependem de licença.
+          - A integração de upload é bem explícita.
+  - id: quill
+    title: Quill
+    description: Quill trabalha com Delta, mas pode inserir imagens no conteúdo a partir da URL retornada.
+    items:
+      - id: quill-handler
+        title: Handler de imagem
+        description: Crie um handler na toolbar para abrir o seletor de arquivos e inserir a imagem enviada.
+        bullets:
+          - O handler pega o range atual.
+          - O upload retorna response.url.
+          - insertEmbed adiciona a imagem no editor.
+          - A persistência pode salvar HTML ou Delta, conforme o projeto.
+        code: |
+          toolbar.addHandler('image', async () => {
+              const file = await pickImage()
+              const response = await uploadRichTextImage({ file, disk: 'posts', mode, key })
+              const range = quill.getSelection(true)
+
+              quill.insertEmbed(range.index, 'image', response.url)
+          })
+      - id: quill-fit
+        title: Quando usar
+        description: Quill é bom quando você prefere um editor mais leve e orientado a Delta.
+        bullets:
+          - Bom para interfaces mais simples.
+          - Bom quando o conteúdo pode ser tratado como Delta.
+          - Exige decisões sobre conversão para HTML.
+          - Pode precisar de módulos extras para recursos avançados.
+  - id: froala
+    title: Froala
+    description: Froala tem opções próprias de upload, mas também pode consumir o endpoint genérico.
+    items:
+      - id: froala-upload
+        title: imageUploadURL
+        description: Configure a rota e normalize os parâmetros enviados para o controller.
+        bullets:
+          - imageUploadURL aponta para a rota genérica.
+          - imageUploadParams envia disk, mode e key.
+          - Ajuste o nome do campo se o editor enviar image_param diferente de file.
+          - Confira a licença do Froala antes de distribuir o projeto.
+        code: |
+          new FroalaEditor('#content', {
+              imageUploadURL: route('admin.rich-text-media.uploads.store'),
+              imageUploadParam: 'file',
+              imageUploadParams: {
+                  disk: 'posts',
+                  mode,
+                  [mode === 'owner' ? 'owner_key' : 'temporary_key']: key,
+              },
+          })
+      - id: froala-fit
+        title: Quando usar
+        description: Froala é útil quando o projeto já aceita uma dependência comercial e quer uma experiência polida pronta.
+        bullets:
+          - Bom para times que querem uma UI rica pronta.
+          - Pode reduzir trabalho de interface.
+          - Licença e custo precisam ser avaliados.
+          - O core PHP do módulo não muda.
+  - id: tiptap
+    title: Tiptap
+    description: Tiptap é uma camada moderna sobre ProseMirror e costuma trabalhar melhor com comandos explícitos.
+    items:
+      - id: tiptap-command
+        title: Comando customizado
+        description: Faça upload fora do editor e depois use setImage para inserir a URL.
+        bullets:
+          - O adapter pode ser um botão customizado da toolbar.
+          - A resposta response.url vira src da imagem.
+          - O conteúdo pode ser salvo como HTML ou JSON.
+          - É uma boa escolha para experiências editoriais mais personalizadas.
+        code: |
+          const file = await pickImage()
+          const response = await uploadRichTextImage({ file, disk: 'posts', mode, key })
+
+          editor.chain().focus().setImage({ src: response.url }).run()
+      - id: tiptap-fit
+        title: Quando usar
+        description: Tiptap combina bem com painéis que querem controle fino da UI e do schema do conteúdo.
+        bullets:
+          - Bom para editores customizados.
+          - Bom para conteúdo estruturado.
+          - Exige mais código de interface.
+          - O fluxo de mídia continua igual.
+  - id: lexical
+    title: Lexical
+    description: Lexical é uma opção moderna para quem quer montar o editor com plugins próprios.
+    items:
+      - id: lexical-plugin
+        title: Plugin de upload
+        description: O plugin escolhe uma imagem, envia para o endpoint e insere um nó de imagem no editor.
+        bullets:
+          - O upload fica fora do core do editor.
+          - O node de imagem recebe response.url.
+          - O projeto decide como serializar o conteúdo.
+          - É uma integração poderosa, mas mais manual.
+        code: |
+          const response = await uploadRichTextImage({ file, disk: 'posts', mode, key })
+
+          editor.update(() => {
+              const imageNode = $createImageNode({ src: response.url })
+              $insertNodes([imageNode])
+          })
+      - id: lexical-fit
+        title: Quando usar
+        description: Lexical vale quando o projeto quer controle avançado e uma base moderna para compor o editor.
+        bullets:
+          - Bom para produtos com editor próprio.
+          - Bom para plugins sob medida.
+          - Menos plug-and-play que editores tradicionais.
+          - O contrato de mídia permanece simples.
+  - id: project-implementation
+    title: Implementação no Projeto
+    description: No projeto base, leve o core genérico e documente apenas o adapter do editor escolhido.
+    items:
+      - id: project-checklist
+        title: Checklist
+        description: A implementação final depende do editor escolhido, mas o fluxo PHP permanece o mesmo.
+        bullets:
+          - Copie RichTextMediaManager e RichTextMediaUploadController.
+          - Registre a rota dentro do grupo admin autenticado.
+          - Garanta que o disk usado tem URL pública.
+          - Crie um adapter JavaScript para o editor escolhido.
+          - Em create, gere temporaryKey e rode commitTemporaryImages após criar o registro.
+          - Em edit, use ownerKey e rode syncOwnerImages após salvar.
+      - id: project-schedule
+        title: Limpeza programada
+        description: Temporários abandonados devem ser limpos por command ou schedule.
+        bullets:
+          - Use pruneTemporaryDirectories para apagar pastas antigas.
+          - Rode a limpeza por disk.
+          - Escolha uma janela segura, como 24 horas.
+          - Não apague a pasta owner durante a edição normal.
+        code: |
+          Schedule::call(function () {
+              app(RichTextMediaManager::class)
+                  ->pruneTemporaryDirectories('posts', olderThanHours: 24);
+          })->daily();

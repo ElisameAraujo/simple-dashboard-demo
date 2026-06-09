@@ -124,6 +124,17 @@ return [
                     'keywords_key' => 'components/search-engine.admin.notifications-ui.keywords',
                     'weight' => 85,
                 ],
+                'rich-text-media' => [
+                    'title' => 'Rich Text Media',
+                    'summary_key' => 'components/search-engine.admin.rich-text-media.summary',
+                    'group' => 'modules',
+                    'badge_key' => 'ui.modules',
+                    'icon' => 'fa-solid fa-photo-film',
+                    'route' => 'modules.show',
+                    'route_parameters' => ['module' => 'rich-text-media'],
+                    'keywords_key' => 'components/search-engine.admin.rich-text-media.keywords',
+                    'weight' => 85,
+                ],
                 'maintenance-mode' => [
                     'title_key' => 'ui.maintenance',
                     'summary_key' => 'components/search-engine.admin.maintenance-mode.summary',

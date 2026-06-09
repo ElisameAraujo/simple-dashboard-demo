@@ -124,6 +124,10 @@ return [
             'summary' => 'Interface visual para notificações administrativas.',
             'keywords' => ['notificacoes', 'alertas', 'sino', 'dropdown', 'modal'],
         ],
+        'rich-text-media' => [
+            'summary' => 'Upload e sincronização de imagens embutidas em conteúdo rico.',
+            'keywords' => ['editor', 'wysiwyg', 'tinymce', 'ckeditor', 'quill', 'froala', 'tiptap', 'lexical', 'imagens'],
+        ],
         'maintenance-mode' => [
             'summary' => 'Controle a disponibilidade pública do site.',
             'keywords' => ['manutencao', 'site offline', '503', 'wordpress', 'site online'],

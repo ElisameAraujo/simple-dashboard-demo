@@ -92,9 +92,16 @@
             </a>
         </li>
         @foreach (\App\Support\ModuleDemoCatalog::all() as $menuModule)
-            @if ($menuModule['slug'] === 'search-engine' && $menuModule['documentation_pages'] !== [])
-                <li data-submenu-id="module-search-engine"
-                    class="{{ (request()->routeIs('modules.show') && request()->route('module') === 'search-engine') || request()->routeIs('modules.search-engine.section') ? 'open' : '' }}">
+            @php
+                $moduleHasDocumentationPages = $menuModule['documentation_pages'] !== [];
+                $moduleIsOpen = (request()->routeIs('modules.show') && request()->route('module') === $menuModule['slug'])
+                    || (request()->routeIs('modules.section') && request()->route('module') === $menuModule['slug'])
+                    || ($menuModule['slug'] === 'search-engine' && request()->routeIs('modules.search-engine.section'));
+            @endphp
+
+            @if ($moduleHasDocumentationPages)
+                <li data-submenu-id="module-{{ $menuModule['slug'] }}"
+                    class="{{ $moduleIsOpen ? 'open' : '' }}">
                     <a href="#" class="has-submenu">
                         <span>
                             <i class="{{ $menuModule['icon'] }}"></i>
@@ -105,7 +112,12 @@
                     <ul>
                         @foreach ($menuModule['documentation_pages'] as $page)
                             <li>
-                                <a class="{{ (request()->routeIs('modules.show') && request()->route('module') === 'search-engine' && $loop->first) || (request()->routeIs('modules.search-engine.section') && request()->route('section') === $page['id']) ? 'active' : '' }}"
+                                @php
+                                    $modulePageIsActive = (request()->routeIs('modules.show') && request()->route('module') === $menuModule['slug'] && $loop->first)
+                                        || (request()->routeIs('modules.section') && request()->route('module') === $menuModule['slug'] && request()->route('section') === $page['id'])
+                                        || ($menuModule['slug'] === 'search-engine' && request()->routeIs('modules.search-engine.section') && request()->route('section') === $page['id']);
+                                @endphp
+                                <a class="{{ $modulePageIsActive ? 'active' : '' }}"
                                     href="{{ $page['url'] }}">{{ $page['title'] }}</a>
                             </li>
                         @endforeach
