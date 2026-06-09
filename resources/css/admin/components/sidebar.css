@@ -135,7 +135,7 @@ body.no-scroll {
     }
 
     .side-menu ul > li.open > ul {
-        max-height: 500px;
+        max-height: 600px;
     }
 
     .side-menu ul li a.menu-item,
