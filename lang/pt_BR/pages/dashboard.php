@@ -4,10 +4,10 @@ return [
     'kicker' => 'Simple Dashboard',
     'intro' => [
         'title' => 'Resumo geral da demo',
-        'description' => 'Esta tela centraliza o estado atual do painel, os caminhos já disponíveis para navegação e alguns links de referência para continuar a implementação.',
+        'description' => 'Esta tela centraliza o estado atual do painel, os caminhos disponíveis para navegação e links de referência para conhecer a base do projeto.',
     ],
     'actions' => [
-        'profile' => 'Perfil do GitHub',
+        'readme' => 'README do projeto',
     ],
     'summary' => [
         'stack' => [
@@ -31,10 +31,6 @@ return [
         'available_pages' => [
             'title' => 'Páginas disponíveis',
             'description' => 'Atalhos para as telas que já fazem parte da demo.',
-        ],
-        'next_steps' => [
-            'title' => 'Próximos passos',
-            'description' => 'Fila inicial para expandir a demo.',
         ],
         'useful_links' => [
             'title' => 'Links úteis',
@@ -75,10 +71,5 @@ return [
             'label' => 'Repositório',
             'description' => 'Código-fonte e histórico público.',
         ],
-    ],
-    'next_steps' => [
-        'Adicionar páginas administrativas com tabelas e filtros.',
-        'Criar exemplos de formulários com validação real.',
-        'Incluir componentes Livewire reutilizáveis na demo.',
     ],
 ];

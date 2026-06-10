@@ -34,10 +34,6 @@ return [
             'title' => 'Métodos',
             'description' => 'Chamadas públicas que vale conhecer antes de usar o módulo em um projeto real.',
         ],
-        'improvements' => [
-            'title' => 'Ajustes',
-            'description' => 'Mudanças feitas antes de tratar este item como um extra reutilizável.',
-        ],
         'documentation' => [
             'title' => 'Menu',
         ],

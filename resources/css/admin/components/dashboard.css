@@ -102,8 +102,7 @@
 
 .dashboard-page-list,
 .dashboard-link-list,
-.dashboard-helper-grid,
-.dashboard-step-list {
+.dashboard-helper-grid {
     @apply flex flex-col gap-2;
 }
 
@@ -165,18 +164,3 @@
     @apply bg-white text-success;
 }
 
-.dashboard-step-list {
-    @apply list-none;
-}
-
-.dashboard-step-list li {
-    @apply flex gap-3 rounded-md border border-gray-200 p-3;
-}
-
-.dashboard-step-list span {
-    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-bold text-white;
-}
-
-.dashboard-step-list p {
-    @apply text-sm leading-6 text-gray-600;
-}

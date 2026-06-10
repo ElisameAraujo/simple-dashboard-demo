@@ -122,13 +122,6 @@ methods:
     description: Ação destrutiva opcional para projetos que permitem remover notificações já lidas.
     example: |
       Auth::user()->notifications()->whereNotNull('read_at')->delete();
-improvements:
-  - O módulo foi renomeado para Notifications UI para deixar claro que sua responsabilidade é visual, sem prometer um sistema de back-end.
-  - As preferências de notificação foram removidas do módulo genérico porque e-mails, período silencioso, comentários e mensagens são recursos específicos de cada projeto.
-  - A dependência exportada de objetos de notificação Laravel foi trocada por um contrato de array normalizado.
-  - Rotas fixas de preferências de conta foram removidas e todas as ações ficaram como hooks para o projeto consumidor.
-  - As classes visuais foram consolidadas com o prefixo notifications-ui para evitar colisões com estilos específicos do projeto.
-  - A lista completa de notificações foi movida para wire-elements/modal para que fechar, escape, clique fora e estado Livewire sejam tratados pela mesma camada de modal usada no projeto de origem.
 notes:
   - A demo usa apenas dados falsos. Ela não cria migrations, classes de notificação, eventos, filas ou registros no banco.
   - A UI pode ser conectada às notificações de banco do Laravel, mas não exige essa implementação.

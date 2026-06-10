@@ -24,9 +24,9 @@
                 <p>{{ __('pages/dashboard.intro.description') }}</p>
             </div>
             <div class="dashboard-actions">
-                <a class="btn btn-primary" href="https://github.com/ElisameAraujo" target="_blank" rel="noopener noreferrer">
-                    <i class="fa-solid fa-user"></i>
-                    {{ __('pages/dashboard.actions.profile') }}
+                <a class="btn btn-primary" href="{{ $readmeUrl }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-readme"></i>
+                    {{ __('pages/dashboard.actions.readme') }}
                 </a>
                 <a class="btn btn-soft btn-secondary" href="https://github.com/ElisameAraujo/simple-dashboard"
                     target="_blank" rel="noopener noreferrer">
@@ -76,24 +76,6 @@
                     </a>
                 @endforeach
             </div>
-        </div>
-
-        <div class="dashboard-panel">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h2>{{ __('pages/dashboard.sections.next_steps.title') }}</h2>
-                    <p>{{ __('pages/dashboard.sections.next_steps.description') }}</p>
-                </div>
-            </div>
-
-            <ol class="dashboard-step-list">
-                @foreach ($nextSteps as $step)
-                    <li>
-                        <span>{{ $loop->iteration }}</span>
-                        <p>{{ $step }}</p>
-                    </li>
-                @endforeach
-            </ol>
         </div>
 
         <div class="dashboard-panel">

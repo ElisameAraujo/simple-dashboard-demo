@@ -134,11 +134,6 @@ methods:
       Post::query()
           ->popularBetween(now()->subDays(30), now())
           ->get();
-improvements:
-  - O acoplamento com a factory exportada foi removido porque dados fake de visitas pertencem aos testes ou seeders locais, não ao módulo standalone.
-  - A API fluente inspirada no laravisit foi mantida sem trazer dependências externas de pacote.
-  - Foram adicionados scopes de períodos anteriores para semana passada, mês passado e ano passado.
-  - Visitantes por UUID foram mantidos como extensão leve para identificadores gerados por cookie ou cliente.
 notes:
   - Visits depende apenas de Laravel, Eloquent, migrations e Carbon através da própria aplicação.
   - A foreign key de usuário assume a tabela users padrão. Se um app não usa essa tabela, ajuste a migration antes de rodá-la.

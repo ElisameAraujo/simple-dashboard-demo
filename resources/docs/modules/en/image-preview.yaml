@@ -115,13 +115,6 @@ implementation:
 
           $path = DiskHelper::updateFile($data['banner_image'], $this->banner->banner_image, 'banners');
       }
-improvements:
-  - Renamed the installed component to ImagePreview so the public API matches the component responsibility.
-  - Replaced inline JavaScript click handling with native label and input behavior.
-  - Added translated labels for empty, loading, select, change, and save states.
-  - Added the missing image-preview utility that was present in the source project but not in the exported package.
-  - Removed duplicate fixed DOM ids so multiple previews can render safely on the same page.
-  - Removed the visual remove action because deleting an image is a parent-form/domain decision, not preview behavior.
 notes:
   - The component previews images only. Storing, replacing, and deleting files belongs to the parent form or Livewire component.
   - Modal flows that reuse the same property for the persisted path and the temporary upload should call NormalizesLivewireUploads before validation.

@@ -34,10 +34,6 @@ return [
             'title' => 'Methods',
             'description' => 'Public calls worth knowing before using the module in a real project.',
         ],
-        'improvements' => [
-            'title' => 'Refinements',
-            'description' => 'Changes made before treating this as a reusable extra.',
-        ],
         'documentation' => [
             'title' => 'Menu',
         ],

@@ -76,11 +76,6 @@ methods:
     description: "Indicates whether the Site Online badge should appear in the header."
     example: |
       MaintenanceSetting::current()->shouldShowOnlineAlert();
-improvements:
-  - "The demo uses a real public route to prove the middleware behavior."
-  - "The confirmation modal uses DaisyUI because the flow is only Yes/No and does not need validation."
-  - "wire-elements/modal remains reserved for modals with forms and Livewire validation."
-  - "Texts were extracted to translation files."
 notes:
   - "Do not apply site.available to login, auth, or admin dashboard routes."
   - "The module does not use Laravel's native artisan down mode, so the admin panel remains available."

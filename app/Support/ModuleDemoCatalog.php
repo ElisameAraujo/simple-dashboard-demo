@@ -71,7 +71,6 @@ class ModuleDemoCatalog
             'configuration' => self::configurationFor($documentation['configuration'] ?? []),
             'implementation' => $documentation['implementation'] ?? [],
             'methods' => $documentation['methods'] ?? [],
-            'improvements' => $documentation['improvements'] ?? [],
             'notes' => $documentation['notes'] ?? [],
             'sections' => $documentation['sections'] ?? [],
             'documentation_pages' => self::documentationPages($slug, $documentation['sections'] ?? []),

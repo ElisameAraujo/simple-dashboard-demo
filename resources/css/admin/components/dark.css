@@ -125,8 +125,7 @@
 [data-theme="dark"] .dashboard-panel,
 [data-theme="dark"] .dashboard-page-link,
 [data-theme="dark"] .dashboard-link-list a,
-[data-theme="dark"] .dashboard-helper-grid a,
-[data-theme="dark"] .dashboard-step-list li {
+[data-theme="dark"] .dashboard-helper-grid a {
     @apply border-gray-600;
 }
 
@@ -135,8 +134,7 @@
 [data-theme="dark"] .dashboard-summary-card p,
 [data-theme="dark"] .dashboard-page-copy small,
 [data-theme="dark"] .dashboard-link-list small,
-[data-theme="dark"] .dashboard-helper-grid small,
-[data-theme="dark"] .dashboard-step-list p {
+[data-theme="dark"] .dashboard-helper-grid small {
     @apply text-gray-400;
 }
 

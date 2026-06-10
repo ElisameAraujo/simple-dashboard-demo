@@ -76,11 +76,6 @@ methods:
     description: "Indica se o badge Site Online deve aparecer no header."
     example: |
       MaintenanceSetting::current()->shouldShowOnlineAlert();
-improvements:
-  - "A demo usa uma rota pública real para provar o comportamento do middleware."
-  - "O modal de confirmação é DaisyUI, porque o fluxo é apenas Sim/Não e não precisa de validação."
-  - "wire-elements/modal fica reservado para modais com formulário e validação Livewire."
-  - "Textos foram extraídos para arquivos de tradução."
 notes:
   - "Não aplique site.available em rotas de login, auth ou painel administrativo."
   - "O módulo não usa o modo nativo artisan down, então o painel continua disponível."

@@ -247,20 +247,6 @@
                 </div>
             </article>
 
-            <article class="demo-docs-panel">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <h2>{{ __('pages/modules.sections.improvements.title') }}</h2>
-                        <p>{{ __('pages/modules.sections.improvements.description') }}</p>
-                    </div>
-                </div>
-
-                <div class="demo-docs-explanation-list">
-                    @foreach ($module['improvements'] as $item)
-                        <p>{{ $item }}</p>
-                    @endforeach
-                </div>
-            </article>
             </div>
         @endif
     </section>

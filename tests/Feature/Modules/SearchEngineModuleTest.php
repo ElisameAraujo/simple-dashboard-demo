@@ -57,7 +57,9 @@ class SearchEngineModuleTest extends TestCase
         $this->assertSame('Ações no Spotlight', $module['sections'][6]['title']);
         $this->assertSame('Busca Web', $module['sections'][7]['title']);
         $this->assertSame('Tabelas Livewire', $module['sections'][8]['title']);
-        $this->assertSame('Evolução do Livewire', $module['sections'][10]['items'][1]['title']);
+        $this->assertSame('Validação e Testes', $module['sections'][9]['title']);
+        $this->assertCount(10, $module['sections']);
+        $this->assertNotContains('Próximos Passos', collect($module['sections'])->pluck('title')->all());
         $this->assertSame('Visão Geral', $module['documentation_pages'][0]['title']);
         $this->assertSame(route('modules.search-engine.section', 'livewire-tables'), $module['documentation_pages'][8]['url']);
     }

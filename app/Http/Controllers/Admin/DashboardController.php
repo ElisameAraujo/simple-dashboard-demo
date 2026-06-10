@@ -73,11 +73,13 @@ class DashboardController extends Controller
             ],
         ];
 
+        $readmeUrl = $this->readmeUrl();
+
         $usefulLinks = [
             [
                 'label' => __('pages/dashboard.useful_links.readme.label'),
                 'description' => __('pages/dashboard.useful_links.readme.description'),
-                'url' => $this->readmeUrl(),
+                'url' => $readmeUrl,
                 'icon' => 'fa-brands fa-readme',
             ],
             [
@@ -88,14 +90,12 @@ class DashboardController extends Controller
             ],
         ];
 
-        $nextSteps = __('pages/dashboard.next_steps');
-
         return view('admin.dashboard.index', compact(
             'summaryItems',
             'demoPages',
             'helperDocs',
             'usefulLinks',
-            'nextSteps'
+            'readmeUrl'
         ));
     }
 

@@ -115,13 +115,6 @@ implementation:
 
           $path = DiskHelper::updateFile($data['banner_image'], $this->banner->banner_image, 'banners');
       }
-improvements:
-  - O componente instalado foi nomeado como ImagePreview para que a API pública acompanhe a responsabilidade do componente.
-  - O clique com JavaScript inline foi trocado por comportamento nativo de label e input.
-  - Foram adicionados textos traduzidos para os estados vazio, carregando, selecionar, alterar e salvar.
-  - A utility image-preview que existia no projeto de origem, mas não veio no pacote exportado, foi adicionada.
-  - IDs fixos duplicados foram removidos para permitir múltiplos previews na mesma página.
-  - A ação visual de remover foi removida porque excluir imagem é decisão do formulário pai, não comportamento de preview.
 notes:
   - O componente apenas exibe o preview. Salvar, substituir e remover arquivos fisicamente é responsabilidade do formulário ou componente Livewire pai.
   - Fluxos em modal que reutilizam a mesma propriedade para o caminho persistido e o upload temporário devem chamar NormalizesLivewireUploads antes da validação.

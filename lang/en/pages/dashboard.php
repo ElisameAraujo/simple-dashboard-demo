@@ -4,10 +4,10 @@ return [
     'kicker' => 'Simple Dashboard',
     'intro' => [
         'title' => 'General demo summary',
-        'description' => 'This screen centralizes the current panel status, the navigation paths already available, and a few reference links for continuing the implementation.',
+        'description' => 'This screen centralizes the current panel status, the available navigation paths, and reference links for understanding the project foundation.',
     ],
     'actions' => [
-        'profile' => 'GitHub Profile',
+        'readme' => 'Project README',
     ],
     'summary' => [
         'stack' => [
@@ -31,10 +31,6 @@ return [
         'available_pages' => [
             'title' => 'Available pages',
             'description' => 'Shortcuts to the screens that are already part of the demo.',
-        ],
-        'next_steps' => [
-            'title' => 'Next steps',
-            'description' => 'Initial queue for expanding the demo.',
         ],
         'useful_links' => [
             'title' => 'Useful links',
@@ -75,10 +71,5 @@ return [
             'label' => 'Repository',
             'description' => 'Source code and public history.',
         ],
-    ],
-    'next_steps' => [
-        'Add administrative pages with tables and filters.',
-        'Create form examples with real validation.',
-        'Include reusable Livewire components in the demo.',
     ],
 ];
