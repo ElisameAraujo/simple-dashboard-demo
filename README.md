@@ -1,285 +1,193 @@
-<p align="center" style="display: flex; justify-content:center; gap: 10px; width: 100%">
-<img alt="Static Badge" src="https://img.shields.io/badge/Laravel%2013-version?style=plastic&logo=laravel&logoColor=white&labelColor=%23FF2D20&color=black">
-<img alt="Static Badge" src="https://img.shields.io/badge/DaisyUI%205-version?style=plastic&logo=daisyui&logoColor=white&labelColor=%231AD1A5&color=black">
-<img alt="Static Badge" src="https://img.shields.io/badge/Livewire%204-version?style=plastic&logo=livewire&logoColor=white&labelColor=%234E56A6&color=black">
-<img alt="Static Badge" src="https://img.shields.io/badge/FontAwesome%207-version?style=plastic&logo=fontawesome&logoColor=white&labelColor=%23538DD7&color=black">
-</p>
+# Simple Dashboard Demo
 
-<div style="display: flex; justify-content:center; gap: .4em; width: 100%">
-<a href="https://github.com/ElisameAraujo/simple-dashboard">
-Readme (English)
-</a>
-|
-<a href="https://github.com/ElisameAraujo/simple-dashboard/blob/main/README.pt-br.md">
-Readme (Português do Brasil)
-</a>
-</div>
+This repository contains the working Simple Dashboard demo. It is used to show, test, and document the global helpers and extra modules available in the admin panel.
 
-# Simple Dashboard
+The demo is independent from the starter repository. If you want the clean project base, use [`simple-dashboard`](https://github.com/ElisameAraujo/simple-dashboard). If you want to explore the features in action, use this demo repository.
 
-A simple, modern, and functional administrative panel, built with:
+## Stack
 
--   **Laravel 13+**
--   **Livewire 4+**
--   **Tailwind CSS 4+**
--   **DaisyUI 5+**
--   **FontAwesome 7+**
+- Laravel 13
+- Livewire 4
+- Tailwind CSS 4
+- DaisyUI 5
+- FontAwesome 7
+- Vite 8
+- SQLite for local development
 
-The goal of this project is to serve as a **starting base** for creating dashboards, offering a clean, organized structure with a set of ready-to-use helpers.
+## What Is Included
 
-This project is provided **AS IS**. Updates may occur occasionally, if I seen necessary.
+### Helpers
 
----
+Helpers live in `app/Helpers` and are documented inside the demo UI.
 
-# 🚀 Quick Installation
+| Helper               | Focus                                                               |
+| -------------------- | ------------------------------------------------------------------- |
+| `DateHelper`         | Dates, periods, and relative text.                                  |
+| `DiskHelper`         | Upload, replacement, removal, and URL generation for Laravel disks. |
+| `HTMLHelper`         | Fake HTML generation for demos, previews, and docs.                 |
+| `MediaHelper`        | Media resolution, display, download, and MIME type helpers.         |
+| `NotificationHelper` | Reading Laravel notifications for the authenticated user.           |
+| `NumberHelper`       | Locale-aware numbers, currency, area, and ordinals.                 |
+| `RouteHelper`        | Organized import of route files and folders.                        |
+| `RuleHelper`         | Extracting values from Laravel validation rules.                    |
+| `TextHelper`         | Cleaning, normalization, pluralization, slugs, and UI text.         |
+| `UserHelper`         | Safe access to basic user data and optional permission extras.      |
+
+### Modules
+
+Modules live in the **Modules / Extras** area inside the panel.
+
+| Module             | What it demonstrates                                                           |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `ImagePreview`     | Decoupled image preview for Livewire create and edit forms.                    |
+| `Visits`           | Standalone visit tracking and popularity scopes for Eloquent models.           |
+| `Notifications UI` | Visual admin notification interface with mocked data.                          |
+| `Maintenance Mode` | WordPress-style maintenance mode without taking down the admin panel.          |
+| `Search Engine`    | Search engine for Spotlight, web search, models, statics, and Livewire tables. |
+| `Rich Text Media`  | Upload, commit, and cleanup for images embedded in WYSIWYG editors.            |
+
+## Installation
+
+Clone the repository:
 
 ```bash
-git clone https://github.com/ElisameAraujo/simple-dashboard.git
-cd simple-dashboard
+git clone https://github.com/ElisameAraujo/simple-dashboard-demo.git
+cd simple-dashboard-demo
+```
 
+Install PHP and JavaScript dependencies:
+
+```bash
 composer install
 npm install
-npm run build
+```
 
+Create `.env`, generate the app key, and prepare the database:
+
+```bash
 cp .env.example .env
 php artisan key:generate
+php artisan migrate
+```
 
+To rebuild the demonstration data:
+
+```bash
+composer demo:fresh
+```
+
+Build assets:
+
+```bash
+npm run build
+```
+
+## Running The Demo
+
+Use the development script:
+
+```bash
 composer run dev
 ```
 
----
+It starts the Laravel server, Vite, and the queue listener.
 
-# 📦 Requirements
+Then open:
 
--   **PHP 8.3+**
--   **Laravel 13+**
--   **Node 20+**
--   **Composer 2+**
-
----
-
-# 🗂 Project Structure (Summary)
-
-```
-.
-├── app/
-│   ├── ...
-│   ├── Helpers (Global Helpers)/
-│   │   ├── Support/
-│   │   │   └── LocaleResolver.php
-│   │   ├── DateHelper.php
-│   │   ├── DiskHelper.php
-|   |   ├── HTMLHelper.php
-│   │   ├── MediaHelper.php
-│   │   ├── NotificationHelper.php
-│   │   ├── NumberHelper.php
-│   │   ├── PaginationHelper.php
-│   │   ├── RouteHelper.php
-│   │   ├── RuleHelper.php
-│   │   ├── TextHelper.php
-│   │   └── UserHelper.php
-│   ├── ...
-│   └── Providers/
-│       ├── ...
-│       └── HelperServiceProvider.php (Service Provider for Helpers)
-├── ...
-├── config/
-│   ├── ...
-│   └── helpers.php (Helpers Registry)
-├── ...
-├── documentation/
-│   ├── en-US/
-│   │   ├── DateHelper.md
-│   │   ├── DiskHelper.md
-│   │   ├── HTMLHelper.md
-│   │   ├── MediaHelper.md
-│   │   ├── NotificationHelper.md
-│   │   ├── NumberHelper.md
-│   │   ├── PaginationHelper.md
-│   │   ├── RouteHelper.md
-│   │   ├── RuleHelper.md
-│   │   ├── TextHelper.md
-│   │   └── UserHelper.md
-│   └── pt-BR/
-│       ├── DateHelper.md
-│       ├── DiskHelper.md
-│       ├── HTMLHelper.md
-│       ├── MediaHelper.md
-│       ├── NotificationHelper.md
-│       ├── NumberHelper.md
-│       ├── PaginationHelper.md
-│       ├── RouteHelper.md
-│       ├── RuleHelper.md
-│       ├── TextHelper.md
-│       └── UserHelper.md
-├── lang/
-│   ├── en/
-│   │   ├── dates.php
-│   │   ├── error_messages.php
-│   │   ├── plurals.php
-│   │   └── ui.php
-│   └── pt-BR/
-│       ├── dates.php
-│       ├── error_messages.php
-│       ├── plurals.php
-│       └── ui.php
-├── ...
-├── resources/
-│   ├── css/
-│   │   ├── admin/
-│   │   │   └── components/
-│   │   │       ├── dark.css
-│   │   │       ├── header.css
-│   │   │       ├── profile-options.css
-│   │   │       └── sidebar.css
-│   │   ├── global/
-│   │   │   ├── theme.css
-│   │   │   └── utilities.css
-│   │   └── web/
-│   │       ├── style.css
-│   │       └── web.css
-│   ├── js/
-│   │   ├── admin/
-│   │   │   ├── admin.js
-│   │   │   ├── mobile-menu.js
-│   │   │   └── submenu.js
-│   │   └── web/
-│   │       └── web.js
-│   └── views/
-│       ├── admin/
-│       │   ├── dashboard/
-│       │   │   └── index.blade.php
-│       │   └── profile/
-│       │       ├── my-profile.blade.php
-│       │       ├── notifications.blade.php
-│       │       └── security.blade.php
-│       ├── components/
-│       │   └── admin/
-│       │       ├── header.blade.php
-│       │       ├── menu-structrure.blade.php
-│       │       ├── side-menu.blade-mobile.php
-│       │       └── side-menu.blade.php
-│       ├── layouts/
-│       │    └── admin.blade.php
-|       └── web/
-├── routes/
-│   ├── admin/
-│   │   ├── dashboard/
-│   │   │   └── dashboard-routes.php
-│   │   └── profile/
-│   │       └── profile-routes.php
-|   └── web/
-└── ...
+```text
+http://127.0.0.1:8000
 ```
 
----
+## Manual Test Flow
 
-# 🧰 Helpers
+### Panel
 
-This project already has a small list of helpers with static functions that can be accessed globally via `ClassName::function()`.
+1. Open `/`.
+2. Switch language from the header or mobile menu.
+3. Toggle light and dark themes.
+4. Open Spotlight with `Ctrl+K` or the search field.
+5. Search terms such as `maintenance`, `visits`, `media`, `product`, or `post`.
 
-You can create new helpers within the `App\Helpers` folder and register them in the `config\helpers.php` file under the `global` key.
+### Helpers
 
-You can check what each helper and function does in the [**`/documentation`**](https://github.com/ElisameAraujo/simple-dashboard/tree/main/documentation) folder. There you will find specific files for each class and also for the functions within each class. Within the classes you will also find comments for more specific functions.
+1. Open `/helpers`.
+2. Open each helper from the sidebar.
+3. Check examples, methods, and YAML-generated documentation.
 
-The currently available helpers are:
+### Modules
 
-| Helper                 | Description                                 |
-| ---------------------- | ------------------------------------------- |
-| **DateHelper**         | Date manipulation and formatting            |
-| **DiskHelper**         | Laravel disk and path management            |
-| **HTMLHelper**         | Create HTML for factories                   |
-| **MediaHelper**        | Disk media display and management           |
-| **NotificationHelper** | Laravel notification management             |
-| **NumberHelper**       | Multi-language numeric formatting           |
-| **PaginationHelper**   | Build pagination with multiple parts        |
-| **RoutesHelper**       | Importing application route files           |
-| **RuleHelper**         | Extract values from rules or DTO Classes    |
-| **TextHelper**         | Cleaning, normalization, and pluralization  |
-| **UserHelper**         | Quick access to data from the `User` model. |
+1. Open `/modules`.
+2. Open `ImagePreview` and test create/edit states.
+3. Open `Notifications UI` and test dropdown, modal, and notification states.
+4. Open `Maintenance Mode`, enable maintenance, and test `/site-preview`.
+5. Open `Search Engine` and navigate through architecture, Spotlight, web, and Livewire sections.
+6. Open `Rich Text Media` and review TinyMCE, CKEditor, Quill, Froala, Tiptap, and Lexical integration examples.
 
----
+### Web Search
 
-# 🎨 Themes (DaisyUI)
+1. Open `/site-preview`.
+2. Use the search dropdown in the navbar.
+3. Open `/site-preview/search?q=media` to see the results page.
 
-This panel uses [**DaisyUI 5+**](https://daisyui.com/), which offers native theme support and contains a library of ready-to-use [components](https://daisyui.com/components/).
+### Mobile
 
-🔗 **List of Official Themes:**
+1. Reduce the browser width.
+2. Open the mobile menu.
+3. Test language, theme, notifications, and maintenance.
+4. Check that dropdowns and modals are not trapped inside the sidebar.
 
-[https://daisyui.com/docs/themes/](https://daisyui.com/docs/themes/)
+## Validation Commands
 
-🔗 **Theme Generator:**
-
-[https://daisyui.com/theme-generator/](https://daisyui.com/theme-generator/)
-
-Defining a theme:
-
-```html
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
-    <head>
-        ...
-    </head>
-</html>
-```
-
-If you want to replace or edit the current theme, simply edit the `theme.css` file inside `resources/global`.
-
----
-
-# 🧩 Extra Packages Included
-
-### 📦 NPM
-
--   **[Theme Change](https://github.com/saadeghi/theme-change)** — Theme switching with persistence via cookie
-
-### 📦 Composer
-
--   **[Spatie Media Library](https://github.com/spatie/laravel-medialibrary)** — Media management that is linked to Eloquent Models
--   **[Spatie Laravel Permission](https://github.com/spatie/laravel-permission)** — Roles and permissions management
--   **[Log Viewer](https://log-viewer.opcodes.io/)** — It allows you to read your Laravel logs in a clearer and more organized way.
-
----
-
-# ❓ FAQ
-
-### **Can I use this panel in production?**
-
-Yes, but it is provided _AS IS_. Adjust it according to your needs.
-
-### **Can I remove the pre-installed packages?**
-
-Yes, feel free! The base project is just a guide when you're setting up your administration panel, so if the packages aren't necessary or you don't like them, just use the native Composer or NPM commands to remove them.
-
-### **Can I add my own helpers?**
-
-Yes. Just create them in `app/Helpers` and register them in `config/helpers.php`.
-
-### **Does the panel receive frequent updates?**
-
-I can update the project to support newer versions of the packages already available here, as well as remove or add new packages. But this can only happen occasionally, if I seen it necessary.
-
-### **Can I create forks and variants?**
-
-Yes, feel free.
-
----
-
-# 🤝 Contribution
-
-Contributions are welcome, especially for:
-
--   Interface translations
--   Expansion of the plural dictionary
--   Improvements to the helpers
--   General fixes
-
-To contribute:
+Asset build:
 
 ```bash
-git checkout -b my-improvement
-git commit -m "Improvement X"
-git push origin my-improvement
+npm run build
 ```
 
-Then open a **Pull Request**.
+Module tests:
+
+```bash
+php artisan test tests/Feature/Modules
+```
+
+Search Engine tests:
+
+```bash
+php artisan test --filter=SearchEngineTest
+```
+
+Maintenance mode tests:
+
+```bash
+php artisan test --filter=MaintenanceModeTest
+```
+
+Helper documentation and localization tests:
+
+```bash
+php artisan test tests/Feature/Localization
+```
+
+## Internal Documentation
+
+The UI documentation comes from YAML:
+
+```text
+resources/docs/helpers/{locale}
+resources/docs/modules/{locale}
+```
+
+When a helper or module public contract changes, update both `en` and `pt_BR` files and run the matching documentation tests.
+
+## Demo Versus Starter
+
+[`simple-dashboard-demo`](https://github.com/ElisameAraujo/simple-dashboard-demo) contains live screens, fake data, visual examples, and behavior tests.
+
+[`simple-dashboard`](https://github.com/ElisameAraujo/simple-dashboard) is the clean starter project for real use: core, reusable components, and implementation documentation, without fake data or unnecessary demonstration pages.
+
+## Notes
+
+- `wire-elements/modal` is used for Livewire modals that need state or validation.
+- Simple confirmation modals use DaisyUI.
+- Search Engine and Rich Text Media are project-configurable and do not force a final UI.
+- The demo can contain more didactic code than the starter project because its job is to teach and validate the flows.
